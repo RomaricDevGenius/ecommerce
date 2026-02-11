@@ -9,6 +9,7 @@
 /public/uploads
 /storage/*.key
 /storage/debugbar
+/storage/logs
 /vendor
 /temp
 /.idea
