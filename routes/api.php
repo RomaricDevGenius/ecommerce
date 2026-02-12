@@ -260,7 +260,7 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
     Route::get('categories/featured', 'App\Http\Controllers\Api\V2\CategoryController@featured');
     Route::get('categories/home', 'App\Http\Controllers\Api\V2\CategoryController@home');
     Route::get('categories/top', 'App\Http\Controllers\Api\V2\CategoryController@top');
-    Route::apiResource('categories', 'App\Http\Controllers\Api\V2\CategoryController')->only('index');
+    Route::apiResource('categories', 'App\Http\Controllers\Api\V2\CategoryController')->only('index')->names(['index' => 'api.categories.index']);
     Route::get('sub-categories/{id}', 'App\Http\Controllers\Api\V2\SubCategoryController@index')->name('subCategories.index');
 
     Route::apiResource('colors', 'App\Http\Controllers\Api\V2\ColorController')->only('index');
