@@ -22,6 +22,8 @@ yarn-error.log
 .DS_Store
 .idea/
 /public/*
+!/public/index.php
+!/public/.htaccess
 updates/
 composer.lock
 *.lock
