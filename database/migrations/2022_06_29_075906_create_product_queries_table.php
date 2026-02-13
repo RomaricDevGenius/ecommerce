@@ -13,6 +13,9 @@ class CreateProductQueriesTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('product_queries')) {
+            return;
+        }
         Schema::create('product_queries', function (Blueprint $table) {
             $table->id();
             $table->integer('customer_id');
