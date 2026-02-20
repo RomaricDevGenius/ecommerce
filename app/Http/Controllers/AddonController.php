@@ -98,7 +98,28 @@ class AddonController extends Controller
                     dd('could not open');
                 }
 
-                $str = file_get_contents(base_path('temp/' . $random_dir . '/addons/' . $dir . '/config.json'));
+                $addon_base = base_path('temp/' . $random_dir . '/addons');
+                $config_path = $addon_base . '/' . $dir . '/config.json';
+                if (!file_exists($config_path)) {
+                    $config_path = null;
+                    $iterator = new \RecursiveIteratorIterator(
+                        new \RecursiveDirectoryIterator($addon_base, \RecursiveDirectoryIterator::SKIP_DOTS),
+                        \RecursiveIteratorIterator::SELF_FIRST
+                    );
+                    foreach ($iterator as $file) {
+                        if ($file->isFile() && $file->getFilename() === 'config.json') {
+                            $config_path = $file->getPathname();
+                            $dir = trim(str_replace($addon_base, '', $file->getPath()), DIRECTORY_SEPARATOR);
+                            $dir = str_replace(DIRECTORY_SEPARATOR, '/', $dir);
+                            break;
+                        }
+                    }
+                    if ($config_path === null || !file_exists($config_path)) {
+                        flash(translate('Invalid addon zip: config.json not found'))->error();
+                        return back();
+                    }
+                }
+                $str = file_get_contents($config_path);
                 $json = json_decode($str, true);
 
                 //dd($random_dir, $json);
