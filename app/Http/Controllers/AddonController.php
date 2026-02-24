@@ -85,21 +85,51 @@ class AddonController extends Controller
 
                 //Unzip uploaded update file and remove zip file.
                 $zip = new ZipArchive;
-                $res = $zip->open(base_path('public/' . $path));
+                $zipPath = base_path('public/' . $path);
+                if (!file_exists($zipPath)) {
+                    $zipPath = Storage::disk('local')->path($path);
+                }
+                $res = $zip->open($zipPath);
 
                 $random_dir = Str::random(10);
-
                 $dir = trim($zip->getNameIndex(0), '/');
 
-                if ($res === true) {
-                    $res = $zip->extractTo(base_path('temp/' . $random_dir . '/addons'));
-                    $zip->close();
-                } else {
-                    dd('could not open');
+                if ($res !== true) {
+                    flash(translate('Invalid addon zip: could not open'))->error();
+                    return back();
                 }
 
-                $str = file_get_contents(base_path('temp/' . $random_dir . '/addons/' . $dir . '/config.json'));
-                $json = json_decode($str, true);
+                // Find and read config.json from zip (works with any zip structure)
+                $config_content = null;
+                $dir = null;
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $entry = $zip->getNameIndex($i);
+                    if (preg_match('#(^|/)config\.json$#', $entry)) {
+                        $config_content = $zip->getFromName($entry);
+                        $dir = trim(dirname(str_replace('\\', '/', $entry)), '/');
+                        break;
+                    }
+                }
+                if ($config_content === null || $dir === null || $dir === '.') {
+                    $zip->close();
+                    flash(translate('Invalid addon zip: config.json not found'))->error();
+                    return back();
+                }
+
+                $json = json_decode($config_content, true);
+                if (!$json) {
+                    $zip->close();
+                    flash(translate('Invalid addon zip: config.json is invalid'))->error();
+                    return back();
+                }
+
+                // Extract to temp for files/sql copy
+                $extract_to = base_path('temp/' . $random_dir . '/addons');
+                if (!is_dir($extract_to)) {
+                    mkdir($extract_to, 0755, true);
+                }
+                $zip->extractTo($extract_to);
+                $zip->close();
 
                 //dd($random_dir, $json);
 
