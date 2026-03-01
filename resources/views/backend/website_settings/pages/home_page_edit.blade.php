@@ -576,6 +576,18 @@
 				<h6 class="mb-0">{{ translate('Home Categories') }}</h6>
 			</div>
 			<div class="card-body">
+				<ul class="nav nav-tabs nav-fill language-bar mb-2">
+					@foreach ($activeLanguages as $key => $language)
+						<li class="nav-item">
+							<a class="nav-link text-reset @if ($language->code == $lang) active @endif py-3"
+								href="{{route('custom-pages.edit', ['id'=>$page->slug, 'lang'=>$language->code, 'page'=>'home'] )}}">
+								<img src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
+									height="11" class="mr-1">
+								<span>{{ $language->name }}</span>
+							</a>
+						</li>
+					@endforeach
+				</ul>
 				<form action="{{ route('business_settings.update') }}" method="POST" enctype="multipart/form-data">
 					@csrf
 					<div class="form-group">

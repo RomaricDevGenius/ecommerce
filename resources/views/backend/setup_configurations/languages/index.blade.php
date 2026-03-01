@@ -20,7 +20,7 @@
                                 <input type="hidden" name="types[]" value="DEFAULT_LANGUAGE">
                                 <div class="col-lg-6">
                                     <select class="form-control aiz-selectpicker" name="DEFAULT_LANGUAGE" data-selected="{{ env('DEFAULT_LANGUAGE') }}">
-                                        @foreach (\App\Models\Language::where('status', 1)->get() as $key => $language)
+                                        @foreach (get_all_active_language() as $key => $language)
                                             <option value="{{ $language->code }}" @if(env('DEFAULT_LANGUAGE') == $language->code) selected @endif>
                                                 {{ $language->name }}
                                             </option>

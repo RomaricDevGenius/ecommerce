@@ -24,6 +24,8 @@ class LanguageController extends Controller
     	$request->session()->put('locale', $request->locale);
         $language = Language::where('code', $request->locale)->first();
         $request->session()->put('langcode', $language->app_lang_code);
+        // Invalider le cache des traductions pour recharger depuis la BDD (et appliquer les traductions partout)
+        Cache::forget('translations-' . $request->locale);
     	flash(translate('Language changed to ').$language->name)->success();
     }
 

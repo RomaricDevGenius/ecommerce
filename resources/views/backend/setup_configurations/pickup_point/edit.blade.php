@@ -20,7 +20,6 @@
       					</li>
   		            @endforeach
       			</ul>
-
                 <form class="p-4" action="{{ route('pick_up_points.update',$pickup_point->id) }}" method="POST">
                 	<input name="_method" type="hidden" value="PATCH">
                     <input type="hidden" name="lang" value="{{ $lang }}">

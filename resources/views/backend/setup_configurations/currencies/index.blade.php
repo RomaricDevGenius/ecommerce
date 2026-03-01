@@ -105,6 +105,10 @@
 	</div>
 </div>
 
+<div class="alert alert-info mb-3">
+    <strong>{{ translate('Conversion rates') }} :</strong> {{ translate('All rates are relative to 1 USD. Example: USD = 1, EUR = 0.92 (1 USD = 0.92 €), FCFA = 600 (1 USD = 600 FCFA). Your product prices are in the default currency; the site converts them using these rates.') }}
+</div>
+
 <div class="card">
     <div class="card-header row gutters-5">
         <div class="col text-center text-md-left">
@@ -126,7 +130,7 @@
                     <th>{{translate('Currency name')}}</th>
                     <th data-breakpoints="lg">{{translate('Currency symbol')}}</th>
                     <th data-breakpoints="lg">{{translate('Currency code')}}</th>
-                    <th>{{translate('Exchange rate')}}(1 USD = ?)</th>
+                    <th>{{translate('Exchange rate')}} <span class="text-muted fs-11">(1 USD = ?)</span></th>
                     <th data-breakpoints="lg">{{translate('Status')}}</th>
                     <th class="text-right">{{translate('Options')}}</th>
                 </tr>
@@ -149,6 +153,11 @@
                             <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" onclick="edit_currency_modal('{{$currency->id}}');" title="{{ translate('Edit') }}">
                                 <i class="las la-edit"></i>
                             </a>
+                            @if (get_setting('system_default_currency') != $currency->id)
+                            <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{ route('currency.destroy', $currency->id) }}" title="{{ translate('Delete') }}">
+                                <i class="las la-trash"></i>
+                            </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -229,5 +238,12 @@
                 $('#currency_modal_edit').modal('show', {backdrop: 'static'});
             });
         }
+
+        $(document).on('click', '.confirm-delete', function(e) {
+            e.preventDefault();
+            var url = $(this).data('href');
+            $('#delete-link').attr('href', url);
+            $('#delete-modal').modal('show');
+        });
     </script>
 @endsection

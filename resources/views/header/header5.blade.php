@@ -258,20 +258,19 @@ $middleHeaderTextColor = get_setting('middle_header_text_color');
                                         style="min-height: 40px;">
                                         <div class="form-control form-control-sm border-0 bg-transparent p-0 w-100 cursor-pointer hover-text-primary h-100 d-flex align-items-center justify-content-between"
                                             onclick="toggleChildDropdown(this, event)">
-                                            <span>{{ $system_currency->name ?? ''}}
-                                                ({{ $system_currency->symbol ?? ''}})</span>
+                                            <span>{{ currency_display_label($system_currency) }}</span>
                                             <i class="la la-angle-right"></i>
                                         </div>
 
                                         <!-- Currency Child Dropdown -->
                                         <div class="dropdown-menu dropdown-menu-right py-0 header-drop child-dropdown"
                                             style="min-width: 200px; left: 100%; top: 1px!important; margin-top: -1px;">
-                                            @foreach (get_all_active_currency() as $currency)
+                                            @foreach (get_frontend_currencies() as $currency)
                                             <div class="px-2 py-1 border-bottom border-soft-light hover-bg-light">
                                                 <a href="javascript:void(0)" class="d-block text-dark"
                                                     data-currency="{{ $currency->code }}"
                                                     onclick="changeCurrency('{{ $currency->code }}')">
-                                                    {{ $currency->name }} ({{ $currency->symbol }})
+                                                    {{ currency_display_label($currency) }}
                                                 </a>
                                             </div>
                                             @endforeach
@@ -280,8 +279,8 @@ $middleHeaderTextColor = get_setting('middle_header_text_color');
                                     @endif
 
 
-                                    <!-- Become a Seller Links -->
-                                    @if (get_setting('vendor_system_activation') == 1)
+                                    <!-- Become a Seller Links (masqués) -->
+                                    @if (get_setting('vendor_system_activation') == 1 && false)
                                     <div>
                                         <a href="{{ route(get_setting('seller_registration_verify') === '1' ? 'shop-reg.verification' : 'shops.create') }}"
                                             class="dropdown-item fs-13 py-2 px-3 hover-bg-light hover-text-primary border-bottom border-soft-light d-flex align-items-center"

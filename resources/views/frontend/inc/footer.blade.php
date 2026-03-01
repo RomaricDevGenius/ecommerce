@@ -329,8 +329,8 @@
             @if ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy'))
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="text-center text-sm-left mt-4">
-                    <!-- Seller -->
-                    @if (get_setting('vendor_system_activation') == 1)
+                    <!-- Seller (masqué temporairement - retirer "&& false" pour réafficher) -->
+                    @if (get_setting('vendor_system_activation') == 1 && false)
                         <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">{{ translate('Seller Zone') }}</h4>
                         <ul class="list-unstyled">
                             <li class="mb-2">
@@ -489,8 +489,8 @@
             </div>
         </div>
 
-        <!-- Seller -->
-        @if (get_setting('vendor_system_activation') == 1)
+        <!-- Seller (masqué temporairement - retirer "&& false" pour réafficher) -->
+        @if (get_setting('vendor_system_activation') == 1 && false)
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Seller Zone') }}</button>
