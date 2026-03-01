@@ -922,6 +922,213 @@ if (!function_exists('renderStarRatingLatest')) {
     }
 }
 
+/**
+ * Traductions françaises par défaut pour le site (fallback si absentes en BDD).
+ * Clés = lang_key (ex: hot_categories), valeurs = texte en français.
+ */
+function get_french_translations_fallback()
+{
+    return [
+        'hot_categories' => 'Catégories à la une',
+        'featured_categories' => 'Catégories en vedette',
+        'categories_catching_eyes_winning_hearts_across_our_marketplace' => 'Catégories qui attirent l\'œil et séduisent sur notre marketplace',
+        'all_categories' => 'Toutes les catégories',
+        'best_selling' => 'Meilleures ventes',
+        'best_sellers' => 'Meilleurs vendeurs',
+        'view_all' => 'Voir tout',
+        'view_all_sellers' => 'Voir tous les vendeurs',
+        'visit_store' => 'Visiter la boutique',
+        'todays_deal' => 'Offre du jour',
+        'featured_products' => 'Produits en vedette',
+        'new_products' => 'Nouveaux produits',
+        'preorder_featured_products' => 'Produits en précommande',
+        'products' => 'Produits',
+        'wholesale' => 'Grossiste',
+        'add_to_wishlist' => 'Ajouter aux favoris',
+        'add_to_compare' => 'Ajouter au comparatif',
+        'select_variant' => 'Choisir une variante',
+        'add_to_cart' => 'Ajouter au panier',
+        'select_option' => 'Choisir une option',
+        'place_bid' => 'Enchérir',
+        'classified_ads' => 'Annonces classées',
+        'new' => 'Neuf',
+        'used' => 'Occasion',
+        'load_more' => 'Charger plus',
+        'loading' => 'Chargement...',
+        'no_more_products' => 'Plus de produits',
+        'error_try_again' => 'Erreur, réessayez',
+        'price' => 'Prix',
+        'frequently_bought_together' => 'Souvent achetés ensemble',
+        'view_cart' => 'Voir le panier',
+        'item_successfully_added_to_your_cart' => 'Article ajouté à votre panier !',
+        'shipping_info' => 'Informations de livraison',
+        'delivery_info' => 'Informations d\'expédition',
+        'payment' => 'Paiement',
+        'i_agree_to_the' => 'J\'accepte les',
+        'terms_and_conditions' => 'conditions générales',
+        'return_policy' => 'politique de retour',
+        'privacy_policy' => 'politique de confidentialité',
+        'return_to_shop' => 'Retour à la boutique',
+        'complete_order' => 'Finaliser la commande',
+        'you_order_amount_is_less_then_the_minimum_order_amount' => 'Le montant de votre commande est inférieur au minimum.',
+        'please_fill_in_all_mandatory_fields' => 'Veuillez remplir tous les champs obligatoires.',
+        'you_need_to_agree_with_our_policies' => 'Vous devez accepter nos conditions.',
+        'you_need_to_put_transaction_id' => 'Veuillez indiquer l\'identifiant de transaction.',
+        'please_login_as_a_customer_to_apply_coupon_code' => 'Connectez-vous en tant que client pour appliquer un code promo.',
+        'my_cart' => 'Mon panier',
+        'shipping_info' => 'Informations de livraison',
+        'delivery_info' => 'Informations d\'expédition',
+        'confirmation' => 'Confirmation',
+        'any_additional_info' => 'Informations complémentaires ?',
+        'type_your_text' => 'Saisir votre texte...',
+        'select_a_payment_option' => 'Choisir un mode de paiement',
+        'cash_on_delivery' => 'Paiement à la livraison',
+        'bank_name' => 'Nom de la banque',
+        'account_name' => 'Titulaire du compte',
+        'account_number' => 'Numéro de compte',
+        'routing_number' => 'Code banque',
+        'transaction_id' => 'Identifiant de transaction',
+        'photo' => 'Photo',
+        'browse' => 'Parcourir',
+        'choose_image' => 'Choisir une image',
+        'or_your_wallet_balance' => 'Ou le solde de votre portefeuille :',
+        'insufficient_balance' => 'Solde insuffisant',
+        'pay_with_wallet' => 'Payer avec le portefeuille',
+        'language_changed_to' => 'Langue changée en',
+        'here' => 'Ici',
+        'set_hot_categories' => 'Définir les catégories à la une',
+        // Header / navigation
+        'become_a_seller' => 'Devenir vendeur',
+        'login_to_seller' => 'Espace vendeur',
+        'helpline' => 'Assistance',
+        'i_am_shopping_for' => 'Je recherche...',
+        'notifications' => 'Notifications',
+        'notification' => 'Notification',
+        'no_notification_found' => 'Aucune notification',
+        'view_all_notifications' => 'Voir toutes les notifications',
+        'avatar' => 'Avatar',
+        'login' => 'Connexion',
+        'registration' => 'Inscription',
+        'dashboard' => 'Tableau de bord',
+        'purchase_history' => 'Historique des commandes',
+        'preorder_list' => 'Précommandes',
+        'preorder' => 'Précommande',
+        'preorder_conversations' => 'Conversations précommandes',
+        'downloads' => 'Téléchargements',
+        'conversations' => 'Messages',
+        'my_wallet' => 'Mon portefeuille',
+        'support_ticket' => 'Support',
+        'logout' => 'Déconnexion',
+        'sign_out' => 'Déconnexion',
+        'categories' => 'Catégories',
+        'see_all' => 'Tout voir',
+        'my_account' => 'Mon compte',
+        'wishlist' => 'Favoris',
+        'compare' => 'Comparer',
+        'top_banner' => 'Bannière',
+        // Footer
+        'last_viewed_products' => 'Derniers produits vus',
+        'terms_conditions' => 'Conditions générales',
+        'return_policy' => 'Politique de retour',
+        'support_policy' => 'Politique d\'assistance',
+        'privacy_policy' => 'Politique de confidentialité',
+        'subscribe_to_our_newsletter_for_regular_updates_about_offers_coupons_more' => 'Inscrivez-vous à notre newsletter pour les offres, bons de réduction et plus.',
+        'your_email_address' => 'Votre adresse e-mail',
+        'subscribe' => 'S\'inscrire',
+        'follow_us' => 'Suivez-nous',
+        'mobile_apps' => 'Applications mobiles',
+        'contacts' => 'Contact',
+        // Compte / profil
+        'manage_profile' => 'Gérer mon profil',
+        'delete_my_account' => 'Supprimer mon compte',
+        'refund_requests' => 'Demandes de remboursement',
+        'followed_sellers' => 'Vendeurs suivis',
+        'classified_products' => 'Annonces classées',
+        'auction' => 'Enchères',
+        'bidded_products' => 'Mes enchères',
+        'earning_points' => 'Points de fidélité',
+        'affiliate' => 'Programme partenaire',
+        'affiliate_system' => 'Programme partenaire',
+        'payment_history' => 'Historique des paiements',
+        'withdraw_request_history' => 'Historique des retraits',
+        // Avis et évaluations produit
+        'reviews_ratings' => 'Avis et évaluations',
+        'total_review' => 'Total des avis',
+        'rate_this_product' => 'Évaluer ce produit',
+        'no_reviews_found' => 'Aucun avis trouvé !',
+        'message_us' => 'Nous contacter',
+        'review' => 'Avis',
+        'rating' => 'Note',
+        'your_review' => 'Votre avis',
+        'review_images' => 'Images de l\'avis',
+        'submit_review' => 'Envoyer l\'avis',
+        'reviews' => 'Avis',
+        'ratings' => 'Évaluations',
+        'your_reviews_ratings' => 'Vos avis et évaluations',
+        'these_images_are_visible_in_product_review_page_gallery_upload_square_images' => 'Ces images sont visibles dans la galerie des avis. Privilégiez des images carrées.',
+        'filter_by_star_rating' => 'Filtrer par note',
+        // Page détail produit
+        'products_from_this_seller' => 'Produits de ce vendeur',
+        'more_from_this_seller' => 'Plus de ce vendeur',
+        'no_frequently_bought_products_found' => 'Aucun produit « achetés ensemble » trouvé !',
+        'related_products' => 'Produits similaires',
+        'frequently_bought' => 'Souvent achetés ensemble',
+        'frequently_bought_together' => 'Souvent achetés ensemble',
+        'frequently_bought_products' => 'Souvent achetés ensemble',
+        'pricing' => 'Tarifs',
+        'exclusive_for_today_only' => 'Exclusif pour aujourd\'hui uniquement',
+        'minimum_order_qty' => 'Quantité minimale',
+        'order_via_whatsapp' => 'Commander via WhatsApp',
+        'products_from_this_brand' => 'Produits de cette marque',
+        'cash_on_delivery_available' => 'Paiement à la livraison disponible',
+        'home' => 'Accueil',
+        'description' => 'Description',
+        'product_queries' => 'Questions sur le produit',
+        'any_query_about_this_product' => 'Une question sur ce produit ?',
+        'product_name' => 'Nom du produit',
+        'your_question' => 'Votre question',
+        'cancel' => 'Annuler',
+        'send' => 'Envoyer',
+        'bid_for_product' => 'Enchérir sur ce produit',
+        'min_bid_amount' => 'Montant minimum :',
+        'place_bid_price' => 'Prix de l\'enchère',
+        'enter_amount' => 'Saisir le montant',
+        'an' => 'Une',
+        'gst_will_be_applied_if_you_win_the_bid_and_proceed_with_the_purchase' => 'TVA sera appliquée si vous remportez l\'enchère et poursuivez l\'achat',
+        'submit' => 'Envoyer',
+        'warranty_note' => 'Note de garantie',
+        'refund_note' => 'Note de remboursement',
+        'share_with_friends' => 'Partager avec des amis',
+        'trading_is_more_effective_when_you_share_products_with_friends' => 'Le partage rend les achats plus utiles !',
+        'share_you_link' => 'Partager votre lien',
+        'copied' => 'Copié',
+        'link_copied_to_clipboard' => 'Lien copié dans le presse-papiers',
+        'oops_unable_to_copy' => 'Impossible de copier',
+        'sku_copied_to_clipboard' => 'Réf. copiée dans le presse-papiers',
+        'share_to' => 'Partager sur',
+        // Page catégorie / listing (category/motos, etc.)
+        'filters' => 'Filtres',
+        'price_range' => 'Fourchette de prix',
+        'filter_by_color' => 'Filtrer par couleur',
+        'filter_by_availability' => 'Filtrer par disponibilité',
+        'available_now' => 'Disponible',
+        'upcoming' => 'À venir',
+        'all' => 'Tout',
+        'general_products' => 'Produits classiques',
+        'preorder_products' => 'Produits en précommande',
+        'brand' => 'Marque',
+        'showing_results' => 'Résultats',
+        'search_result_for' => 'Résultats pour',
+        'sort_by' => 'Trier par',
+        'newest' => 'Plus récents',
+        'oldest' => 'Plus anciens',
+        'price_low_to_high' => 'Prix croissant',
+        'price_high_to_low' => 'Prix décroissant',
+        'see_more' => 'Voir plus',
+        'see_less' => 'Voir moins',
+    ];
+}
+
 function translate($key, $lang = null, $addslashes = false)
 {
     if ($lang == null) {
@@ -929,9 +1136,29 @@ function translate($key, $lang = null, $addslashes = false)
     }
 
     $lang_key = preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($key)));
+    $lang_key = preg_replace('/_+/', '_', trim($lang_key, '_')); // normaliser (sauts de ligne/espaces → un seul _)
+
+    // Pour le français : priorité au fallback (pour corriger les valeurs anglaises déjà en BDD)
+    if ($lang === 'fr') {
+        $fr_fallback = get_french_translations_fallback();
+        if (isset($fr_fallback[$lang_key])) {
+            $value = trim($fr_fallback[$lang_key]);
+            Translation::updateOrCreate(
+                ['lang' => 'fr', 'lang_key' => $lang_key],
+                ['lang_value' => $value]
+            );
+            Cache::forget('translations-fr');
+            return $addslashes ? addslashes($value) : $value;
+        }
+    }
 
     $translations_en = Cache::rememberForever('translations-en', function () {
-        return Translation::where('lang', 'en')->pluck('lang_value', 'lang_key')->toArray();
+        $arr = [];
+        foreach (Translation::where('lang', 'en')->get() as $row) {
+            $k = preg_replace('/_+/', '_', trim(preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($row->lang_key))), '_'));
+            $arr[$k] = $row->lang_value;
+        }
+        return $arr;
     });
 
     if (!isset($translations_en[$lang_key])) {
@@ -952,9 +1179,14 @@ function translate($key, $lang = null, $addslashes = false)
         Cache::forget('translations-en');
     }
 
-    // return user session lang
+    // return user session lang (clés normalisées pour correspondre aux blades avec sauts de ligne)
     $translation_locale = Cache::rememberForever("translations-{$lang}", function () use ($lang) {
-        return Translation::where('lang', $lang)->pluck('lang_value', 'lang_key')->toArray();
+        $arr = [];
+        foreach (Translation::where('lang', $lang)->get() as $row) {
+            $k = preg_replace('/_+/', '_', trim(preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($row->lang_key))), '_'));
+            $arr[$k] = $row->lang_value;
+        }
+        return $arr;
     });
     if (isset($translation_locale[$lang_key])) {
         return $addslashes ? addslashes(trim($translation_locale[$lang_key])) : trim($translation_locale[$lang_key]);
@@ -962,7 +1194,12 @@ function translate($key, $lang = null, $addslashes = false)
 
     // return default lang if session lang not found
     $translations_default = Cache::rememberForever('translations-' . env('DEFAULT_LANGUAGE', 'en'), function () {
-        return Translation::where('lang', env('DEFAULT_LANGUAGE', 'en'))->pluck('lang_value', 'lang_key')->toArray();
+        $arr = [];
+        foreach (Translation::where('lang', env('DEFAULT_LANGUAGE', 'en'))->get() as $row) {
+            $k = preg_replace('/_+/', '_', trim(preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($row->lang_key))), '_'));
+            $arr[$k] = $row->lang_value;
+        }
+        return $arr;
     });
     if (isset($translations_default[$lang_key])) {
         return $addslashes ? addslashes(trim($translations_default[$lang_key])) : trim($translations_default[$lang_key]);
@@ -1975,6 +2212,12 @@ if (!function_exists('get_all_active_language')) {
     {
         $language_query = Language::query();
         $language_query->where('status', 1);
+        // Exclure Arabic et Bangla du site web (par code et par nom)
+        $language_query->whereNotIn('code', ['ar', 'bn', 'bd']);
+        $language_query->where(function ($q) {
+            $q->where('name', 'not like', '%Bangla%')
+              ->where('name', 'not like', '%Arabic%');
+        });
 
         return $language_query->get();
     }
@@ -2010,6 +2253,57 @@ if (!function_exists('get_all_active_currency')) {
         $currency_query->where('status', 1);
 
         return $currency_query->get();
+    }
+}
+
+/**
+ * Libellé d'affichage pour une devise dans le sélecteur.
+ * FCFA : affiche "XOF (FCFA)". Sinon : "Nom (Symbole)" ou "Nom" si identique.
+ */
+if (!function_exists('currency_display_label')) {
+    function currency_display_label($currency)
+    {
+        if (!$currency) {
+            return '';
+        }
+        $code = strtoupper(trim($currency->code ?? ''));
+        $symbol = trim($currency->symbol ?? '');
+        $name = strtoupper(trim($currency->name ?? ''));
+        if ($code === 'XOF' || $code === 'FCFA' || $symbol === 'FCFA' || $name === 'FCFA') {
+            return 'XOF (FCFA)';
+        }
+        $name = trim($currency->name ?? '');
+        if ($name !== $symbol) {
+            return $name . ' (' . $currency->symbol . ')';
+        }
+        return $name ?: $currency->symbol;
+    }
+}
+
+/**
+ * Devises affichées dans le sélecteur frontend : uniquement Euro, Dollar US et la devise par défaut (ex. FCFA).
+ * Les prix sont déjà convertis automatiquement via convert_price() après changement de devise (session).
+ */
+if (!function_exists('get_frontend_currencies')) {
+    function get_frontend_currencies()
+    {
+        $default_id = (int) get_setting('system_default_currency');
+        $default = Currency::where('id', $default_id)->where('status', 1)->first();
+        $eur = Currency::where('code', 'EUR')->where('status', 1)->first();
+        $usd = Currency::where('code', 'USD')->where('status', 1)->first();
+
+        $list = collect();
+        if ($default) {
+            $list->push($default);
+        }
+        if ($eur && (!$default || $eur->id !== $default->id)) {
+            $list->push($eur);
+        }
+        if ($usd && (!$default || $usd->id !== $default->id)) {
+            $list->push($usd);
+        }
+
+        return $list;
     }
 }
 

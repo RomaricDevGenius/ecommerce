@@ -45,15 +45,14 @@
                             <a href="javascript:void(0)" class="dropdown-toggle fs-12 py-2 top-text-color-visibility"
                                 data-toggle="dropdown" style="color: {{ $topHeaderTextColor }}"
                                 data-display="static">
-                                {{ $system_currency->name }}
+                                {{ currency_display_label($system_currency) }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-                                @foreach (get_all_active_currency() as $key => $currency)
+                                @foreach (get_frontend_currencies() as $key => $currency)
                                     <li>
                                         <a class="dropdown-item @if ($system_currency->code == $currency->code) active @endif"
                                             href="javascript:void(0)"
-                                            data-currency="{{ $currency->code }}">{{ $currency->name }}
-                                            ({{ $currency->symbol }})
+                                            data-currency="{{ $currency->code }}">{{ currency_display_label($currency) }}
                                         </a>
                                     </li>
                                 @endforeach
@@ -67,7 +66,8 @@
             <div class="col-6 text-right d-none d-lg-block top-text-color-visibility"
                 style="color: {{ $topHeaderTextColor }}">
                 <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center">
-                    @if (get_setting('vendor_system_activation') == 1)
+                    {{-- Become a Seller / Seller Login masqués --}}
+                    @if (get_setting('vendor_system_activation') == 1 && false)
                         <!-- Seller Dropdown and Helpline -->
                         <li class="list-inline-item d-flex">
 

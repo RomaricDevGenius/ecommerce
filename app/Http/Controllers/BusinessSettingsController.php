@@ -15,6 +15,7 @@ use App\Models\State;
 use App\Models\Zone;
 use Artisan;
 use CoreComponentRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Str;
@@ -481,7 +482,10 @@ class BusinessSettingsController extends Controller
             }
         }
 
-        
+        if (in_array('system_default_currency', $types)) {
+            Cache::forget('system_default_currency');
+        }
+
         if ($resetRefundData) {
             Product::query()->update([
                 'refundable' => 0,

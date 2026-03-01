@@ -389,6 +389,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/currency/store', 'store')->name('currency.store');
         Route::post('/currency/currency_edit', 'edit')->name('currency.edit');
         Route::post('/currency/update_status', 'update_status')->name('currency.update_status');
+        Route::get('/currency/destroy/{id}', 'destroy')->name('currency.destroy');
     });
 
     //Tax

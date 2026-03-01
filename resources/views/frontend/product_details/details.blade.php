@@ -321,7 +321,7 @@
             <input type="hidden" name="id" value="{{ $detailedProduct->id }}">
             
             <!--In Stock Start-->
-            <h5 class="fs-16 fw-600 text-gray">Pricing</h5>
+            <h5 class="fs-16 fw-600 text-gray">{{ translate('Pricing') }}</h5>
             <div class="bg-light overflow-hidden px-20px py-20px rounded-2">
                 @if ($detailedProduct->digital == 0)
                     <div class="d-flex flex-wrap align-items-center mb-md-0">

@@ -241,12 +241,12 @@
                                                 <div class="d-flex justify-content-end">
                                                     <button type="button"
                                                         class="btn btn-link p-0 m-0 mb-3 font-weight-bold see_more_toggle_btn">
-                                                        See More <i class="las la-angle-down fs-12 fw-600 "></i></button>
+                                                        {{ translate('See More') }} <i class="las la-angle-down fs-12 fw-600 "></i></button>
                                                 </div>
                                                 <div class="d-flex justify-content-end">
                                                     <button type="button"
-                                                        class="btn btn-link p-0 m-0 mb-3 font-weight-bold less_toggle_btn">See
-                                                        Less <i class="las la-angle-up fs-12 fw-600 "></i></button>
+                                                        class="btn btn-link p-0 m-0 mb-3 font-weight-bold less_toggle_btn">{{ translate('See Less') }}
+                                                        <i class="las la-angle-up fs-12 fw-600 "></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -298,12 +298,12 @@
                                             <div class="d-flex justify-content-end">
                                                 <button type="button"
                                                     class="btn btn-link p-0 m-0 mb-3 font-weight-bold see_more_toggle_btn">
-                                                    See More <i class="las la-angle-down fs-12 fw-600 "></i></button>
+                                                    {{ translate('See More') }} <i class="las la-angle-down fs-12 fw-600 "></i></button>
                                             </div>
                                             <div class="d-flex justify-content-end">
                                                 <button type="button"
-                                                    class="btn btn-link p-0 m-0 mb-3 font-weight-bold less_toggle_btn">See
-                                                    Less <i class="las la-angle-up fs-12 fw-600 "></i></button>
+                                                    class="btn btn-link p-0 m-0 mb-3 font-weight-bold less_toggle_btn">{{ translate('See Less') }}
+                                                    <i class="las la-angle-up fs-12 fw-600 "></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -401,12 +401,12 @@
                             @if (!isset($category_id) && !isset($brand_id))
                                 <i class="las la-angle-right fs-12 fw-600"></i>
                                 <li class=" fw-700  text-dark fs-12">
-                                    "{{ translate('All Categories') }}"
+                                    {{ translate('All Categories') }}
                                 </li>
                             @else
                                 <i class="las la-angle-right fs-12 fw-600 show_cat1 d-none"></i>
                                 <li class=" fw-700  text-dark fs-12 show_cat1 d-none">
-                                    "{{ translate('All Categories') }}"
+                                    {{ translate('All Categories') }}
                                 </li>
 
                                 @if (!isset($brand_id))

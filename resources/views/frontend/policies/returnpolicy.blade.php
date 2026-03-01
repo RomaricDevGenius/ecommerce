@@ -16,7 +16,8 @@
 
 @extends($layout)
 
-@section('meta_title'){{ $page->meta_title }}@stop
+@php $page_meta_title = $page->getTranslation('title') ?: translate('Return Policy'); @endphp
+@section('meta_title'){{ $page_meta_title }}@stop
 
 @section('meta_description'){{ $page->meta_description }}@stop
 
@@ -24,20 +25,20 @@
 
 @section('meta')
     <!-- Schema.org markup for Google+ -->
-    <meta itemprop="name" content="{{ $page->meta_title }}">
+    <meta itemprop="name" content="{{ $page_meta_title }}">
     <meta itemprop="description" content="{{ $page->meta_description }}">
     <meta itemprop="image" content="{{ uploaded_asset($page->meta_image) }}">
 
     <!-- Twitter Card data -->
     <meta name="twitter:card" content="website">
     <meta name="twitter:site" content="@publisher_handle">
-    <meta name="twitter:title" content="{{ $page->meta_title }}">
+    <meta name="twitter:title" content="{{ $page_meta_title }}">
     <meta name="twitter:description" content="{{ $page->meta_description }}">
     <meta name="twitter:creator" content="@author_handle">
     <meta name="twitter:image" content="{{ uploaded_asset($page->meta_image) }}">
 
     <!-- Open Graph data -->
-    <meta property="og:title" content="{{ $page->meta_title }}" />
+    <meta property="og:title" content="{{ $page_meta_title }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ URL($page->slug) }}" />
     <meta property="og:image" content="{{ uploaded_asset($page->meta_image) }}" />
@@ -51,7 +52,7 @@
     <div class="container text-center">
         <div class="row">
             <div class="col-lg-6 text-center text-lg-left">
-                <h1 class="fw-600 h4">{{ $page->getTranslation('title') }}</h1>
+                <h1 class="fw-600 h4">{{ translate('Return Policy') }}</h1>
             </div>
             <div class="col-lg-6">
                 <ul class="breadcrumb bg-transparent p-0 justify-content-center justify-content-lg-end">
@@ -59,7 +60,7 @@
                         <a class="text-reset" href="{{ route('home') }}">{{ translate('Home')}}</a>
                     </li>
                     <li class="text-dark fw-600 breadcrumb-item">
-                        "{{ translate('Return Policy') }}"
+                        {{ translate('Return Policy') }}
                     </li>
                 </ul>
             </div>
