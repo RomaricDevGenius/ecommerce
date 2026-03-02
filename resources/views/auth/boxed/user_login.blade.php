@@ -54,7 +54,7 @@
                                                 <input type="hidden" name="country_code" value="">
                                                 
                                                 <div class="form-group text-right">
-                                                    <button class="btn btn-link p-0 text-primary fs-12 fw-400" type="button" onclick="toggleEmailPhone(this)"><i>*{{ translate('Use Email Instead') }}</i></button>
+                                                    <button class="btn btn-link p-0 text-primary fs-12 fw-400" type="button" onclick="toggleEmailPhone(this)"><i>*{{ translate('Use phone number instead') }}</i></button>
                                                 </div>
                                             @else
                                                 <div class="form-group">
