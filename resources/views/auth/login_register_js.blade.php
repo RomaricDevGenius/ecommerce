@@ -65,7 +65,10 @@
 @if (addon_is_activated('otp_system'))
     <script type="text/javascript">
         // Country Code
-        var isPhoneShown = true,
+        // Déterminer dynamiquement ce qui est affiché par défaut :
+        // - si le bloc téléphone n'a pas la classe d-none => téléphone visible
+        // - sinon => email visible
+        var isPhoneShown = !$('.phone-form-group').hasClass('d-none'),
             countryData = window.intlTelInputGlobals.getCountryData(),
             input = document.querySelector("#phone-code");
 
@@ -100,15 +103,17 @@
 
         function toggleEmailPhone(el) {
             if (isPhoneShown) {
+                // Téléphone actuellement visible -> passer à l'email
                 $('.phone-form-group').addClass('d-none');
                 $('.email-form-group').removeClass('d-none');
                 $('input[name=phone]').val(null);
                 isPhoneShown = false;
-                $(el).html('*{{ translate('Use Phone Number Instead') }}');
+                $(el).html('<i>*{{ translate('Use Phone Number Instead') }}</i>');
 
                 $('.toggle-login-with-otp').addClass('d-none');
 
             } else {
+                // Email actuellement visible -> passer au téléphone
                 $('.phone-form-group').removeClass('d-none');
                 $('.email-form-group').addClass('d-none');
                 $('input[name=email]').val(null);
