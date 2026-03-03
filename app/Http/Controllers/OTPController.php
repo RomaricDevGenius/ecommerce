@@ -19,7 +19,16 @@ class OTPController extends Controller
      */
     public function configure_index()
     {
-        $otp_configurations = OtpConfiguration::all();
+        // S'assurer qu'une configuration Ligdicash existe toujours
+        OtpConfiguration::firstOrCreate(
+            ['type' => 'ligdicash'],
+            ['value' => 0]
+        );
+
+        // Récupérer les configurations en plaçant Ligdicash en premier
+        $otp_configurations = OtpConfiguration::orderByRaw(
+            "CASE WHEN type = 'ligdicash' THEN 0 ELSE 1 END"
+        )->get();
         return view('backend.otp_systems.configurations.index', compact('otp_configurations'));
     }
 
