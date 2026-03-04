@@ -105,21 +105,27 @@ class ShippingController extends Controller
                 // Filter cart items for this owner (collection where, no get() needed)
                 $shop_items_raw_data = $cartItems->where('owner_id', $owner_id)->toArray();
 
+                // Construire la liste complète des produits pour ce vendeur
                 $shop_items_data = [];
                 if (!empty($shop_items_raw_data)) {
                     foreach ($shop_items_raw_data as $shop_items_raw_data_item) {
                         $product = Product::find($shop_items_raw_data_item["product_id"]);
-                        if (!$product) continue;
-                        $shop_items_data = [];
+                        if (!$product) {
+                            continue;
+                        }
+
                         $shop_items_data_item = [];
                         $shop_items_data_item["id"] = intval($shop_items_raw_data_item["id"]);
                         $shop_items_data_item["owner_id"] = intval($shop_items_raw_data_item["owner_id"]);
                         $shop_items_data_item["user_id"] = intval($shop_items_raw_data_item["user_id"]);
-                        $shop_items_data_item["temp_user_id"] = intval($shop_items_raw_data_item["temp_user_id"]);
+                        $shop_items_data_item["temp_user_id"] = isset($shop_items_raw_data_item["temp_user_id"])
+                            ? intval($shop_items_raw_data_item["temp_user_id"])
+                            : null;
                         $shop_items_data_item["product_id"] = intval($shop_items_raw_data_item["product_id"]);
                         $shop_items_data_item["product_name"] = $product->getTranslation('name');
                         $shop_items_data_item["product_thumbnail_image"] = uploaded_asset($product->thumbnail_img);
                         $shop_items_data_item["product_is_digital"] = $product->digital == 1;
+
                         $shop_items_data[] = $shop_items_data_item;
                     }
                 }
