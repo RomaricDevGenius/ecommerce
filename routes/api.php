@@ -189,6 +189,10 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
         Route::post('payments/pay/manual', 'App\Http\Controllers\Api\V2\PaymentController@manualPayment')->middleware('auth:sanctum');
         Route::post('order/store', [OrderController::class, 'store'])->middleware('auth:sanctum');
 
+        // Paiements mobile Moov Money & Orange Money (API v2)
+        Route::post('moov/init', [MoovController::class, 'init'])->middleware('auth:sanctum');
+        Route::post('orange/pay', [OrangeController::class, 'pay'])->middleware('auth:sanctum');
+
         Route::get('order/cancel/{id}', 'App\Http\Controllers\Api\V2\OrderController@order_cancel')->middleware('auth:sanctum');
 
         Route::get('profile/counters', 'App\Http\Controllers\Api\V2\ProfileController@counters')->middleware('auth:sanctum');
