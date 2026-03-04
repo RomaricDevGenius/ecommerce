@@ -71,30 +71,60 @@ class OTPController extends Controller
      */
     public function update_credentials(Request $request)
     {
-        foreach ($request->types as $key => $type) {
-                $this->overWriteEnvFile($type, $request[$type]);
+        $types = $request->input('types');
+        if (!is_array($types) || empty($types)) {
+            flash(translate('Invalid request. Please try again.'))->error();
+            return back();
         }
 
-        flash("Settings updated successfully")->success();
+        try {
+            $path = base_path('.env');
+            if (!file_exists($path)) {
+                flash(translate('.env file not found.'))->error();
+                return back();
+            }
+            if (!is_writable($path)) {
+                flash(translate('The .env file is not writable. Please check file permissions on the server.'))->error();
+                return back();
+            }
+
+            $contents = file_get_contents($path);
+            foreach ($types as $type) {
+                $type = trim((string) $type);
+                if ($type === '') {
+                    continue;
+                }
+                $val = $request->get($type, '');
+                $contents = $this->overWriteEnvFileContents($contents, $type, $val);
+            }
+
+            if (file_put_contents($path, $contents) === false) {
+                flash(translate('Unable to save .env file. Please check permissions.'))->error();
+                return back();
+            }
+
+            flash(translate('Settings updated successfully'))->success();
+        } catch (\Throwable $e) {
+            flash(translate('Something went wrong: ') . $e->getMessage())->error();
+        }
+
         return back();
     }
 
     /**
-    *.env file overwrite
-    */
-    public function overWriteEnvFile($type, $val)
+     * Update or append a key in .env file contents (returns modified string).
+     */
+    protected function overWriteEnvFileContents($contents, $type, $val)
     {
-        $path = base_path('.env');
-        if (file_exists($path)) {
-            $val = '"'.trim($val).'"';
-            if(is_numeric(strpos(file_get_contents($path), $type)) && strpos(file_get_contents($path), $type) >= 0){
-                file_put_contents($path, str_replace(
-                    $type.'="'.env($type).'"', $type.'='.$val, file_get_contents($path)
-                ));
-            }
-            else{
-                file_put_contents($path, file_get_contents($path)."\r\n".$type.'='.$val);
-            }
+        $val = '"' . str_replace('"', '\\"', trim($val)) . '"';
+        $newLine = $type . '=' . $val;
+
+        // Match line that starts with TYPE= (with optional quotes)
+        $pattern = '/^' . preg_quote($type, '/') . '=.*$/m';
+        if (preg_match($pattern, $contents)) {
+            return preg_replace($pattern, $newLine, $contents);
         }
+
+        return rtrim($contents) . "\n" . $newLine . "\n";
     }
 }
