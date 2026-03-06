@@ -939,6 +939,8 @@ function get_french_translations_fallback()
         'view_all_sellers' => 'Voir tous les vendeurs',
         'visit_store' => 'Visiter la boutique',
         'todays_deal' => 'Offre du jour',
+        'flash_deal' => 'Vente flash',
+        'flash_deals' => 'Ventes flash',
         'featured_products' => 'Produits en vedette',
         'new_products' => 'Nouveaux produits',
         'preorder_featured_products' => 'Produits en précommande',
