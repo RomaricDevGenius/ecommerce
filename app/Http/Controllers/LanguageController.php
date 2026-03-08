@@ -261,7 +261,8 @@ class LanguageController extends Controller
                     ->where('lang_key', $value->lang_key)
                     ->first();
 
-                if (!$existing || empty($existing->lang_value)) {
+                // Re-translate if: no entry, empty value, OR value was wrongly seeded with the English text
+                if (!$existing || empty($existing->lang_value) || $existing->lang_value === $value->lang_value) {
                     $tr = new GoogleTranslate();
                     $translatedText = $tr->setSource('en')->setTarget($targetLang)->translate($value->lang_value);
 
@@ -275,6 +276,9 @@ class LanguageController extends Controller
                     );
                 }
             }
+
+            // Clear translation cache so updated values take effect immediately
+            Cache::forget('translations-' . $language->code);
 
             return response()->json([
                 'result' => true,
