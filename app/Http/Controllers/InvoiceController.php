@@ -20,8 +20,9 @@ class InvoiceController extends Controller
             $currency_code = Currency::findOrFail(get_setting('system_default_currency'))->code;
         }
         $language_code = Session::get('locale', Config::get('app.locale'));
+        $language = Language::where('code', $language_code)->first();
 
-        if (Language::where('code', $language_code)->first()->rtl == 1) {
+        if ($language && $language->rtl == 1) {
             $direction = 'rtl';
             $text_align = 'right';
             $not_text_align = 'left';
@@ -102,6 +103,10 @@ class InvoiceController extends Controller
         $config = [];
 
         $order = Order::findOrFail($id);
+        if (!auth()->check()) {
+            flash(translate("You must be logged in to access this invoice."))->error();
+            return redirect()->route('login');
+        }
         if (in_array(auth()->user()->user_type, ['admin','staff']) || in_array(auth()->id(), [$order->user_id, $order->seller_id])) {
             return PDF::loadView('backend.invoices.invoice', [
                 'order' => $order,
@@ -121,7 +126,8 @@ class InvoiceController extends Controller
 
         // You may want to apply the same font logic here too if needed
         $language_code = Session::get('locale', Config::get('app.locale'));
-        $direction = Language::where('code', $language_code)->first()->rtl == 1 ? 'rtl' : 'ltr';
+        $language = Language::where('code', $language_code)->first();
+        $direction = ($language && $language->rtl == 1) ? 'rtl' : 'ltr';
         $text_align = $direction == 'rtl' ? 'right' : 'left';
         $not_text_align = $direction == 'rtl' ? 'left' : 'right';
 

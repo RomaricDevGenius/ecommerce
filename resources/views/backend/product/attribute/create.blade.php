@@ -34,7 +34,7 @@
 
                             <button type="button" class="btn btn-block border border-dashed hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center add-row">
                                 <i class="las la-plus"></i>
-                                <span class="ml-2">Add More</span>
+                                <span class="ml-2">{{ translate('Add More') }}</span>
                             </button>
                         </div>
                     </div>
