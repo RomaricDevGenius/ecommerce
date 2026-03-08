@@ -60,6 +60,7 @@
 			$shipping = json_decode($order->shipping_address);
 			$billing = json_decode($order->billing_address) ?? $shipping;
 			$first_order = $order->orderDetails->first();
+			$has_gst = $first_order && is_numeric($first_order->gst_amount ?? null);
 		@endphp
 
 
@@ -98,7 +99,7 @@
 						@php 
 							$gstin = get_seller_gstin($order);
 						@endphp
-						<td class="gry-color small">@if($gstin != null && is_numeric($first_order->gst_amount)) {{ translate('GSTIN') }}: {{ $gstin }} @endif</td>
+						<td class="gry-color small">@if($gstin != null && $has_gst) {{ translate('GSTIN') }}: {{ $gstin }} @endif</td>
 						<td class="text-right small">
 							<span class="gry-color small">
 								{{  translate('Payment method') }}:
@@ -200,7 +201,7 @@
 								<th width="35%" class="text-left">{{ translate('Product Name') }}</th>
 								<th width="10%" class="text-left">{{ translate('Qty') }}</th>
 								
-								@if(is_numeric($first_order->gst_amount))
+								@if($has_gst)
 								<th width="15%" class="text-left">{{ translate('Gross Amount')}}</th>
 								<th width="15%" class="text-left">{{ translate('Discount/ Coupon')}}</th>
 								<th width="15%" class="text-left">{{ translate('Taxable Value')}}</th>
@@ -237,7 +238,7 @@
 										</td>
 										<td class="">{{ $orderDetail->quantity }}</td>
 
-										@if(is_numeric($first_order->gst_amount))
+										@if($has_gst)
 										<td class="border-top-0 border-bottom">
 											{{ single_price($orderDetail->price) }}
 										</td>
@@ -273,14 +274,14 @@
 										<td class="currency">{{ single_price($orderDetail->tax/$orderDetail->quantity) }}</td>
 										@endif
 
-										@if(is_numeric($first_order->gst_amount))
+										@if($has_gst)
 										<td class="text-right currency">{{ single_price($orderDetail->price - $orderDetail->coupon_discount + $gst_amount) }}</td>
 										@else
 										<td class="text-right currency">{{ single_price($orderDetail->price+$orderDetail->tax) }}</td>
 										@endif
 										
 									</tr>
-									@if(is_numeric($first_order->gst_amount))
+									@if($has_gst)
 									<tr>
 										<td class="border-top-0 border-bottom">
 											{{translate('Shipping')}}
@@ -341,7 +342,7 @@
 								<td>
 									<table class="text-right sm-padding small strong">
 										<tbody>
-											@if(is_numeric($first_order->gst_amount))
+											@if($has_gst)
 											<tr>
 												<th class="gry-color text-left">{{ translate('Sub Total') }}</th>
 												<td class="currency">{{ single_price($order->orderDetails->sum('price') + $order->orderDetails->sum('shipping_cost') - $order->orderDetails->sum('coupon_discount')) }}</td>

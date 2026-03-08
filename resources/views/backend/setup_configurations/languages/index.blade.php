@@ -67,24 +67,24 @@
     </div>
     <div class="col-lg-6">
         <div class="alert  alert-info mb-1 pb-0">
-            <h6 class="text-info">Language Settings Instructions</h6>
+            <h6 class="text-info">{{ translate('Language Settings Instructions') }}</h6>
             <ul>
-                <li class="py-0">To create a new language, click <strong>Add New Language</strong>.</li>
-                <li class="py-0">Enter the <strong>Language Name</strong>, <strong>Language Code</strong> (short form), and <strong>Flutter App Lang Code</strong>.</li>
-                <li class="py-0">Click <strong>Save</strong>. The page will redirect to the language listing page.</li>
-                <li class="py-0">You can select any language from the list as the <strong>System Default Language</strong> and click Save.</li>
-                <li class="py-0">To import app translation files, select the file and click <strong>Import</strong>.</li>
+                <li class="py-0">{{ translate('To create a new language, click') }} <strong>{{ translate('Add New Language') }}</strong>.</li>
+                <li class="py-0">{{ translate('Enter the') }} <strong>{{ translate('Language Name') }}</strong>, <strong>{{ translate('Language Code') }}</strong> ({{ translate('short form') }}), {{ translate('and') }} <strong>{{ translate('Flutter App Lang Code') }}</strong>.</li>
+                <li class="py-0">{{ translate('Click') }} <strong>{{ translate('Save') }}</strong>. {{ translate('The page will redirect to the language listing page.') }}</li>
+                <li class="py-0">{{ translate('You can select any language from the list as the') }} <strong>{{ translate('System Default Language') }}</strong> {{ translate('and click Save.') }}</li>
+                <li class="py-0">{{ translate('To import app translation files, select the file and click') }} <strong>{{ translate('Import') }}</strong>.</li>
             </ul>
 
-            <h6 class="text-info">Translation Settings Instructions</h6>
+            <h6 class="text-info">{{ translate('Translation Settings Instructions') }}</h6>
             <ul class="pb-1 mb-3">
-                <li class="py-0">Click the <strong>“Translation”</strong> option next to the language you want to edit.</li>
-                <li class="py-0">On the Translation page, <strong>“Translate By Google”</strong> button to automatically translate your website content.</li>
-                <li class="py-0">To sync translations for the mobile app, click <strong>“Sync Translation For App”</strong>.</li>
-                <li class="py-0">To export the translation file, click <strong>“Export arb File”</strong>.</li>
-                <li class="py-0">To manually update any translation value, edit the value fields and click <strong>Save</strong>.</li>
-                <li class="py-0">To copy all keys into the value fields, click <strong>“Copy Translations”</strong>, then click Save.</li>
-                <li class="py-0">Google Translate won't override your custom translations</li>
+                <li class="py-0">{{ translate('Click the') }} <strong>“Translation”</strong> {{ translate('option next to the language you want to edit.') }}</li>
+                <li class="py-0">{{ translate('On the Translation page,') }} <strong>“Translate By Google”</strong> {{ translate('button to automatically translate your website content.') }}</li>
+                <li class="py-0">{{ translate('To sync translations for the mobile app, click') }} <strong>“Sync Translation For App”</strong>.</li>
+                <li class="py-0">{{ translate('To export the translation file, click') }} <strong>“Export arb File”</strong>.</li>
+                <li class="py-0">{{ translate('To manually update any translation value, edit the value fields and click') }} <strong>{{ translate('Save') }}</strong>.</li>
+                <li class="py-0">{{ translate('To copy all keys into the value fields, click') }} <strong>{{ translate('Copy Translations') }}</strong>, {{ translate('then click Save.') }}</li>
+                <li class="py-0">{{ translate('Google Translate won\'t override your custom translations') }}</li>
             </ul>
         </div>
     </div>
