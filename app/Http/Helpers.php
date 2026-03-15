@@ -1585,6 +1585,15 @@ function get_french_translations_fallback()
         'filter_by_payment_status' => 'Filtrer par statut de paiement',
         'cash_on_delivery' => 'Paiement à la livraison',
         'cash_on_delivery_option_is_disabled_activate_this_feature_from_here' => 'Le paiement à la livraison est désactivé. Activez cette option ici.',
+
+        // Coris Money labels
+        'coris' => 'Coris Money',
+        'coris_money_client_id' => 'Identifiant client Coris Money',
+        'coris_money_client_secret' => 'Secret client Coris Money',
+        'coris_money_shop_code_code_pv' => 'Code point de vente Coris Money (Code PV)',
+        'coris_money_test_base_url' => 'URL de base de test Coris Money',
+        'coris_money_live_base_url' => 'URL de base de production Coris Money',
+        'coris_money_sandbox_mode' => 'Mode sandbox Coris Money',
     ];
 }
 
@@ -2250,6 +2259,103 @@ if (!function_exists('sendOrangeMoneyPayment')) {
             return $obj;
         }
         return json_decode(json_encode($xml));
+    }
+}
+
+// Coris Money payment (paiement internet)
+if (!function_exists('sendCorisInternetPayment')) {
+    /**
+     * Effectue un paiement internet CorisMoney (étape 2 de la doc).
+     *
+     * Le client doit d'abord initier un paiement internet dans son app CorisMoney
+     * pour obtenir un code de retrait, puis saisir ce code et son numéro ici.
+     *
+     * @param string $phoneNumber Numéro de téléphone du client (sans indicatif pays)
+     * @param int|float $amount   Montant total de la commande
+     * @param string $withdrawCode Code de retrait (codeRetrait)
+     * @return object             Réponse décodée (stdClass) avec au moins ->success (bool), ->code, ->message, ->raw
+     */
+    function sendCorisInternetPayment($phoneNumber, $amount, $withdrawCode)
+    {
+        $clientId = env('CORIS_CLIENT_ID');
+        $clientSecret = env('CORIS_CLIENT_SECRET');
+        $codePv = env('CORIS_CODE_PV');
+        $countryCode = env('CORIS_COUNTRY_CODE', '226');
+
+        // Choix de l'URL selon sandbox / production
+        $baseUrl = get_setting('coris_sandbox') == 1
+            ? (env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'))
+            : (env('CORIS_BASE_URL_PROD') ?: env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'));
+
+        $obj = new \stdClass();
+
+        if (!$clientId || !$clientSecret || !$codePv || !$baseUrl) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Coris Money configuration is incomplete. Please check Client ID, Secret, Code PV and Base URLs.');
+            return $obj;
+        }
+
+        $montant = (int) round($amount);
+        $isMontant = '1';
+        $phone = preg_replace('/\D/', '', $phoneNumber);
+
+        // Construction du hashParam : codePays + telephone + codePv + codeRetrait + montant + isMontant + clientSecret
+        $stringToHash = $countryCode . $phone . $codePv . $withdrawCode . $montant . $isMontant . $clientSecret;
+        $hashParam = hash('sha256', $stringToHash);
+
+        $endpoint = rtrim($baseUrl, '/') . '/operations/paiementinternet';
+
+        $queryParams = http_build_query([
+            'codePays'   => $countryCode,
+            'telephone'  => $phone,
+            'codePv'     => $codePv,
+            'codeRetrait'=> $withdrawCode,
+            'montant'    => $montant,
+            'isMontant'  => $isMontant,
+        ]);
+
+        $url = $endpoint . '?' . $queryParams;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'clientId: ' . $clientId,
+            'hashParam: ' . $hashParam,
+        ]);
+
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        $decoded = json_decode($response, false);
+
+        if ($curlError) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Unable to reach Coris Money service. Please try again later.');
+            $obj->raw = $response;
+            return $obj;
+        }
+
+        if (!$decoded || !isset($decoded->code)) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Invalid response from Coris Money.');
+            $obj->raw = $response;
+            return $obj;
+        }
+
+        $obj->success = (string) $decoded->code === '0';
+        $obj->code = (string) $decoded->code;
+        $obj->message = isset($decoded->message) ? $decoded->message : '';
+        $obj->transactionId = isset($decoded->transactionId) ? $decoded->transactionId : null;
+        $obj->amount = isset($decoded->montant) ? $decoded->montant : $montant;
+        $obj->raw = $decoded;
+
+        return $obj;
     }
 }
 

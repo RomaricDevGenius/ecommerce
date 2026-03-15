@@ -120,10 +120,10 @@ class BusinessSettingsController extends Controller
     {
         CoreComponentRepository::instantiateShopRepository();
         CoreComponentRepository::initializeCache();
-        // Uniquement Orange, Moov et Stripe (Bande), dans cet ordre ; Paiement en espèces est affiché séparément dans la vue
+        // Uniquement Orange, Moov, Coris Money et Stripe (Bande), dans cet ordre ; Paiement en espèces est affiché séparément dans la vue
         $payment_methods = PaymentMethod::whereNull('addon_identifier')
-            ->whereIn('name', ['orange', 'moov', 'stripe'])
-            ->orderByRaw("FIELD(name, 'orange', 'moov', 'stripe')")
+            ->whereIn('name', ['orange', 'moov', 'coris', 'stripe'])
+            ->orderByRaw("FIELD(name, 'orange', 'moov', 'coris', 'stripe')")
             ->get();
         return view('backend.setup_configurations.payment_method.index', compact('payment_methods'));
     }

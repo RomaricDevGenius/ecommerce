@@ -25,6 +25,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\Payment\StripeController;
 use App\Http\Controllers\Payment\OrangeController;
 use App\Http\Controllers\Payment\MoovController;
+use App\Http\Controllers\Payment\CorisController;
 use App\Http\Controllers\ProductQueryController;
 use App\Http\Controllers\PurchaseHistoryController;
 use App\Http\Controllers\ReviewController;
@@ -232,6 +233,12 @@ Route::controller(OrangeController::class)->group(function () {
 Route::controller(MoovController::class)->group(function () {
     Route::get('/moov/payment/form', 'showPaymentForm')->name('moov.payment.form');
     Route::post('/moov/pay', 'initPayment')->name('moov.pay');
+});
+
+// Coris Money
+Route::controller(CorisController::class)->group(function () {
+    Route::get('/coris/payment/form', 'showPaymentForm')->name('coris.payment.form');
+    Route::post('/coris/pay', 'handlePayment')->name('coris.pay');
 });
 
 // Compare
