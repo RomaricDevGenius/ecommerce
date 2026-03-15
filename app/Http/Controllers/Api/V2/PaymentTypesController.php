@@ -28,8 +28,8 @@ class PaymentTypesController
         if ($list == "online" || $list == "both") {
             $all_online_payment_methods = get_activate_payment_methods();
             if (count($all_online_payment_methods) > 0) {
-                // Uniquement Orange, Moov, Stripe (Bande) ; paiement en espèces géré séparément
-                $available_online_payment_methods = ['orange', 'moov', 'stripe'];
+                // Orange, Moov, Coris, Stripe ; paiement en espèces géré séparément
+                $available_online_payment_methods = ['orange', 'moov', 'coris', 'stripe'];
                 $online_payment_methods = $all_online_payment_methods->toQuery()->whereIn('name', $available_online_payment_methods)->get();
 
                 foreach ($online_payment_methods as $online_payment_method){
