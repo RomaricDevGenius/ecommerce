@@ -1594,6 +1594,16 @@ function get_french_translations_fallback()
         'coris_money_test_base_url' => 'URL de base de test Coris Money',
         'coris_money_live_base_url' => 'URL de base de production Coris Money',
         'coris_money_sandbox_mode' => 'Mode sandbox Coris Money',
+        // Formulaire de paiement Coris Money (frontend)
+        'pay_by' => 'Payer par',
+        'to_pay_with_coris_money_open_your_corismoney_client_app_and_initiate_an_internet_payment_you_will_receive_a_withdrawal_code_that_you_must_enter_below_with_your_phone_number' => 'Pour payer avec Coris Money, ouvrez l\'application CorisMoney et initiez un paiement internet. Vous recevrez un code de retrait à saisir ci-dessous avec votre numéro de téléphone.',
+        'coris_money_phone_number' => 'Numéro de téléphone Coris Money',
+        'phone_number_linked_to_coris_money_account' => 'Numéro lié à votre compte Coris Money',
+        'withdrawal_code_coderetrait' => 'Code de retrait (codeRetrait)',
+        'code_provided_by_corismoney_app' => 'Code fourni par l\'application CorisMoney',
+        'confirm_payment' => 'Confirmer le paiement',
+        'payment_failed' => 'Paiement échoué',
+        'an_unexpected_error_occurred_please_try_again' => 'Une erreur inattendue s\'est produite. Veuillez réessayer.',
     ];
 }
 
@@ -3721,7 +3731,7 @@ if (!function_exists('get_activate_payment_methods')) {
     function get_activate_payment_methods()
     {
         $payment_methods = PaymentMethod::where('active', 1)
-                                        ->whereIn('name', ['orange', 'moov', 'stripe'])
+                                        ->whereIn('name', ['orange', 'moov', 'coris', 'stripe'])
                                         ->Where(function($query){
                                             $query->whereNull('addon_identifier')
                                             ->orWhere(function($q){
