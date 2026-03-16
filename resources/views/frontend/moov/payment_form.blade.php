@@ -61,6 +61,19 @@
 $(function() {
     let otpStep = false;
     $('#validate_button').prop('disabled', true);
+
+    function openLoader(message) {
+        if (typeof HoldOn !== 'undefined') {
+            HoldOn.open({ theme: "sk-circle", message: "<h4>" + message + "</h4>" });
+        }
+    }
+
+    function closeLoader() {
+        if (typeof HoldOn !== 'undefined') {
+            HoldOn.close();
+        }
+    }
+
     function validate_code() {
         var invalidPhone = "{{ translate('Phone number is not valid') }}";
         var phone = $('#phone_number').val();
@@ -77,10 +90,10 @@ $(function() {
     $('#moov-payment-form').on('submit', function(e) {
         e.preventDefault();
         var url = otpStep ? '{{ route('moov.confirm') }}' : '{{ route('moov.pay') }}';
-        HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait, do not close or refresh the page') }}</h4>" });
+        openLoader("{{ translate('Please wait, do not close or refresh the page') }}");
         $.post(url, $(this).serialize())
             .done(function(data) {
-                HoldOn.close();
+                closeLoader();
                 if (data.success) {
                     if (!otpStep && data.step === 'otp_sent') {
                         otpStep = true;
@@ -98,24 +111,24 @@ $(function() {
                 }
             })
             .fail(function() {
-                HoldOn.close();
+                closeLoader();
                 Swal.fire({ title: '{{ translate("Error") }}', text: "{{ translate('An unexpected error occurred, please try again later') }}", icon: 'error', confirmButtonText: 'OK' });
             });
     });
 
     $('#resend_otp_button').on('click', function() {
-        HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait, do not close or refresh the page') }}</h4>" });
+        openLoader("{{ translate('Please wait, do not close or refresh the page') }}");
         $.post('{{ route('moov.resend_otp') }}', {
             _token: '{{ csrf_token() }}'
         }).done(function(data) {
-            HoldOn.close();
+            closeLoader();
             if (data.success) {
                 Swal.fire({ title: '{{ translate("Success") }}', text: data.message, icon: 'info', confirmButtonText: 'OK' });
             } else {
                 Swal.fire({ title: '{{ translate("Error") }}', text: data.message, icon: 'error', confirmButtonText: 'OK' });
             }
         }).fail(function() {
-            HoldOn.close();
+            closeLoader();
             Swal.fire({ title: '{{ translate("Error") }}', text: "{{ translate('An unexpected error occurred, please try again later') }}", icon: 'error', confirmButtonText: 'OK' });
         });
     });
