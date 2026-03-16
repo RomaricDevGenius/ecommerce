@@ -977,6 +977,13 @@ function get_french_translations_fallback()
         'you_need_to_agree_with_our_policies' => 'Vous devez accepter nos conditions.',
         'you_need_to_put_transaction_id' => 'Veuillez indiquer l\'identifiant de transaction.',
         'please_login_as_a_customer_to_apply_coupon_code' => 'Connectez-vous en tant que client pour appliquer un code promo.',
+        'you_owe_amount_fcfa' => 'Vous devez {amount} FCFA',
+        'if_you_dont_have_an_account_you_can_go_to_an_moov_money_agent' => 'Si vous n\'avez pas de compte, vous pouvez vous rendre chez un agent Moov Money.',
+        'you_will_receive_an_otp_by_sms_enter_it_below_to_confirm_the_payment' => 'Vous recevrez un OTP par SMS. Saisissez-le ci-dessous pour confirmer le paiement.',
+        'your_moov_money_phone_number_no_spaces_or_dashes' => 'Votre numéro Moov Money (sans espaces ni tirets)',
+        'otp_code_received_by_sms' => 'Code OTP (reçu par SMS)',
+        'send_otp' => 'Envoyer l\'OTP',
+        'resend_otp' => 'Renvoyer l\'OTP',
         'my_cart' => 'Mon panier',
         'shipping_info' => 'Informations de livraison',
         'delivery_info' => 'Informations d\'expédition',
@@ -2398,14 +2405,14 @@ if (!function_exists('initMoovMoneyPayment')) {
         $token = base64_encode(env('MOOV_MONEY_MERCHANT_ID') . ':' . env('MOOV_MONEY_MERCHANT_PASSWORD'));
         $time = time();
         $url = get_setting('moov_sandbox') == 1
-            ? 'https://196.28.245.227/tlcfzc_gw/api/gateway/3pp/transaction/process'
-            : 'https://196.28.245.227/tlcfzc_gw_prod/mbs-gateway/gateway/3pp/transaction/process';
+            ? env('MOOV_MONEY_BASE_URL', 'https://hwmm.moov-money.bf:38443') . '/apiaccess/Deduction'
+            : env('MOOV_MONEY_BASE_URL', 'https://hwmm.moov-money.bf:38443') . '/apiaccess/Deduction';
         $data = [
             'request-id' => 'DAKWARI-' . $time,
             'destination' => '226' . $customerNumber,
             'amount' => (int) $amount,
-            'remarks' => '',
-            'message' => '',
+            'remarks' => 'DAKWARI ORDER',
+            'message' => 'PAYMENT OF ' . (int) $amount . ' TO DAKWARI, PLEASE CONFIRM WITH PIN',
             'extended-data' => (object) [],
         ];
         $ch = curl_init($url);
@@ -2429,8 +2436,8 @@ if (!function_exists('handleMoovMoneyPayment')) {
     {
         $token = base64_encode(env('MOOV_MONEY_MERCHANT_ID') . ':' . env('MOOV_MONEY_MERCHANT_PASSWORD'));
         $url = get_setting('moov_sandbox') == 1
-            ? 'https://196.28.245.227/tlcfzc_gw/api/gateway/3pp/transaction/process'
-            : 'https://196.28.245.227/tlcfzc_gw_prod/mbs-gateway/gateway/3pp/transaction/process';
+            ? env('MOOV_MONEY_BASE_URL', 'https://hwmm.moov-money.bf:38443') . '/apiaccess/SearchTransactionByExtID'
+            : env('MOOV_MONEY_BASE_URL', 'https://hwmm.moov-money.bf:38443') . '/apiaccess/SearchTransactionByExtID';
         $data = ['request-id' => $transactionId];
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -2440,6 +2447,115 @@ if (!function_exists('handleMoovMoneyPayment')) {
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'command-id: process-check-transaction',
             'Authorization: Basic ' . $token,
+            'Content-Type: application/json',
+        ]);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
+}
+
+// Moov Money OTP payment (Online Merchant Payment with OTP)
+if (!function_exists('moovBaseUrl')) {
+    function moovBaseUrl()
+    {
+        return env('MOOV_MONEY_BASE_URL', 'https://hwmm.moov-money.bf:38443');
+    }
+}
+
+if (!function_exists('moovAuthToken')) {
+    function moovAuthToken()
+    {
+        return base64_encode(env('MOOV_MONEY_MERCHANT_ID') . ':' . env('MOOV_MONEY_MERCHANT_PASSWORD'));
+    }
+}
+
+if (!function_exists('moovOtpGenerate')) {
+    function moovOtpGenerate($amount, $msisdn)
+    {
+        $url = rtrim(moovBaseUrl(), '/') . '/apiaccess/otpRequest';
+        $data = [
+            'request-id' => 'DAKWARI-OTP-' . time(),
+            'destination' => $msisdn,
+            'amount' => (int) $amount,
+            'remarks' => 'OTP Merchant',
+            'extended-data' => [
+                'module' => 'MERCHOTPPAY',
+            ],
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'command-id: process-create-mror-otp',
+            'Authorization: Basic ' . moovAuthToken(),
+            'Content-Type: application/json',
+        ]);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
+}
+
+if (!function_exists('moovOtpResend')) {
+    function moovOtpResend($amount, $msisdn, $originalRequestId)
+    {
+        $url = rtrim(moovBaseUrl(), '/') . '/apiaccess/otpRequest';
+        $data = [
+            'request-id' => 'DAKWARI-OTP-RESEND-' . time(),
+            'destination' => $msisdn,
+            'amount' => (int) $amount,
+            'remarks' => 'RESEND OTP',
+            'extended-data' => [
+                'module' => 'MERCHOTPPAY',
+                'ext1' => $originalRequestId,
+            ],
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'command-id: process-mror-resend-otp',
+            'Authorization: Basic ' . moovAuthToken(),
+            'Content-Type: application/json',
+        ]);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
+}
+
+if (!function_exists('moovOtpCommitPayment')) {
+    function moovOtpCommitPayment($amount, $msisdn, $otp, $transId, $originalRequestId)
+    {
+        $url = rtrim(moovBaseUrl(), '/') . '/apiaccess/otpRequest';
+        $data = [
+            'request-id' => 'DAKWARI-OTP-COMMIT-' . time(),
+            'destination' => $msisdn,
+            'amount' => (int) $amount,
+            'remarks' => 'Merchant Payment with OTP',
+            'extended-data' => [
+                'module' => 'MERCHOTPPAY',
+                'otp' => $otp,
+                'ext1' => $originalRequestId,
+                'trans-id' => $transId,
+            ],
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'command-id: process-commit-otppay',
+            'Authorization: Basic ' . moovAuthToken(),
             'Content-Type: application/json',
         ]);
         $result = curl_exec($ch);
