@@ -28,7 +28,13 @@
                         </div>
                         <div class="card-body">
                             <p>{{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA, pay by Orange money by doing:')) }}</p>
-                            <p class="font-weight-bold" style="color: red; font-size: 1.2em;">*144*4*6*{{ (int) $combined_order->grand_total }}*secret_code#</p>
+                            <p class="font-weight-bold" style="color: red; font-size: 1.2em;">
+                                @if (get_setting('orange_sandbox') == 1)
+                                    *866*4*6*{{ (int) $combined_order->grand_total }}#
+                                @else
+                                    *144*4*6*{{ (int) $combined_order->grand_total }}#
+                                @endif
+                            </p>
                             <p style="color:red; font-size: 1.2em;">{{ translate("If you don't have an account you can go to an Orange money agent") }}</p>
                             <p class="font-weight-bold">{{ translate("You will receive an OTP by SMS. Enter it and the phone number below.") }}</p>
                             <div class="alert alert-block alert-danger d-none" id="error-msg"></div>

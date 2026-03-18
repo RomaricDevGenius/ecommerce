@@ -52,10 +52,15 @@ class OrangeController extends Controller
         }
 
         $combined_order = CombinedOrder::findOrFail($combined_order_id);
+        $reference_number = 'ORD-' . $combined_order_id;
+        $ext_txn_id = 'DAKWARI-' . $combined_order_id . '-' . time();
+
         $result = sendOrangeMoneyPayment(
             $request->phone_number,
             (int) $combined_order->grand_total,
-            $request->otp
+            $request->otp,
+            $reference_number,
+            $ext_txn_id
         );
 
         if (isset($result->status) && (string) $result->status === '200') {
