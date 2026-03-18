@@ -9,19 +9,8 @@ class DeliveryHistoryCollection extends ResourceCollection
 {
     public function toArray($request)
     {
-        $items = $this->collection;
-
-        // Si la ressource provient d'une pagination Laravel, $items peut être un paginator.
-        // On convertit systématiquement vers une liste afin d'éviter "data: null"
-        // côté mobile (qui appelle ensuite json["data"].map(...)).
-        if (is_object($items) && method_exists($items, 'items')) {
-            $items = $items->items();
-        }
-
-        $items = collect($items)->values();
-
         return [
-            'data' => $items->map(function ($data) {
+            'data' => $this->collection->map(function ($data) {
                 return [
                     'id' => $data->id,
                     'delivery_boy_id' => $data->delivery_boy_id,
@@ -33,7 +22,7 @@ class DeliveryHistoryCollection extends ResourceCollection
                     'payment_type' => $data->payment_type,
                     'date' => Carbon::parse($data->created_at)->format('d-m-Y'),
                 ];
-            })->all()
+            })
         ];
     }
 
