@@ -29,18 +29,13 @@
                         <div class="card-body">
                             <p>{{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA')) }}</p>
                             <p style="color:red; font-size: 1.2em;">{{ translate("(If you don't have an account you can go to an Moov money agent)") }}</p>
-                            <p class="font-weight-bold">{{ translate("You will receive an OTP by SMS. Enter it below to confirm the payment.") }}</p>
+                            <p class="font-weight-bold">{{ translate("You will receive a message with instructions to complete the payment on your phone.") }}</p>
                             <div class="alert alert-block alert-danger d-none" id="error-msg"></div>
                             <div class="form-group">
                                 <label>{{ translate("Your Moov money phone number (no spaces or dashes)") }}</label>
                                 <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="70123456">
                             </div>
-                            <div class="form-group d-none" id="otp-group">
-                                <label>{{ translate("OTP code (received by SMS)") }}</label>
-                                <input type="text" name="otp" id="otp" class="form-control" placeholder="123456">
-                            </div>
-                            <button type="submit" class="btn btn-primary fw-600" id="validate_button">{{ translate('Send OTP') }}</button>
-                            <button type="button" class="btn btn-link px-0 d-none" id="resend_otp_button">{{ translate('Resend OTP') }}</button>
+                            <button type="submit" class="btn btn-primary fw-600" id="validate_button">{{ translate('Initiate transaction') }}</button>
                         </div>
                     </div>
                     <div class="row align-items-center pt-3">
@@ -59,7 +54,6 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
-    let otpStep = false;
     $('#validate_button').prop('disabled', true);
 
     function openLoader(message) {
@@ -89,21 +83,19 @@ $(function() {
 
     $('#moov-payment-form').on('submit', function(e) {
         e.preventDefault();
-        var url = otpStep ? '{{ route('moov.confirm') }}' : '{{ route('moov.pay') }}';
+        var url = '{{ route('moov.pay') }}';
         openLoader("{{ translate('Please wait, do not close or refresh the page') }}");
         $.post(url, $(this).serialize())
             .done(function(data) {
                 closeLoader();
                 if (data.success) {
-                    if (!otpStep && data.step === 'otp_sent') {
-                        otpStep = true;
-                        $('#otp-group').removeClass('d-none');
-                        $('#resend_otp_button').removeClass('d-none');
-                        $('#validate_button').text('{{ translate('Confirm Payment') }}');
-                        if (data.message) {
-                            Swal.fire({ title: '{{ translate("Success") }}', text: data.message, icon: 'info', confirmButtonText: 'OK' });
-                        }
-                    } else if (otpStep && data.url) {
+                    if (data.message) {
+                        Swal.fire({ title: '{{ translate("Success") }}', text: data.message, icon: 'info', confirmButtonText: 'OK' }).then(function() {
+                            if (data.url) {
+                                window.location.href = data.url;
+                            }
+                        });
+                    } else if (data.url) {
                         window.location.href = data.url;
                     }
                 } else {
@@ -114,23 +106,6 @@ $(function() {
                 closeLoader();
                 Swal.fire({ title: '{{ translate("Error") }}', text: "{{ translate('An unexpected error occurred, please try again later') }}", icon: 'error', confirmButtonText: 'OK' });
             });
-    });
-
-    $('#resend_otp_button').on('click', function() {
-        openLoader("{{ translate('Please wait, do not close or refresh the page') }}");
-        $.post('{{ route('moov.resend_otp') }}', {
-            _token: '{{ csrf_token() }}'
-        }).done(function(data) {
-            closeLoader();
-            if (data.success) {
-                Swal.fire({ title: '{{ translate("Success") }}', text: data.message, icon: 'info', confirmButtonText: 'OK' });
-            } else {
-                Swal.fire({ title: '{{ translate("Error") }}', text: data.message, icon: 'error', confirmButtonText: 'OK' });
-            }
-        }).fail(function() {
-            closeLoader();
-            Swal.fire({ title: '{{ translate("Error") }}', text: "{{ translate('An unexpected error occurred, please try again later') }}", icon: 'error', confirmButtonText: 'OK' });
-        });
     });
 });
 </script>

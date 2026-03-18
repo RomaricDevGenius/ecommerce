@@ -24,6 +24,17 @@
         </div>
     </div>
     <div class="form-group row">
+        <input type="hidden" name="types[]" value="MOOV_MOBICASH_URL">
+        <div class="col-md-4">
+            <label class="col-from-label">{{ translate('Moov Mobicash API URL') }}</label>
+        </div>
+        <div class="col-md-8">
+            <input type="text" class="form-control" name="MOOV_MOBICASH_URL"
+                value="{{ env('MOOV_MOBICASH_URL') ?? '' }}"
+                placeholder="{{ translate('Mobicash API URL') }}" autocomplete="off" required>
+        </div>
+    </div>
+    <div class="form-group row">
         <div class="col-md-4">
             <label class="col-from-label">{{ translate('Moov Money Sandbox Mode') }}</label>
         </div>

@@ -233,8 +233,6 @@ Route::controller(OrangeController::class)->group(function () {
 Route::controller(MoovController::class)->group(function () {
     Route::get('/moov/payment/form', 'showPaymentForm')->name('moov.payment.form');
     Route::post('/moov/pay', 'initPayment')->name('moov.pay');
-    Route::post('/moov/confirm', 'confirmOtp')->name('moov.confirm');
-    Route::post('/moov/resend-otp', 'resendOtp')->name('moov.resend_otp');
 });
 
 // Coris Money
