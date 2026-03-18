@@ -40,9 +40,32 @@ class DeliveryHistoryCollection extends ResourceCollection
 
     public function with($request)
     {
+        $meta = [
+            'current_page' => null,
+            'from' => null,
+            'last_page' => null,
+            'path' => null,
+            'per_page' => null,
+            'to' => null,
+            'total' => 0,
+        ];
+
+        if ($this->resource instanceof AbstractPaginator) {
+            $meta = [
+                'current_page' => $this->resource->currentPage(),
+                'from' => $this->resource->firstItem(),
+                'last_page' => $this->resource->lastPage(),
+                'path' => method_exists($this->resource, 'path') ? $this->resource->path() : null,
+                'per_page' => $this->resource->perPage(),
+                'to' => $this->resource->lastItem(),
+                'total' => $this->resource->total(),
+            ];
+        }
+
         return [
             'success' => true,
-            'status' => 200
+            'status' => 200,
+            'meta' => $meta,
         ];
     }
 }
