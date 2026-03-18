@@ -4,13 +4,25 @@ namespace App\Http\Resources\V2;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Support\Collection;
 
 class DeliveryHistoryCollection extends ResourceCollection
 {
     public function toArray($request)
     {
+        $items = $this->collection;
+
+        // Quand Laravel envoie une pagination, $this->collection peut ne pas être une Collection.
+        // On normalise toujours pour que Flutter reçoive un tableau (même vide), jamais null.
+        if ($items instanceof AbstractPaginator) {
+            $items = $items->items();
+        }
+
+        $items = $items instanceof Collection ? $items : collect($items ?? []);
+
         return [
-            'data' => $this->collection->map(function ($data) {
+            'data' => $items->map(function ($data) {
                 return [
                     'id' => $data->id,
                     'delivery_boy_id' => $data->delivery_boy_id,
@@ -22,7 +34,7 @@ class DeliveryHistoryCollection extends ResourceCollection
                     'payment_type' => $data->payment_type,
                     'date' => Carbon::parse($data->created_at)->format('d-m-Y'),
                 ];
-            })
+            })->values()->all(),
         ];
     }
 
