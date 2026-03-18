@@ -980,6 +980,12 @@ function get_french_translations_fallback()
         'you_owe_amount_fcfa' => 'Vous devez {amount} FCFA',
         'if_you_dont_have_an_account_you_can_go_to_an_moov_money_agent' => 'Si vous n\'avez pas de compte, vous pouvez vous rendre chez un agent Moov Money.',
         'you_will_receive_an_otp_by_sms_enter_it_below_to_confirm_the_payment' => 'Vous recevrez un OTP par SMS. Saisissez-le ci-dessous pour confirmer le paiement.',
+        'you_owe_amount_fcfa_pay_by_orange_money_by_doing' => 'Vous devez {amount} FCFA, payez via Orange Money en faisant :',
+        'if_you_dont_have_an_account_you_can_go_to_an_orange_money_agent' => 'Si vous n\'avez pas de compte, vous pouvez vous rendre chez un agent Orange Money.',
+        'you_will_receive_an_otp_by_sms_enter_it_and_the_phone_number_below' => 'Vous recevrez un OTP par SMS. Saisissez-le ainsi que le numéro de téléphone ci-dessous.',
+        'phone_number_used_for_otp_no_spaces_or_dashes' => 'Numéro de téléphone utilisé pour l\'OTP (sans espaces ni tirets)',
+        'please_wait' => 'Veuillez patienter',
+        'an_unexpected_error_occurred' => 'Une erreur inattendue s\'est produite',
         'you_will_receive_a_message_with_instructions_to_complete_the_payment_on_your_phone' => 'Vous recevrez un message avec des instructions pour terminer le paiement sur votre téléphone.',
         'your_moov_money_phone_number_no_spaces_or_dashes' => 'Votre numéro Moov Money (sans espaces ni tirets)',
         'otp_code_received_by_sms' => 'Code OTP (reçu par SMS)',
@@ -2241,28 +2247,65 @@ if (!function_exists('get_videos_path')) {
     }
 }
 
-// Orange Money payment (BF gateway)
-if (!function_exists('sendOrangeMoneyPayment')) {
-    function sendOrangeMoneyPayment($customerNumber, $amount, $otp)
+// Orange Money payment (BF gateway - doc API Orange Money BF)
+if (!function_exists('normalizeOrangeCustomerMsisdn')) {
+    /**
+     * Normalise le numéro client pour Orange Money BF : chiffres uniquement, 8 chiffres (sans indicatif 226).
+     */
+    function normalizeOrangeCustomerMsisdn($customerNumber)
     {
+        $digits = preg_replace('/\D/', '', $customerNumber);
+        if (strlen($digits) === 11 && substr($digits, 0, 3) === '226') {
+            return substr($digits, 3, 8);
+        }
+        if (strlen($digits) > 8 && substr($digits, 0, 2) === '22') {
+            return substr($digits, -8);
+        }
+        return strlen($digits) >= 8 ? substr($digits, -8) : $digits;
+    }
+}
+
+if (!function_exists('sendOrangeMoneyPayment')) {
+    /**
+     * Envoie une requête XML-RPC PAYMENT REQUEST à Orange Money (doc BF).
+     *
+     * @param string $customerNumber   Numéro client (sera normalisé en 8 chiffres BF)
+     * @param int    $amount            Montant
+     * @param string $otp               Code OTP reçu par SMS
+     * @param string $reference_number  Info supplémentaire partenaire (ex. id commande)
+     * @param string $ext_txn_id        Référence transaction partenaire (obligatoire dans la doc)
+     */
+    function sendOrangeMoneyPayment($customerNumber, $amount, $otp, $reference_number = '', $ext_txn_id = '')
+    {
+        $customer_msisdn = normalizeOrangeCustomerMsisdn($customerNumber);
+        $ext_txn_id = $ext_txn_id !== '' ? $ext_txn_id : ('DAKWARI-' . time() . '-' . uniqid());
+        $reference_number = $reference_number !== '' ? $reference_number : $ext_txn_id;
+
+        $merchant = env('ORANGE_MONEY_MERCHANT_NUMBER');
+        $api_user = env('ORANGE_MONEY_MERCHANT_ID');
+        $api_pass = env('ORANGE_MONEY_MERCHANT_PASSWORD');
+
         $params = '<?xml version="1.0" encoding="UTF-8"?>
 <COMMAND>
     <TYPE>OMPREQ</TYPE>
-    <customer_msisdn>' . $customerNumber . '</customer_msisdn>
-    <merchant_msisdn>' . env('ORANGE_MONEY_MERCHANT_NUMBER') . '</merchant_msisdn>
-    <api_username>' . env('ORANGE_MONEY_MERCHANT_ID') . '</api_username>
-    <api_password>' . env('ORANGE_MONEY_MERCHANT_PASSWORD') . '</api_password>
+    <customer_msisdn>' . htmlspecialchars($customer_msisdn, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</customer_msisdn>
+    <merchant_msisdn>' . htmlspecialchars($merchant, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</merchant_msisdn>
+    <api_username>' . htmlspecialchars($api_user, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</api_username>
+    <api_password>' . htmlspecialchars($api_pass, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</api_password>
     <amount>' . (int) $amount . '</amount>
     <PROVIDER>101</PROVIDER>
     <PROVIDER2>101</PROVIDER2>
     <PAYID>12</PAYID>
     <PAYID2>12</PAYID2>
-    <otp>' . $otp . '</otp>
+    <otp>' . htmlspecialchars($otp, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</otp>
+    <reference_number>' . htmlspecialchars($reference_number, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</reference_number>
+    <ext_txn_id>' . htmlspecialchars($ext_txn_id, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</ext_txn_id>
 </COMMAND>';
         $url = get_setting('orange_sandbox') == 1
             ? 'https://testom.orange.bf:9008/payment'
             : 'https://apiom.orange.bf:9007/payment';
         $session = curl_init($url);
+        curl_setopt($session, CURLOPT_POST, true);
         curl_setopt($session, CURLOPT_POSTFIELDS, $params);
         curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($session, CURLOPT_SSL_VERIFYPEER, false);
@@ -2379,24 +2422,52 @@ if (!function_exists('sendCorisInternetPayment')) {
 }
 
 if (!function_exists('translateOMErrors')) {
+    /**
+     * Traduit les codes d'erreur Orange Money selon la doc API BF (tableau des codes d'erreurs).
+     */
     function translateOMErrors($result)
     {
         if (!isset($result->status)) {
             return translate('An error occurred, please try again later');
         }
-        switch ((string) $result->status) {
-            case '08':
-                return translate('The amount does not match the amount to be paid');
-            case 'OTPINV':
-                return translate('OTP is invalid');
-            case '990422':
-            case '00066':
-                return translate('The number is invalid, check that it is linked to an Orange Money account');
-            case '990418':
-                return translate('The OTP code has already been used');
-            default:
-                return isset($result->message) ? $result->message : translate('Payment failed');
+        $status = (string) $result->status;
+        $messages = [
+            '08' => 'The amount does not match the amount to be paid',
+            '00042' => 'Requested amount is not in multiple of configured value',
+            '00043' => 'The amount is not configured in the system',
+            '00075' => 'You are not allowed to access the service',
+            '84' => 'Service charge is not defined',
+            '00084' => 'Service charge is not defined',
+            '00186' => 'Request initiator is not found',
+            '409' => 'Transaction amount is less than the defined minimum value',
+            '00409' => 'Transaction amount is less than the defined minimum value',
+            '410' => 'Transaction amount is more than the allowed value',
+            '00410' => 'Transaction amount is more than the allowed value',
+            'OTPINV' => 'OTP is invalid',
+            '990413' => 'Wrong OTP entered',
+            '990416' => 'Wrong OTP entered',
+            '990417' => 'OTP does not exist',
+            '990418' => 'The OTP code has already been used',
+            '990422' => 'The number is invalid, check that it is linked to an Orange Money account',
+            '00066' => 'The number is invalid, check that it is linked to an Orange Money account',
+            '02117' => 'User account is locked',
+            '99987' => 'Service is not accessible',
+            '99990' => 'Insufficient balance',
+            '99992' => 'Transaction amount is less than the minimum allowed value',
+            '99993' => 'Amount is more than the allowed value',
+            '99996' => 'User wallet is suspended',
+            '90001' => 'Transaction not allowed',
+            '09988' => 'There is a problem while doing transaction with Merchant',
+            '11007' => 'There is a problem while doing transaction with Merchant',
+            '60011' => 'Maximum count of transactions for the day reached',
+            '60012' => 'Maximum count of transactions for the week reached',
+            '60013' => 'Maximum count of transactions per month reached',
+            '60019' => 'Insufficient funds',
+        ];
+        if (isset($messages[$status])) {
+            return translate($messages[$status]);
         }
+        return isset($result->message) && (string) $result->message !== '' ? $result->message : translate('Payment failed');
     }
 }
 

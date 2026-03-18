@@ -28,10 +28,15 @@ class OrangeController
             ], 404);
         }
 
+        $reference_number = 'ORD-' . $combined_order->id;
+        $ext_txn_id = 'DAKWARI-' . $combined_order->id . '-' . time();
+
         $result = sendOrangeMoneyPayment(
             $request->phone_number,
             (int) $combined_order->grand_total,
-            $request->otp
+            $request->otp,
+            $reference_number,
+            $ext_txn_id
         );
 
         if (isset($result->status) && (string) $result->status === '200') {
