@@ -86,15 +86,17 @@ $(function() {
     $('#otp, #phone_number').on('keyup', validate_code);
     $('#orange-payment-form').on('submit', function(e) {
         e.preventDefault();
-        HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait') }}</h4>" });
+        if (typeof HoldOn !== 'undefined') {
+            HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait') }}</h4>" });
+        }
         $.post('{{ route('orange.pay') }}', $(this).serialize())
             .done(function(data) {
-                HoldOn.close();
+                if (typeof HoldOn !== 'undefined') HoldOn.close();
                 if (data.success) window.location.href = data.url;
                 else Swal.fire({ title: 'Error', text: data.message, icon: 'error', confirmButtonText: 'OK' });
             })
             .fail(function() {
-                HoldOn.close();
+                if (typeof HoldOn !== 'undefined') HoldOn.close();
                 Swal.fire({ title: 'Error', text: "{{ translate('An unexpected error occurred') }}", icon: 'error', confirmButtonText: 'OK' });
             });
     });
