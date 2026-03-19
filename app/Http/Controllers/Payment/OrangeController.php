@@ -65,11 +65,16 @@ class OrangeController extends Controller
 
         if (isset($result->status) && (string) $result->status === '200') {
             $transId = isset($result->transID) ? $result->transID : (isset($result->TransID) ? $result->TransID : '');
-            $payment_details = json_encode([
+
+            // Informations de paiement utilisées à la fois pour checkout_done (logique métier)
+            // et renvoyées au frontend pour affichage dans l'alerte de succès.
+            $payment_info = [
                 'transaction_id' => $transId,
                 'phone' => $request->phone_number,
                 'method' => 'Orange Money',
-            ]);
+            ];
+
+            $payment_details = json_encode($payment_info);
             checkout_done($combined_order_id, $payment_details);
             $request->session()->forget('combined_order_id');
             $request->session()->forget('payment_data');
@@ -78,6 +83,7 @@ class OrangeController extends Controller
             return response()->json([
                 'success' => true,
                 'url' => route('order_confirmed'),
+                'payment' => $payment_info,
             ]);
         }
 
