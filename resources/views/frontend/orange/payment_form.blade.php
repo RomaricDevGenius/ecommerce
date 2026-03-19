@@ -46,7 +46,10 @@
                                 <label>{{ translate("Phone number used for OTP (no spaces or dashes)") }}</label>
                                 <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="70123456">
                             </div>
-                            <button type="submit" class="btn btn-primary fw-600" id="validate_button">{{ translate('Complete order') }}</button>
+                            <button type="submit" class="btn btn-primary fw-600 d-inline-flex align-items-center justify-content-center" id="validate_button">
+                                <span id="validate_button_spinner" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                <span id="validate_button_text">{{ translate('Complete order') }}</span>
+                            </button>
                         </div>
                     </div>
                     <div class="row align-items-center pt-3">
@@ -58,31 +61,8 @@
             </div>
         </div>
     </div>
+
 </section>
-<div id="orange-loading-overlay" class="d-none">
-    <div class="orange-loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">{{ translate('Loading...') }}</span>
-        </div>
-    </div>
-</div>
-<style>
-    #orange-loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1050;
-    }
-    #orange-loading-overlay .orange-loading-spinner {
-        text-align: center;
-    }
-</style>
 @endsection
 
 @section('script')
@@ -90,11 +70,15 @@
 <script>
 $(function() {
     function showLoading() {
-        $('#orange-loading-overlay').removeClass('d-none');
+        $('#validate_button').prop('disabled', true);
+        $('#validate_button_spinner').removeClass('d-none');
+        $('#validate_button_text').text("{{ translate('Processing...') }}");
     }
 
     function hideLoading() {
-        $('#orange-loading-overlay').addClass('d-none');
+        $('#validate_button').prop('disabled', false);
+        $('#validate_button_spinner').addClass('d-none');
+        $('#validate_button_text').text("{{ translate('Complete order') }}");
     }
 
     $('#validate_button').prop('disabled', true);
