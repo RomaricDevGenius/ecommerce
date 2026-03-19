@@ -59,12 +59,44 @@
         </div>
     </div>
 </section>
+<div id="orange-loading-overlay" class="d-none">
+    <div class="orange-loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">{{ translate('Loading...') }}</span>
+        </div>
+    </div>
+</div>
+<style>
+    #orange-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+    }
+    #orange-loading-overlay .orange-loading-spinner {
+        text-align: center;
+    }
+</style>
 @endsection
 
 @section('script')
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
+    function showLoading() {
+        $('#orange-loading-overlay').removeClass('d-none');
+    }
+
+    function hideLoading() {
+        $('#orange-loading-overlay').addClass('d-none');
+    }
+
     $('#validate_button').prop('disabled', true);
     function validate_code() {
         var invalidOtp = "{{ translate('OTP is invalid') }}";
@@ -86,17 +118,29 @@ $(function() {
     $('#otp, #phone_number').on('keyup', validate_code);
     $('#orange-payment-form').on('submit', function(e) {
         e.preventDefault();
-        if (typeof HoldOn !== 'undefined') {
-            HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait') }}</h4>" });
-        }
+        showLoading();
         $.post('{{ route('orange.pay') }}', $(this).serialize())
             .done(function(data) {
-                if (typeof HoldOn !== 'undefined') HoldOn.close();
-                if (data.success) window.location.href = data.url;
-                else Swal.fire({ title: 'Error', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                hideLoading();
+                if (data.success) {
+                    var p = data.payment || {};
+                    Swal.fire({
+                        icon: 'success',
+                        title: "{{ translate('Payment successful') }}",
+                        html:
+                            '<p>{{ translate('Payment method') }} : <strong>' + (p.method || 'Orange Money') + '</strong></p>' +
+                            '<p>{{ translate('Phone') }} : <strong>' + (p.phone || '') + '</strong></p>' +
+                            '<p>{{ translate('Transaction ID') }} : <strong>' + (p.transaction_id || '') + '</strong></p>',
+                        confirmButtonText: "{{ translate('Continue') }}"
+                    }).then(function() {
+                        window.location.href = data.url;
+                    });
+                } else {
+                    Swal.fire({ title: 'Error', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                }
             })
             .fail(function() {
-                if (typeof HoldOn !== 'undefined') HoldOn.close();
+                hideLoading();
                 Swal.fire({ title: 'Error', text: "{{ translate('An unexpected error occurred') }}", icon: 'error', confirmButtonText: 'OK' });
             });
     });
