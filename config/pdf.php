@@ -8,7 +8,8 @@ return
         'keywords'              => '',
         'creator'               => 'Laravel Pdf',
         'display_mode'          => 'fullpage',
-        'tempDir'               => base_path('temp/'),
+        // Utiliser un dossier temporaire dans storage (écrivable en prod)
+        'tempDir'               => storage_path('app/mpdf_temp/'),
         'font_path' => base_path('public/assets/fonts/'),
         'font_data' => [
             'roboto' => [
