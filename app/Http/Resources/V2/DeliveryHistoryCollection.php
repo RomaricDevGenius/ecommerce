@@ -8,6 +8,20 @@ use Illuminate\Pagination\AbstractPaginator;
 
 class DeliveryHistoryCollection extends ResourceCollection
 {
+    /**
+     * Référence au paginateur d'origine : après parent::__construct(),
+     * $this->resource devient une Collection et n'est plus un AbstractPaginator,
+     * ce qui faisait toujours meta.total = 0 côté API (bug liste vide + résumé correct).
+     */
+    /** @var AbstractPaginator|null */
+    protected $paginator = null;
+
+    public function __construct($resource)
+    {
+        $this->paginator = $resource instanceof AbstractPaginator ? $resource : null;
+        parent::__construct($resource);
+    }
+
     public function toArray($request)
     {
         // $this->collection peut être une pagination => on force en liste d'items
@@ -48,7 +62,7 @@ class DeliveryHistoryCollection extends ResourceCollection
             'total' => 0,
         ];
 
-        $resource = $this->resource;
+        $resource = $this->paginator ?? ($this->resource instanceof AbstractPaginator ? $this->resource : null);
         if ($resource instanceof AbstractPaginator) {
             $meta = [
                 'current_page' => $resource->currentPage(),
