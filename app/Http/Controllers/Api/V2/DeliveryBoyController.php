@@ -198,19 +198,25 @@ class DeliveryBoyController extends Controller
      */
     public function collection($id)
     {
-        $collection_query = DeliveryHistory::query();
-        $collection_query->where('delivery_status', 'delivered');
-        $collection_query->where('payment_type', 'cash_on_delivery');
+        $query = DeliveryHistory::query()
+            ->with('order')
+            ->where('delivery_status', 'delivered')
+            ->where('payment_type', 'cash_on_delivery')
+            ->where('delivery_boy_id', $id)
+            ->latest();
 
-        return new DeliveryHistoryCollection($collection_query->where('delivery_boy_id', $id)->latest()->paginate(10));
+        return new DeliveryHistoryCollection($query->paginate(10));
     }
 
     public function earning($id)
     {
-        $collection_query = DeliveryHistory::query();
-        $collection_query->where('delivery_status', 'delivered');
+        $query = DeliveryHistory::query()
+            ->with('order')
+            ->where('delivery_status', 'delivered')
+            ->where('delivery_boy_id', $id)
+            ->latest();
 
-        return new DeliveryHistoryCollection($collection_query->where('delivery_boy_id', $id)->latest()->paginate(10));
+        return new DeliveryHistoryCollection($query->paginate(10));
     }
 
     public function collection_summary($id)
