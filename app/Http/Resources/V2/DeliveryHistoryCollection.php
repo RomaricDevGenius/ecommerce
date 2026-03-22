@@ -35,14 +35,18 @@ class DeliveryHistoryCollection extends ResourceCollection
 
         return [
             'data' => collect($items)->map(function ($data) {
+                // earning / collection peuvent être NULL en base (commission vs COD) : éviter TypeError dans format_price()
+                $earningRaw = $data->earning;
+                $collectionRaw = $data->collection;
+
                 return [
                     'id' => $data->id,
                     'delivery_boy_id' => $data->delivery_boy_id,
                     'order_id' => $data->order_id,
-                    'order_code' => $data->order->code,
+                    'order_code' => optional($data->order)->code ?? ('#' . (string) $data->order_id),
                     'delivery_status' => $data->delivery_status,
-                    'earning' => format_price($data->earning) ,
-                    'collection' => format_price($data->collection),
+                    'earning' => format_price($earningRaw !== null ? (float) $earningRaw : 0.0),
+                    'collection' => format_price($collectionRaw !== null ? (float) $collectionRaw : 0.0),
                     'payment_type' => $data->payment_type,
                     'date' => Carbon::parse($data->created_at)->format('d-m-Y'),
                 ];
