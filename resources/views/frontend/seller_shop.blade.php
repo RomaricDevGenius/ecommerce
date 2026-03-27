@@ -786,37 +786,45 @@
                             </div>
 
                             <!-- Products -->
-                            <div class="px-3">
-                                <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
-                                    @foreach ($products as $key => $product)
-                                        <div class="col border-right border-bottom has-transition hov-shadow-out z-1">
-                                            {{-- @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product]) --}}
-                                            @include('preorder.frontend.product_box3',['product' => $product])
+                            @isset($products)
+                                @if($products->count() > 0)
+                                    <div class="px-3">
+                                        <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
+                                            @foreach ($products as $key => $product)
+                                                <div class="col border-right border-bottom has-transition hov-shadow-out z-1">
+                                                    {{-- @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product]) --}}
+                                                    @include('preorder.frontend.product_box3',['product' => $product])
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="aiz-pagination mt-4">
-                                {{ $products->appends(request()->input())->links() }}
-                            </div>
+                                    </div>
+                                    <div class="aiz-pagination mt-4">
+                                        {{ $products->appends(request()->input())->links() }}
+                                    </div>
+                                @endif
+                            @endisset
                         </div>
                     </div>
                 </form>
             @else
 
                 <!-- Top Selling Products Section -->
-                <div class="px-3">
-                    <div class="row gutters-16 row-cols-xxl-6 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-2 border-left border-top">
-                        @foreach ($products as $key => $product)
-                            <div class="col border-bottom border-right overflow-hidden has-transition hov-shadow-out z-1">
-                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                @isset($products)
+                    @if($products->count() > 0)
+                        <div class="px-3">
+                            <div class="row gutters-16 row-cols-xxl-6 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-2 border-left border-top">
+                                @foreach ($products as $key => $product)
+                                    <div class="col border-bottom border-right overflow-hidden has-transition hov-shadow-out z-1">
+                                        @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="aiz-pagination mt-4 mb-4">
-                    {{ $products->links() }}
-                </div>
+                        </div>
+                        <div class="aiz-pagination mt-4 mb-4">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+                @endisset
             @endif
         </div>
     </section>
