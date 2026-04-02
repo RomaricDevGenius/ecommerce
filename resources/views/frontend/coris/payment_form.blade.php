@@ -35,8 +35,9 @@
                                 </div>
 
                                 <div class="form-group text-right">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ translate('Confirm Payment') }}
+                                    <button type="submit" class="btn btn-primary fw-600 d-inline-flex align-items-center justify-content-center" id="confirm_button">
+                                        <span id="confirm_button_spinner" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                        <span id="confirm_button_text">{{ translate('Confirm Payment') }}</span>
                                     </button>
                                 </div>
                             </form>
@@ -53,9 +54,21 @@
 @endsection
 
 @section('script')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
-        (function () {
-            'use strict';
+        $(function() {
+            function showLoading() {
+                $('#confirm_button').prop('disabled', true);
+                $('#confirm_button_spinner').removeClass('d-none');
+                $('#confirm_button_text').text("{{ translate('Processing...') }}");
+            }
+
+            function hideLoading() {
+                $('#confirm_button').prop('disabled', false);
+                $('#confirm_button_spinner').addClass('d-none');
+                $('#confirm_button_text').text("{{ translate('Confirm Payment') }}");
+            }
+
             const form = document.getElementById('coris-payment-form');
             const messageBox = document.getElementById('coris-payment-message');
 
@@ -65,8 +78,11 @@
                 e.preventDefault();
 
                 const formData = new FormData(form);
+                const phoneNumber = formData.get('phone_number');
 
                 messageBox.classList.add('d-none');
+
+                showLoading();
 
                 $.ajax({
                     url: form.getAttribute('action'),
@@ -78,20 +94,32 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     success: function (response) {
+                        hideLoading();
                         if (response.success && response.url) {
-                            window.location.href = response.url;
+                            Swal.fire({
+                                icon: 'success',
+                                title: "{{ translate('Payment successful') }}",
+                                html:
+                                    '<p>{{ translate('Payment method') }} : <strong>Coris Money</strong></p>' +
+                                    '<p>{{ translate('Phone') }} : <strong>' + phoneNumber + '</strong></p>' +
+                                    '<p>{{ translate('Transaction ID') }} : <strong>' + (response.transaction_id || 'N/A') + '</strong></p>',
+                                confirmButtonText: "{{ translate('Continue') }}"
+                            }).then(function() {
+                                window.location.href = response.url;
+                            });
                         } else {
                             messageBox.querySelector('.alert').innerText = response.message || '{{ translate('Payment failed') }}';
                             messageBox.classList.remove('d-none');
                         }
                     },
                     error: function () {
+                        hideLoading();
                         messageBox.querySelector('.alert').innerText = '{{ translate('An unexpected error occurred. Please try again.') }}';
                         messageBox.classList.remove('d-none');
                     }
                 });
             });
-        })();
+        });
     </script>
 @endsection
 
