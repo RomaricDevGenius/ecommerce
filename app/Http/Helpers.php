@@ -2325,6 +2325,89 @@ if (!function_exists('sendOrangeMoneyPayment')) {
 }
 
 // Coris Money payment (paiement internet)
+if (!function_exists('checkCorisTransactionStatus')) {
+    /**
+     * Vérifie le statut d'une transaction Coris Money (Section 8 de la doc).
+     *
+     * Après avoir reçu une confirmation de paiement, on appelle cet endpoint
+     * pour s'assurer que le paiement est VRAIMENT confirmé chez Coris.
+     *
+     * @param string $transactionId Le transactionId reçu de sendCorisInternetPayment() (ex: "1900021")
+     * @return object              Réponse avec ->success (bool), ->code, ->message, ->raw
+     */
+    function checkCorisTransactionStatus($transactionId)
+    {
+        $clientId = env('CORIS_CLIENT_ID');
+        $clientSecret = env('CORIS_CLIENT_SECRET');
+        $baseUrl = get_setting('coris_sandbox') == 1
+            ? (env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'))
+            : (env('CORIS_BASE_URL_PROD') ?: env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'));
+
+        $obj = new \stdClass();
+
+        if (!$clientId || !$clientSecret || !$baseUrl) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Coris Money configuration is incomplete.');
+            return $obj;
+        }
+
+        // Construction du hashParam selon la doc Coris Section 8
+        // Ordre : codeOperation + clientSecret
+        $stringToHash = $transactionId . $clientSecret;
+        $hashParam = hash('sha256', $stringToHash);
+
+        $endpoint = rtrim($baseUrl, '/') . '/operations/transactionstatus';
+
+        // Query string avec codeOperation (transactionId)
+        $queryParams = http_build_query([
+            'codeOperation' => $transactionId,
+        ]);
+
+        $url = $endpoint . '?' . $queryParams;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'clientId: ' . $clientId,
+            'hashParam: ' . $hashParam,
+        ]);
+
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        $decoded = json_decode($response, false);
+
+        if ($curlError) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Unable to verify payment status with Coris Money.');
+            $obj->raw = $response;
+            return $obj;
+        }
+
+        if (!$decoded || !isset($decoded->code)) {
+            $obj->success = false;
+            $obj->code = '-1';
+            $obj->message = translate('Invalid response from Coris Money status check.');
+            $obj->raw = $response;
+            return $obj;
+        }
+
+        // Code = "0" signifie que la transaction est confirmée
+        $obj->success = (string) $decoded->code === '0';
+        $obj->code = (string) $decoded->code;
+        $obj->message = isset($decoded->message) ? $decoded->message : '';
+        $obj->transactionId = $transactionId;
+        $obj->raw = $decoded;
+
+        return $obj;
+    }
+}
+
 if (!function_exists('sendCorisInternetPayment')) {
     /**
      * Effectue un paiement internet CorisMoney (étape 2 de la doc).

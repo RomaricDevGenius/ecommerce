@@ -38,8 +38,12 @@ class CorisController extends Controller
     /**
      * Traite le paiement Coris Money (soumission du formulaire).
      *
-     * Le client doit d'abord initier un paiement internet dans l'application CorisMoney
-     * pour obtenir un code de retrait, puis renseigner ce code et son téléphone ici.
+     * Étapes :
+     * 1. Valide les données du formulaire (téléphone + code retrait)
+     * 2. Appelle sendCorisInternetPayment() pour initier le paiement chez Coris
+     * 3. ✨ NOUVEAU : Appelle checkCorisTransactionStatus() pour VÉRIFIER que c'est vraiment confirmé
+     * 4. Si confirmé → Marque la commande comme payée
+     * 5. Si échoué → Affiche erreur
      */
     public function handlePayment(Request $request)
     {
@@ -58,35 +62,51 @@ class CorisController extends Controller
 
         $combined_order = CombinedOrder::findOrFail($combined_order_id);
 
+        // ÉTAPE 1 : Appel initial du paiement internet (Section 4-5 de la doc Coris)
         $result = sendCorisInternetPayment(
             $request->phone_number,
             (int) $combined_order->grand_total,
             $request->withdraw_code
         );
 
-        if ($result->success) {
-            $payment_details = json_encode([
-                'transaction_id' => $result->transactionId,
-                'phone' => preg_replace('/\D/', '', $request->phone_number),
-                'method' => 'Coris Money',
-            ]);
-
-            checkout_done($combined_order_id, $payment_details);
-            $request->session()->forget('combined_order_id');
-            $request->session()->forget('payment_data');
-            $request->session()->forget('payment_type');
-
+        if (!$result->success) {
+            $message = $result->message ?: translate('Payment failed');
             return response()->json([
-                'success' => true,
-                'url' => route('order_confirmed'),
+                'success' => false,
+                'message' => $message,
             ]);
         }
 
-        $message = $result->message ?: translate('Payment failed');
+        // ÉTAPE 2 : ✨ VÉRIFICATION DU STATUT (Section 8 de la doc Coris)
+        // On attend 1 seconde pour que Coris ait le temps de confirmer
+        sleep(1);
+
+        $statusCheck = checkCorisTransactionStatus($result->transactionId);
+
+        if (!$statusCheck->success) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('Payment verification failed. Please try again or contact support.'),
+            ]);
+        }
+
+        // ÉTAPE 3 : Paiement confirmé ! On marque la commande comme payée
+        $payment_details = json_encode([
+            'transaction_id' => $result->transactionId,
+            'phone' => preg_replace('/\D/', '', $request->phone_number),
+            'method' => 'Coris Money',
+            'status_verified' => true,  // ← Proof that verification was done
+        ]);
+
+        checkout_done($combined_order_id, $payment_details);
+        $request->session()->forget('combined_order_id');
+        $request->session()->forget('payment_data');
+        $request->session()->forget('payment_type');
 
         return response()->json([
-            'success' => false,
-            'message' => $message,
+            'success' => true,
+            'url' => route('order_confirmed'),
+            'transaction_id' => $result->transactionId,
         ]);
     }
 }
