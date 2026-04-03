@@ -2470,7 +2470,8 @@ if (!function_exists('sendCorisOTP')) {
 
         $decoded = json_decode($response, false);
 
-        if (!$decoded || !isset($decoded->code)) {
+        // L'endpoint /send-code-otp retourne "codeErr" et "errCode" (pas "code")
+        if (!$decoded || (!isset($decoded->codeErr) && !isset($decoded->errCode))) {
             $obj->success = false;
             $obj->code    = '-1';
             $obj->message = translate('Invalid response from Coris Money.');
@@ -2478,9 +2479,10 @@ if (!function_exists('sendCorisOTP')) {
             return $obj;
         }
 
-        $obj->success = (string) $decoded->code === '0';
-        $obj->code    = (string) $decoded->code;
-        $obj->message = isset($decoded->message) ? $decoded->message : '';
+        $errorCode    = isset($decoded->codeErr) ? (string) $decoded->codeErr : (string) $decoded->errCode;
+        $obj->success = $errorCode === '0';
+        $obj->code    = $errorCode;
+        $obj->message = isset($decoded->msg) ? $decoded->msg : (isset($decoded->text) ? $decoded->text : '');
         $obj->raw     = $decoded;
 
         return $obj;
