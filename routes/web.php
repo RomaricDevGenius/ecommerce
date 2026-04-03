@@ -238,6 +238,7 @@ Route::controller(MoovController::class)->group(function () {
 // Coris Money
 Route::controller(CorisController::class)->group(function () {
     Route::get('/coris/payment/form', 'showPaymentForm')->name('coris.payment.form');
+    Route::post('/coris/send-otp', 'sendOTP')->name('coris.send.otp');
     Route::post('/coris/pay', 'handlePayment')->name('coris.pay');
 });
 
