@@ -2408,26 +2408,105 @@ if (!function_exists('checkCorisTransactionStatus')) {
     }
 }
 
-if (!function_exists('sendCorisInternetPayment')) {
+if (!function_exists('sendCorisOTP')) {
     /**
-     * Effectue un paiement internet CorisMoney (étape 2 de la doc).
+     * Étape 1 du Service paiement de bien (Section 5 de la doc Coris).
+     * Envoie un code OTP au téléphone du client via l'API Coris.
      *
-     * Le client doit d'abord initier un paiement internet dans son app CorisMoney
-     * pour obtenir un code de retrait, puis saisir ce code et son numéro ici.
+     * Endpoint : POST /send-code-otp?codePays=&telephone=
+     * Hash     : sha256(codePays + telephone + clientSecret)
      *
-     * @param string $phoneNumber Numéro de téléphone du client (sans indicatif pays)
-     * @param int|float $amount   Montant total de la commande
-     * @param string $withdrawCode Code de retrait (codeRetrait)
-     * @return object             Réponse décodée (stdClass) avec au moins ->success (bool), ->code, ->message, ->raw
+     * @param string $phoneNumber Numéro de téléphone du client
+     * @return object Réponse avec ->success (bool), ->code, ->message
      */
-    function sendCorisInternetPayment($phoneNumber, $amount, $withdrawCode)
+    function sendCorisOTP($phoneNumber)
     {
-        $clientId = env('CORIS_CLIENT_ID');
+        $clientId     = env('CORIS_CLIENT_ID');
         $clientSecret = env('CORIS_CLIENT_SECRET');
-        $codePv = env('CORIS_CODE_PV');
-        $countryCode = env('CORIS_COUNTRY_CODE', '226');
+        $countryCode  = env('CORIS_COUNTRY_CODE', '226');
 
-        // Choix de l'URL selon sandbox / production
+        $baseUrl = get_setting('coris_sandbox') == 1
+            ? (env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'))
+            : (env('CORIS_BASE_URL_PROD') ?: env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'));
+
+        $obj = new \stdClass();
+
+        if (!$clientId || !$clientSecret || !$baseUrl) {
+            $obj->success = false;
+            $obj->code    = '-1';
+            $obj->message = translate('Coris Money configuration is incomplete.');
+            return $obj;
+        }
+
+        $phone = preg_replace('/\D/', '', $phoneNumber);
+
+        // Hash : codePays + telephone + clientSecret
+        $hashParam = hash('sha256', $countryCode . $phone . $clientSecret);
+
+        $url = rtrim($baseUrl, '/') . '/send-code-otp?' . http_build_query([
+            'codePays'  => $countryCode,
+            'telephone' => $phone,
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'clientId: '  . $clientId,
+            'hashParam: ' . $hashParam,
+        ]);
+
+        $response  = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlError) {
+            $obj->success = false;
+            $obj->code    = '-1';
+            $obj->message = translate('Unable to reach Coris Money service. Please try again later.');
+            return $obj;
+        }
+
+        $decoded = json_decode($response, false);
+
+        if (!$decoded || !isset($decoded->code)) {
+            $obj->success = false;
+            $obj->code    = '-1';
+            $obj->message = translate('Invalid response from Coris Money.');
+            $obj->raw     = $response;
+            return $obj;
+        }
+
+        $obj->success = (string) $decoded->code === '0';
+        $obj->code    = (string) $decoded->code;
+        $obj->message = isset($decoded->message) ? $decoded->message : '';
+        $obj->raw     = $decoded;
+
+        return $obj;
+    }
+}
+
+if (!function_exists('sendCorisPaiementBien')) {
+    /**
+     * Étape 2 du Service paiement de bien (Section 5 de la doc Coris).
+     * Effectue le paiement avec le code OTP reçu par le client.
+     *
+     * Endpoint : POST /operations/paiementbien?codePays=&telephone=&codePv=&montant=&codeOTP=
+     * Hash     : sha256(codePays + telephone + codePv + montant + codeOTP + clientSecret)
+     *
+     * @param string     $phoneNumber Numéro de téléphone du client
+     * @param int|float  $amount      Montant de la commande
+     * @param string     $codeOTP     Code OTP reçu par le client
+     * @return object Réponse avec ->success (bool), ->code, ->message, ->transactionId, ->amount
+     */
+    function sendCorisPaiementBien($phoneNumber, $amount, $codeOTP)
+    {
+        $clientId     = env('CORIS_CLIENT_ID');
+        $clientSecret = env('CORIS_CLIENT_SECRET');
+        $codePv       = env('CORIS_CODE_PV');
+        $countryCode  = env('CORIS_COUNTRY_CODE', '226');
+
         $baseUrl = get_setting('coris_sandbox') == 1
             ? (env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'))
             : (env('CORIS_BASE_URL_PROD') ?: env('CORIS_BASE_URL_TEST', 'https://testbed.corismoney.com/external/v1/api'));
@@ -2436,69 +2515,62 @@ if (!function_exists('sendCorisInternetPayment')) {
 
         if (!$clientId || !$clientSecret || !$codePv || !$baseUrl) {
             $obj->success = false;
-            $obj->code = '-1';
+            $obj->code    = '-1';
             $obj->message = translate('Coris Money configuration is incomplete. Please check Client ID, Secret, Code PV and Base URLs.');
             return $obj;
         }
 
+        $phone   = preg_replace('/\D/', '', $phoneNumber);
         $montant = (int) round($amount);
-        $isMontant = '1';
-        $phone = preg_replace('/\D/', '', $phoneNumber);
 
-        // Construction du hashParam : codePays + telephone + codePv + codeRetrait + montant + isMontant + clientSecret
-        $stringToHash = $countryCode . $phone . $codePv . $withdrawCode . $montant . $isMontant . $clientSecret;
-        $hashParam = hash('sha256', $stringToHash);
+        // Hash : codePays + telephone + codePv + montant + codeOTP + clientSecret
+        $hashParam = hash('sha256', $countryCode . $phone . $codePv . $montant . $codeOTP . $clientSecret);
 
-        $endpoint = rtrim($baseUrl, '/') . '/operations/paiementinternet';
-
-        $queryParams = http_build_query([
-            'codePays'   => $countryCode,
-            'telephone'  => $phone,
-            'codePv'     => $codePv,
-            'codeRetrait'=> $withdrawCode,
-            'montant'    => $montant,
-            'isMontant'  => $isMontant,
+        $url = rtrim($baseUrl, '/') . '/operations/paiementbien?' . http_build_query([
+            'codePays'  => $countryCode,
+            'telephone' => $phone,
+            'codePv'    => $codePv,
+            'montant'   => $montant,
+            'codeOTP'   => $codeOTP,
         ]);
-
-        $url = $endpoint . '?' . $queryParams;
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'clientId: ' . $clientId,
+            'clientId: '  . $clientId,
             'hashParam: ' . $hashParam,
         ]);
 
-        $response = curl_exec($ch);
+        $response  = curl_exec($ch);
         $curlError = curl_error($ch);
         curl_close($ch);
 
-        $decoded = json_decode($response, false);
-
         if ($curlError) {
             $obj->success = false;
-            $obj->code = '-1';
+            $obj->code    = '-1';
             $obj->message = translate('Unable to reach Coris Money service. Please try again later.');
-            $obj->raw = $response;
+            $obj->raw     = $response;
             return $obj;
         }
+
+        $decoded = json_decode($response, false);
 
         if (!$decoded || !isset($decoded->code)) {
             $obj->success = false;
-            $obj->code = '-1';
+            $obj->code    = '-1';
             $obj->message = translate('Invalid response from Coris Money.');
-            $obj->raw = $response;
+            $obj->raw     = $response;
             return $obj;
         }
 
-        $obj->success = (string) $decoded->code === '0';
-        $obj->code = (string) $decoded->code;
-        $obj->message = isset($decoded->message) ? $decoded->message : '';
+        $obj->success       = (string) $decoded->code === '0';
+        $obj->code          = (string) $decoded->code;
+        $obj->message       = isset($decoded->message)       ? $decoded->message       : '';
         $obj->transactionId = isset($decoded->transactionId) ? $decoded->transactionId : null;
-        $obj->amount = isset($decoded->montant) ? $decoded->montant : $montant;
-        $obj->raw = $decoded;
+        $obj->amount        = isset($decoded->montant)       ? $decoded->montant       : $montant;
+        $obj->raw           = $decoded;
 
         return $obj;
     }
