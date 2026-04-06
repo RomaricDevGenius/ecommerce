@@ -2494,7 +2494,7 @@ if (!function_exists('sendCorisPaiementBien')) {
      * Étape 2 du Service paiement de bien (Section 5 de la doc Coris).
      * Effectue le paiement avec le code OTP reçu par le client.
      *
-     * Endpoint : POST /operations/paiementbien?codePays=&telephone=&codePv=&montant=&codeOTP=
+     * Endpoint : POST /operations/paiement-bien?codePays=&telephone=&codePv=&montant=&codeOTP=
      * Hash     : sha256(codePays + telephone + codePv + montant + codeOTP + clientSecret)
      *
      * @param string     $phoneNumber Numéro de téléphone du client
@@ -2528,7 +2528,7 @@ if (!function_exists('sendCorisPaiementBien')) {
         // Hash : codePays + telephone + codePv + montant + codeOTP + clientSecret
         $hashParam = hash('sha256', $countryCode . $phone . $codePv . $montant . $codeOTP . $clientSecret);
 
-        $url = rtrim($baseUrl, '/') . '/operations/paiementbien?' . http_build_query([
+        $url = rtrim($baseUrl, '/') . '/operations/paiement-bien?' . http_build_query([
             'codePays'  => $countryCode,
             'telephone' => $phone,
             'codePv'    => $codePv,
