@@ -2357,7 +2357,7 @@ if (!function_exists('checkCorisTransactionStatus')) {
         $stringToHash = $transactionId . $clientSecret;
         $hashParam = hash('sha256', $stringToHash);
 
-        $endpoint = rtrim($baseUrl, '/') . '/operations/transactionstatus';
+        $endpoint = rtrim($baseUrl, '/') . '/operations/transaction-status';
 
         // Query string avec codeOperation (transactionId)
         $queryParams = http_build_query([
