@@ -106,18 +106,7 @@ class CorisController extends Controller
             ]);
         }
 
-        // VÉRIFICATION DU STATUT (Section 8)
-        sleep(1);
-        $statusCheck = checkCorisTransactionStatus($result->transactionId);
-
-        if (!$statusCheck->success) {
-            return response()->json([
-                'success' => false,
-                'message' => translate('Payment verification failed. Please try again or contact support.'),
-            ]);
-        }
-
-        // Paiement confirmé : on marque la commande comme payée
+        // Paiement confirmé par Coris (code: 0) : on marque la commande comme payée
         $payment_details = json_encode([
             'transaction_id'  => $result->transactionId,
             'phone'           => preg_replace('/\D/', '', $request->phone_number),
