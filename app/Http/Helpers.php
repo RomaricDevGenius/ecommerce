@@ -2559,7 +2559,7 @@ if (!function_exists('sendCorisPaiementBien')) {
 
         $decoded = json_decode($response, false);
 
-        if (!$decoded || !isset($decoded->code)) {
+        if (!$decoded || (!isset($decoded->code) && !isset($decoded->codeErr) && !isset($decoded->errCode))) {
             $obj->success = false;
             $obj->code    = '-1';
             $obj->message = translate('Invalid response from Coris Money.');
@@ -2567,9 +2567,13 @@ if (!function_exists('sendCorisPaiementBien')) {
             return $obj;
         }
 
-        $obj->success       = (string) $decoded->code === '0';
-        $obj->code          = (string) $decoded->code;
-        $obj->message       = isset($decoded->message)       ? $decoded->message       : '';
+        $errorCode          = isset($decoded->code)    ? (string) $decoded->code
+                            : (isset($decoded->codeErr) ? (string) $decoded->codeErr
+                            : (string) $decoded->errCode);
+        $obj->success       = $errorCode === '0';
+        $obj->code          = $errorCode;
+        $obj->message       = isset($decoded->msg)     ? $decoded->msg
+                            : (isset($decoded->message) ? $decoded->message : '');
         $obj->transactionId = isset($decoded->transactionId) ? $decoded->transactionId : null;
         $obj->amount        = isset($decoded->montant)       ? $decoded->montant       : $montant;
         $obj->raw           = $decoded;
