@@ -30,7 +30,7 @@
                             <p>{{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA, pay by Orange money by doing:')) }}</p>
                             <p class="font-weight-bold" style="color: red; font-size: 1.2em;">
                                 @if (get_setting('orange_sandbox') == 1)
-                                    *866*4*6*{{ (int) $combined_order->grand_total }}#
+                                    *865*4*6*{{ (int) $combined_order->grand_total }}#
                                 @else
                                     *144*4*6*{{ (int) $combined_order->grand_total }}#
                                 @endif
