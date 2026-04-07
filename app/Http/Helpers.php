@@ -2302,8 +2302,8 @@ if (!function_exists('sendOrangeMoneyPayment')) {
     <ext_txn_id>' . htmlspecialchars($ext_txn_id, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</ext_txn_id>
 </COMMAND>';
         $url = get_setting('orange_sandbox') == 1
-            ? 'https://testom.orange.bf:9008/payment'
-            : 'https://apiom.orange.bf:9007/payment';
+            ? 'https://testom.orange.bf/payment'
+            : 'https://apiom.orange.bf/payment';
         $session = curl_init($url);
         curl_setopt($session, CURLOPT_POST, true);
         curl_setopt($session, CURLOPT_POSTFIELDS, $params);
