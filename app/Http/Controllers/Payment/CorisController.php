@@ -116,7 +116,6 @@ class CorisController extends Controller
 
         checkout_done($combined_order_id, $payment_details);
 
-        $request->session()->forget('combined_order_id');
         $request->session()->forget('payment_data');
         $request->session()->forget('payment_type');
         $request->session()->forget('coris_phone');
