@@ -76,9 +76,6 @@ class OrangeController extends Controller
 
             $payment_details = json_encode($payment_info);
             checkout_done($combined_order_id, $payment_details);
-            $request->session()->forget('combined_order_id');
-            $request->session()->forget('payment_data');
-            $request->session()->forget('payment_type');
 
             return response()->json([
                 'success' => true,
