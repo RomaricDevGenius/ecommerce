@@ -59,7 +59,21 @@ class SupportTicketController extends Controller
      */
     public function store(Request $request)
     {
-        //dd();
+        // Protection honeypot : si ce champ caché est rempli c'est un bot
+        if (!empty($request->input('website'))) {
+            return redirect()->route('support_ticket.index');
+        }
+
+        $request->validate([
+            'subject' => 'required|string|min:10|max:255',
+            'details' => 'required|string|min:30|max:5000',
+        ], [
+            'subject.min' => translate('The subject must be at least 10 characters.'),
+            'subject.max' => translate('The subject must not exceed 255 characters.'),
+            'details.min' => translate('The description must be at least 30 characters.'),
+            'details.max' => translate('The description must not exceed 5000 characters.'),
+        ]);
+
         $ticket = new Ticket;
         $ticket->code = strtotime(date('Y-m-d H:i:s')) . Auth::user()->id;
         $ticket->user_id = Auth::user()->id;
