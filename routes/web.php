@@ -324,7 +324,10 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function ()
     });
 
     // Support Ticket
-    Route::resource('support_ticket', SupportTicketController::class);
+    Route::resource('support_ticket', SupportTicketController::class)->except(['store']);
+    Route::post('support_ticket', [SupportTicketController::class, 'store'])
+        ->name('support_ticket.store')
+        ->middleware('throttle:3,60');
     Route::post('support_ticket/reply', [SupportTicketController::class, 'seller_store'])->name('support_ticket.seller_store');
 
     // Customer Package

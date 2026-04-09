@@ -78,6 +78,10 @@
                 <div class="modal-body px-3 pt-3">
                     <form class="" action="{{ route('support_ticket.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
+                        {{-- Honeypot : champ invisible pour bloquer les bots --}}
+                        <div style="display:none !important; position:absolute; left:-9999px;">
+                            <input type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                        </div>
                         <div class="row">
                             <div class="col-md-2">
                                 <label>{{ translate('Subject')}}</label>
