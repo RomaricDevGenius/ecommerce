@@ -193,6 +193,10 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
         Route::post('moov/init', [MoovController::class, 'init'])->middleware('auth:sanctum');
         Route::post('orange/pay', [OrangeController::class, 'pay'])->middleware('auth:sanctum');
 
+        // Paiement mobile Coris Money (API v2) - 2 étapes
+        Route::post('coris/send-otp', [CorisApiController::class, 'sendOTP'])->middleware('auth:sanctum');
+        Route::post('coris/pay', [CorisApiController::class, 'pay'])->middleware('auth:sanctum');
+
         Route::get('order/cancel/{id}', 'App\Http\Controllers\Api\V2\OrderController@order_cancel')->middleware('auth:sanctum');
 
         Route::get('profile/counters', 'App\Http\Controllers\Api\V2\ProfileController@counters')->middleware('auth:sanctum');
