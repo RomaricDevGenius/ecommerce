@@ -8,6 +8,7 @@
 /public/storage
 /public/uploads
 /storage/*.key
+/storage/app/firebase/
 /storage/debugbar
 /storage/logs
 /vendor
