@@ -76,6 +76,24 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="minimum_delivery_boy_withdraw_amount">
+                            <label class="col-sm-4 col-from-label">{{ translate('Minimum Withdrawal Amount') }}</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="number" min="0" step="1" name="minimum_delivery_boy_withdraw_amount"
+                                           class="form-control"
+                                           value="{{ get_setting('minimum_delivery_boy_withdraw_amount') ?? 500 }}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            {{ \App\Models\Currency::find(get_setting('system_default_currency'))->code ?? 'XOF' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ translate('Minimum amount a delivery boy can request to withdraw.') }}</small>
+                            </div>
+                        </div>
+
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                         </div>

@@ -728,7 +728,7 @@
 
                 <!-- Deliver Boy Addon-->
                 @if (addon_is_activated('delivery_boy'))
-                @canany(['view_all_delivery_boy','add_delivery_boy','delivery_boy_payment_history','collected_histories_from_delivery_boy','order_cancle_request_by_delivery_boy','delivery_boy_configuration'])
+                @canany(['view_all_delivery_boy','add_delivery_boy','delivery_boy_payment_history','collected_histories_from_delivery_boy','order_cancle_request_by_delivery_boy','delivery_boy_configuration','view_delivery_boy_withdraw_requests'])
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
                         <div class="aiz-side-nav-icon">
@@ -793,6 +793,17 @@
                         <li class="aiz-side-nav-item">
                             <a href="{{route('delivery-boy-configuration')}}" class="aiz-side-nav-link">
                                 <span class="aiz-side-nav-text">{{translate('Configuration')}}</span>
+                            </a>
+                        </li>
+                        @endcan
+                        @can('view_delivery_boy_withdraw_requests')
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('delivery-boy-withdraw-requests.index') }}" class="aiz-side-nav-link">
+                                <span class="aiz-side-nav-text">{{ translate('Withdrawal Requests') }}</span>
+                                @php $db_pending = \App\Models\DeliveryBoyWithdrawRequest::where('status','pending')->count(); @endphp
+                                @if($db_pending > 0)
+                                    <span class="badge badge-danger badge-pill ml-auto">{{ $db_pending }}</span>
+                                @endif
                             </a>
                         </li>
                         @endcan
