@@ -49,10 +49,10 @@
                         <div class="col-md-8">
                            <select class="form-control aiz-selectpicker" name="RECAPTCHA_SCORE_THRESHOLD" id="accept-v3-score" data-live-search="true">
                                 <option value="">{{ translate('Select Score') }}</option>
-                                <option value="0.3" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.3' ? 'selected' : '' }}>More than or equal to 0.3</option>
-                                <option value="0.5" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.5' ? 'selected' : '' }}>More than or equal to 0.5</option>
-                                <option value="0.7" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.7' ? 'selected' : '' }}>More than or equal to 0.7</option>
-                                <option value="0.9" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.9' ? 'selected' : '' }}>More than or equal to 0.9</option>
+                                <option value="0.3" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.3' ? 'selected' : '' }}>{{ translate('Greater than or equal to 0.3') }}</option>
+                                <option value="0.5" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.5' ? 'selected' : '' }}>{{ translate('Greater than or equal to 0.5') }}</option>
+                                <option value="0.7" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.7' ? 'selected' : '' }}>{{ translate('Greater than or equal to 0.7') }}</option>
+                                <option value="0.9" {{ env('RECAPTCHA_SCORE_THRESHOLD') == '0.9' ? 'selected' : '' }}>{{ translate('Greater than or equal to 0.9') }}</option>
                             </select>
                             <small class="text-muted">{{translate("Google reCAPTCHA v3 returns a score ranging from 0.0 to 1.0 that indicates the likelihood a request is made by a human or a bot.")}}</small>
                         </div>
@@ -69,28 +69,28 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0 h6">How to Interpret the reCAPTCHA V3 Scores</h5>
+                <h5 class="mb-0 h6">{{ translate('How to Interpret the reCAPTCHA V3 Scores') }}</h5>
             </div>
             <div class="card-body">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        1. Score: 0.0 - 0.3 : <strong>Very likely a bot</strong> — Recommended Action: Block the request or require additional verification.
+                        1. Score: 0.0 - 0.3 : <strong>{{ translate('Very likely a bot') }}</strong> — {{ translate('Recommended Action: Block the request or require additional verification.') }}
                     </li>
                     <li class="list-group-item">
-                        2. Score: 0.3 - 0.5 : <strong>Suspicious activity</strong> — Recommended Action: Might want to require additional verification.
+                        2. Score: 0.3 - 0.5 : <strong>{{ translate('Suspicious activity') }}</strong> — {{ translate('Recommended Action: Might want to require additional verification.') }}
                     </li>
                     <li class="list-group-item">
-                        3. Score: 0.5 - 0.7 : <strong>Possibly human</strong> — Recommended Action: Could be legitimate traffic.
+                        3. Score: 0.5 - 0.7 : <strong>{{ translate('Possibly human') }}</strong> — {{ translate('Recommended Action: Could be legitimate traffic.') }}
                     </li>
                     <li class="list-group-item">
-                        4. Score: 0.7 - 0.9 : <strong>Likely human</strong> — Recommended Action: Probably safe to allow.
+                        4. Score: 0.7 - 0.9 : <strong>{{ translate('Likely human') }}</strong> — {{ translate('Recommended Action: Probably safe to allow.') }}
                     </li>
                     <li class="list-group-item">
-                        5. Score: 0.9 - 1.0 : <strong>Very likely human</strong> — Recommended Action: Definitely safe to allow.
+                        5. Score: 0.9 - 1.0 : <strong>{{ translate('Very likely human') }}</strong> — {{ translate('Recommended Action: Definitely safe to allow.') }}
                     </li>
                     <li class="list-group-item">
-                        6. If Google reCAPTCHA v3 credentials have not yet been created, please register your site by visiting
-                        <a href="https://www.google.com/recaptcha/admin/create" target="_blank">this link</a> and complete the setup process.
+                        6. {{ translate('If Google reCAPTCHA v3 credentials have not yet been created, please register your site by visiting') }}
+                        <a href="https://www.google.com/recaptcha/admin/create" target="_blank">{{ translate('this link') }}</a> {{ translate('and complete the setup process.') }}
                     </li>
                 </ul>
 
@@ -104,20 +104,20 @@
         <div class="card">
             <div class="card-body p-0">
                 <ul class="list-group mb-4">
-                    <li class="list-group-item bg-light" aria-current="true">Recaptcha Applicable Pages</li>
+                    <li class="list-group-item bg-light" aria-current="true">{{ translate('Recaptcha Applicable Pages') }}</li>
                     <li class="list-group-item">
                        <div class="row">
                             @php
                                 $settings = [
-                                    'recaptcha_admin_login' => 'Admin Login',
-                                    'recaptcha_customer_login' => 'Customer Login',
-                                    'recaptcha_customer_register' => 'Customer Registration',
-                                    'recaptcha_seller_login' => 'Seller Login',
-                                    'recaptcha_seller_register' => 'Seller Registration',
-                                    'recaptcha_seller_mail_verification' => 'Seller Mail Verification',
-                                    'recaptcha_forgot_password' => 'Forgot Password',
-                                    'recaptcha_delivery_boy_login' => 'Delivery Boy Login',
-                                    'recaptcha_contact_form' => 'Contact Us Form',
+                                    'recaptcha_admin_login' => translate('Admin Login'),
+                                    'recaptcha_customer_login' => translate('Customer Login'),
+                                    'recaptcha_customer_register' => translate('Customer Registration'),
+                                    'recaptcha_seller_login' => translate('Seller Login'),
+                                    'recaptcha_seller_register' => translate('Seller Registration'),
+                                    'recaptcha_seller_mail_verification' => translate('Seller Mail Verification'),
+                                    'recaptcha_forgot_password' => translate('Forgot Password'),
+                                    'recaptcha_delivery_boy_login' => translate('Delivery Boy Login'),
+                                    'recaptcha_contact_form' => translate('Contact Us Form'),
                                 ]; 
                                 if (addon_is_activated('affiliate_system')) {
                                     $settings['recaptcha_affiliate_apply'] = 'Affiliate Application Form';
@@ -159,8 +159,8 @@
                     </svg>
                     <p class="mt-3 mb-3 fs-16 fw-700" id="confirmation-message"></p>
                     <div>
-                        <button type="button" class="btn btn-light rounded-2 mt-2 fs-13 fw-700 w-150px" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-warning rounded-2 mt-2 fs-13 fw-700 w-250px" onclick="confirmSettingChange()">Confirm</button>
+                        <button type="button" class="btn btn-light rounded-2 mt-2 fs-13 fw-700 w-150px" data-dismiss="modal">{{ translate('Cancel') }}</button>
+                        <button type="button" class="btn btn-warning rounded-2 mt-2 fs-13 fw-700 w-250px" onclick="confirmSettingChange()">{{ translate('Confirm') }}</button>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
     function triggerConfirmation(el, type, label) {
         pendingElement = el;
         pendingType = type;
-        $('#confirm-modal .modal-body p').text(`Are you sure you want to change the Recaptcha setting for "${label}"?`);
+        $('#confirm-modal .modal-body p').text(`{{ translate('Are you sure you want to change the Recaptcha setting for') }} "${label}" ?`);
         $('#confirm-modal').modal('show');
     }
 
@@ -219,7 +219,7 @@
                 if (data == 1) {
                     AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
                 } else {
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }
