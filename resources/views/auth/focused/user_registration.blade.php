@@ -29,6 +29,10 @@
                                 <div class="">
                                     <form id="reg-form" class="form-default" role="form" action="{{ route('register') }}" method="POST">
                                         @csrf
+                                        {{-- Honeypot anti-bot --}}
+                                        <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                                            <input type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                                        </div>
                                         <!-- Name -->
                                         <div class="form-group">
                                             <label for="name" class="fs-12 fw-700 text-soft-dark">{{  translate('Full Name') }}</label>

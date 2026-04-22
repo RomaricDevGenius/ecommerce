@@ -74,7 +74,9 @@ Route::controller(AizUploadController::class)->group(function () {
 });
 
 Route::group(['middleware' => ['prevent-back-history','handle-demo-login']], function () {
-    Auth::routes(['verify' => true]);
+    Auth::routes(['verify' => true, 'register' => false]);
+    Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('throttle:5,60');
 });
 
 // Login
