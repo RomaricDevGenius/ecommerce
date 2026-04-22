@@ -67,6 +67,13 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
             Route::get('purchase-history-details/{id}', [DeliveryBoyController::class, 'details'])->middleware('auth:sanctum');
             Route::get('purchase-history-items/{id}', [DeliveryBoyController::class, 'items'])->middleware('auth:sanctum');
         });
+
+        // Withdrawal requests (delivery boy side)
+        Route::controller(DeliveryBoyWithdrawRequestController::class)->middleware('auth:sanctum')->group(function () {
+            Route::get('withdraw-requests', 'index');
+            Route::get('withdraw-summary', 'summary');
+            Route::post('withdraw-requests', 'store');
+        });
     });
 
     Route::apiResource('carts', CartController::class)->only('destroy');

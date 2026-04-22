@@ -15,12 +15,13 @@
 //Admin
 
 use App\Http\Controllers\DeliveryBoyController;
+use App\Http\Controllers\DeliveryBoyWithdrawRequestController;
 use App\Http\Controllers\OrderController;
 
 Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function(){
     //Delivery Boy
     Route::resource('delivery-boys', DeliveryBoyController::class);
-    
+
     Route::controller(DeliveryBoyController::class)->group(function () {
         Route::get('/delivery-boy/ban/{id}', 'ban')->name('delivery-boy.ban');
         Route::get('/delivery-boy-configuration', 'delivery_boy_configure')->name('delivery-boy-configuration');
@@ -31,7 +32,16 @@ Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin', 'prevent-bac
         Route::get('/delivery-boys-payment-histories', 'delivery_boys_payment_histories')->name('delivery-boys-payment-histories');
         Route::get('/delivery-boys-collection-histories', 'delivery_boys_collection_histories')->name('delivery-boys-collection-histories');
         Route::get('/delivery-boy/cancel-request', 'cancel_request_list')->name('delivery-boy.cancel-request');
-        
+
+    });
+
+    // Delivery Boy Withdrawal Requests
+    Route::controller(DeliveryBoyWithdrawRequestController::class)->group(function () {
+        Route::get('/delivery-boy-withdraw-requests', 'index')->name('delivery-boy-withdraw-requests.index');
+        Route::post('/delivery-boy-withdraw-requests/detail', 'detail')->name('delivery-boy-withdraw-requests.detail');
+        Route::patch('/delivery-boy-withdraw-requests/{id}/approve', 'approve')->name('delivery-boy-withdraw-requests.approve');
+        Route::patch('/delivery-boy-withdraw-requests/{id}/confirm-payment', 'confirmPayment')->name('delivery-boy-withdraw-requests.confirm-payment');
+        Route::patch('/delivery-boy-withdraw-requests/{id}/reject', 'reject')->name('delivery-boy-withdraw-requests.reject');
     });
 });
 
