@@ -57,11 +57,32 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        $blockedDomains = [
+            'example.com', 'mailinator.com', 'tempmail.com', 'guerrillamail.com',
+            'throwam.com', 'yopmail.com', 'trashmail.com', 'fakeinbox.com',
+            'sharklasers.com', 'guerrillamail.info', 'spam4.me', 'dispostable.com',
+            'mailnull.com', 'spamgourmet.com', 'trashmail.me', 'maildrop.cc',
+            'getairmail.com', 'filzmail.com', 'throwam.com', 'spamfree24.org',
+            'discard.email', 'mailexpire.com', 'spamgourmet.org', 'tempinbox.com',
+        ];
+
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'password' => 'required|string|min:6|confirmed',
+            'name'         => ['required', 'string', 'min:3', 'max:50', 'regex:/^[\pL\s\-]+$/u'],
+            'country_code' => ['sometimes', 'nullable', 'regex:/^[0-9]{1,4}$/'],
+            'email'        => [
+                'sometimes', 'nullable',
+                function ($attribute, $value, $fail) use ($blockedDomains) {
+                    if ($value) {
+                        $domain = strtolower(substr(strrchr($value, '@'), 1));
+                        if (in_array($domain, $blockedDomains)) {
+                            $fail(translate('This email domain is not allowed. Please use a valid email address.'));
+                        }
+                    }
+                },
+            ],
+            'password'             => 'required|string|min:6|confirmed',
             'g-recaptcha-response' => [
-                Rule::when(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_register') == 1 , ['required', new Recaptcha()], ['sometimes'])
+                Rule::when(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_register') == 1, ['required', new Recaptcha()], ['sometimes'])
             ]
         ]);
     }
@@ -139,7 +160,10 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        //dd($request->all());
+        if (!empty($request->input('website'))) {
+            return redirect()->route('home');
+        }
+
         if (filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
             if(User::where('email', $request->email)->first() != null){
                 flash(translate('Email or Phone already exists.'));
