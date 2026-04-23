@@ -125,7 +125,12 @@ class DeliveryBoyWithdrawRequestController extends Controller
             'viewed'          => false,
         ]);
 
-        // Notify admins (via Firebase if configured)
+        // Email à l'admin
+        try {
+            \App\Utility\EmailUtility::deliveryBoyWithdrawRequestEmail($withdrawRequest);
+        } catch (\Throwable $e) {}
+
+        // Push Firebase si configuré
         $this->notifyAdmins($withdrawRequest);
 
         return response()->json([

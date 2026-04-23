@@ -77,6 +77,9 @@ class DeliveryBoyWithdrawRequestController extends Controller
             $withdraw_request->id
         );
 
+        // SMS au livreur
+        $this->sendWithdrawSms('approved', $withdraw_request);
+
         flash(translate('Withdrawal request approved.'))->success();
         return back();
     }
@@ -126,6 +129,9 @@ class DeliveryBoyWithdrawRequestController extends Controller
             $withdraw_request->id
         );
 
+        // SMS au livreur
+        $this->sendWithdrawSms('paid', $withdraw_request);
+
         flash(translate('Payment confirmed successfully.'))->success();
         return back();
     }
@@ -154,6 +160,9 @@ class DeliveryBoyWithdrawRequestController extends Controller
             $withdraw_request->id
         );
 
+        // SMS au livreur
+        $this->sendWithdrawSms('rejected', $withdraw_request);
+
         flash(translate('Withdrawal request rejected.'))->success();
         return back();
     }
@@ -162,6 +171,29 @@ class DeliveryBoyWithdrawRequestController extends Controller
     {
         $req = DeliveryBoyWithdrawRequest::with('deliveryBoy')->findOrFail($request->id);
         return view('backend.delivery_boys.withdraw_requests.detail_modal', compact('req'));
+    }
+
+    private function sendWithdrawSms(string $event, $withdrawRequest): void
+    {
+        if (!addon_is_activated('otp_system')) {
+            return;
+        }
+
+        $phone = $withdrawRequest->deliveryBoy?->phone;
+        if (!$phone) {
+            return;
+        }
+
+        try {
+            match ($event) {
+                'approved' => \App\Utility\SmsUtility::delivery_boy_withdraw_approved($phone, $withdrawRequest),
+                'paid'     => \App\Utility\SmsUtility::delivery_boy_withdraw_paid($phone, $withdrawRequest),
+                'rejected' => \App\Utility\SmsUtility::delivery_boy_withdraw_rejected($phone, $withdrawRequest),
+                default    => null,
+            };
+        } catch (\Throwable $e) {
+            // Ne jamais bloquer l'action admin à cause d'un SMS
+        }
     }
 
     private function notifyDeliveryBoy(?User $user, string $title, string $body, int $requestId): void
