@@ -38,14 +38,41 @@ class DeliveryBoyWithdrawRequestController extends Controller
                             ->whereIn('status', ['pending', 'approved'])
                             ->exists();
 
+        // Build withdrawal methods from active payment methods
+        $methodDefs = [
+            ['value' => 'orange_money', 'label' => 'Orange Money', 'pm_name' => 'orange'],
+            ['value' => 'moov_money',   'label' => 'Moov Money',   'pm_name' => 'moov'],
+            ['value' => 'coris_money',  'label' => 'Coris Money',  'pm_name' => 'coris'],
+        ];
+
+        $withdrawalMethods = [];
+        foreach ($methodDefs as $def) {
+            $active = \App\Models\PaymentMethod::where('name', $def['pm_name'])
+                ->where('active', 1)
+                ->exists();
+            if ($active) {
+                $withdrawalMethods[] = [
+                    'value'     => $def['value'],
+                    'label'     => $def['label'],
+                    'image_url' => static_asset('assets/img/cards/' . $def['pm_name'] . '.png'),
+                ];
+            }
+        }
+        $withdrawalMethods[] = [
+            'value'     => 'cash',
+            'label'     => translate('Cash'),
+            'image_url' => null,
+        ];
+
         return response()->json([
-            'result'          => true,
-            'balance'         => $balance,
-            'balance_formatted' => format_price($balance),
-            'minimum_withdraw' => $minimum,
+            'result'                     => true,
+            'balance'                    => $balance,
+            'balance_formatted'          => format_price($balance),
+            'minimum_withdraw'           => $minimum,
             'minimum_withdraw_formatted' => format_price($minimum),
-            'has_pending_request' => $hasPending,
-            'can_withdraw'    => $balance >= $minimum && !$hasPending,
+            'has_pending_request'        => $hasPending,
+            'can_withdraw'               => $balance >= $minimum && !$hasPending,
+            'withdrawal_methods'         => $withdrawalMethods,
         ]);
     }
 
