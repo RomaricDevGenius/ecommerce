@@ -397,4 +397,38 @@ class EmailUtility
         Mail::to($user->email)->queue(new MailManager($array));
     }
 
+    // Email à l'admin quand un livreur soumet une demande de retrait
+    public static function deliveryBoyWithdrawRequestEmail($withdrawRequest): void
+    {
+        $admin         = get_admin();
+        $emailTemplate = EmailTemplate::whereIdentifier('delivery_boy_withdraw_request_to_admin')->first();
+
+        if (!$emailTemplate || !$emailTemplate->status || !$admin->email) {
+            return;
+        }
+
+        $boy = $withdrawRequest->deliveryBoy;
+
+        $emailSubject = $emailTemplate->subject;
+        $emailSubject = str_replace('[[delivery_boy_name]]', $boy->name ?? '', $emailSubject);
+        $emailSubject = str_replace('[[store_name]]', get_setting('site_name'), $emailSubject);
+
+        $emailBody = $emailTemplate->default_text;
+        $emailBody = str_replace('[[admin_name]]',         $admin->name,                               $emailBody);
+        $emailBody = str_replace('[[store_name]]',         get_setting('site_name'),                   $emailBody);
+        $emailBody = str_replace('[[delivery_boy_name]]',  $boy->name   ?? '',                         $emailBody);
+        $emailBody = str_replace('[[delivery_boy_phone]]', $boy->phone  ?? '',                         $emailBody);
+        $emailBody = str_replace('[[amount]]',             single_price($withdrawRequest->amount),     $emailBody);
+        $emailBody = str_replace('[[payment_method]]',     $withdrawRequest->payment_method_label,     $emailBody);
+        $emailBody = str_replace('[[date]]',               date('d/m/Y H:i', strtotime($withdrawRequest->created_at)), $emailBody);
+        $emailBody = str_replace('[[admin_email]]',        $admin->email,                              $emailBody);
+
+        $array['subject'] = $emailSubject;
+        $array['content'] = $emailBody;
+
+        try {
+            Mail::to($admin->email)->queue(new MailManager($array));
+        } catch (\Exception $e) {}
+    }
+
 }

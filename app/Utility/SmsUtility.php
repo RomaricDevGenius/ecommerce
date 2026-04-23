@@ -92,8 +92,45 @@ class SmsUtility
         $sms_body       = $sms_template->sms_body;
         $sms_body       = str_replace('[[order_code]]', $code, $sms_body);
         $template_id    = $sms_template->template_id;
-        
+
         (new SendSmsService())->sendSMS($phone, env('APP_NAME'), $sms_body, $template_id);
-        
+    }
+
+    public static function delivery_boy_withdraw_approved($phone, $withdrawRequest): void
+    {
+        $sms_template = SmsTemplate::where('identifier', 'delivery_boy_withdraw_approved')->first();
+        if (!$sms_template || !$sms_template->status) return;
+
+        $sms_body = $sms_template->sms_body;
+        $sms_body = str_replace('[[amount]]',    single_price($withdrawRequest->amount), $sms_body);
+        $sms_body = str_replace('[[site_name]]', env('APP_NAME'),                        $sms_body);
+
+        (new SendSmsService())->sendSMS($phone, env('APP_NAME'), $sms_body, $sms_template->template_id);
+    }
+
+    public static function delivery_boy_withdraw_paid($phone, $withdrawRequest): void
+    {
+        $sms_template = SmsTemplate::where('identifier', 'delivery_boy_withdraw_paid')->first();
+        if (!$sms_template || !$sms_template->status) return;
+
+        $sms_body = $sms_template->sms_body;
+        $sms_body = str_replace('[[amount]]',         single_price($withdrawRequest->amount),        $sms_body);
+        $sms_body = str_replace('[[payment_method]]', $withdrawRequest->payment_method_label ?? '',  $sms_body);
+        $sms_body = str_replace('[[site_name]]',      env('APP_NAME'),                               $sms_body);
+
+        (new SendSmsService())->sendSMS($phone, env('APP_NAME'), $sms_body, $sms_template->template_id);
+    }
+
+    public static function delivery_boy_withdraw_rejected($phone, $withdrawRequest): void
+    {
+        $sms_template = SmsTemplate::where('identifier', 'delivery_boy_withdraw_rejected')->first();
+        if (!$sms_template || !$sms_template->status) return;
+
+        $sms_body = $sms_template->sms_body;
+        $sms_body = str_replace('[[amount]]',    single_price($withdrawRequest->amount),           $sms_body);
+        $sms_body = str_replace('[[reason]]',    $withdrawRequest->rejection_reason ?? '',          $sms_body);
+        $sms_body = str_replace('[[site_name]]', env('APP_NAME'),                                   $sms_body);
+
+        (new SendSmsService())->sendSMS($phone, env('APP_NAME'), $sms_body, $sms_template->template_id);
     }
 }
