@@ -61,7 +61,7 @@ class DeliveryBoyWithdrawRequestController extends Controller
         $withdrawalMethods[] = [
             'value'     => 'cash',
             'label'     => translate('Cash'),
-            'image_url' => null,
+            'image_url' => static_asset('assets/img/cards/cod.png'),
         ];
 
         return response()->json([
