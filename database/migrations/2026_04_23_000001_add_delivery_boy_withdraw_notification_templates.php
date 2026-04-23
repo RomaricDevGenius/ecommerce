@@ -44,7 +44,7 @@ class AddDeliveryBoyWithdrawNotificationTemplates extends Migration
         $smsTemplates = [
             [
                 'identifier'  => 'delivery_boy_withdraw_approved',
-                'sms_body'    => 'Bonjour, votre demande de retrait de [[amount]] a été approuvée. Le paiement sera effectué prochainement. – [[site_name]]',
+                'sms_body'    => 'Bonjour, votre demande de retrait de [[amount]] a été approuvée. Le paiement sera effectué sous peu. – [[site_name]]',
                 'template_id' => null,
                 'status'      => 1,
             ],
