@@ -51,7 +51,6 @@
 @endsection
 
 @section('script')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
     $('#validate_button').prop('disabled', true);
@@ -90,21 +89,20 @@ $(function() {
                 closeLoader();
                 if (data.success) {
                     if (data.message) {
-                        Swal.fire({ title: '{{ translate("Success") }}', text: data.message, icon: 'info', confirmButtonText: 'OK' }).then(function() {
-                            if (data.url) {
-                                window.location.href = data.url;
-                            }
-                        });
+                        AIZ.plugins.notify('success', data.message);
+                        setTimeout(function() {
+                            if (data.url) window.location.href = data.url;
+                        }, 2000);
                     } else if (data.url) {
                         window.location.href = data.url;
                     }
                 } else {
-                    Swal.fire({ title: '{{ translate("Error") }}', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                    AIZ.plugins.notify('danger', data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
                 }
             })
             .fail(function() {
                 closeLoader();
-                Swal.fire({ title: '{{ translate("Error") }}', text: "{{ translate('An unexpected error occurred, please try again later') }}", icon: 'error', confirmButtonText: 'OK' });
+                AIZ.plugins.notify('danger', "{{ translate('An unexpected error occurred, please try again later') }}");
             });
     });
 });
