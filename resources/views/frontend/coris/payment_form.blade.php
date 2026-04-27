@@ -87,10 +87,24 @@
             </div>
         </div>
     </section>
+
+<!-- Modal confirmation paiement Coris -->
+<div class="modal fade" id="corisSuccessModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#006400; color:#fff;">
+                <h5 class="modal-title"><i class="las la-check-circle mr-2"></i>Paiement réussi</h5>
+            </div>
+            <div class="modal-body" id="corisSuccessBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success fw-600" id="corisSuccessBtn">Continuer</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
         $(function () {
 
@@ -115,7 +129,6 @@
                     success: function (response) {
                         setLoading('btn_send_otp', 'spinner_send_otp', 'text_send_otp', false, '{{ translate('Receive OTP code') }}');
                         if (response.success) {
-                            // Passer à l'étape 2
                             $('#form_phone_number').val(phone);
                             $('#coris-step-1').addClass('d-none');
                             $('#coris-step-2').removeClass('d-none');
@@ -164,17 +177,15 @@
                     success: function (response) {
                         setLoading('btn_confirm_payment', 'spinner_confirm', 'text_confirm', false, '{{ translate('Confirm Payment') }}');
                         if (response.success && response.url) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Paiement réussi',
-                                html:
-                                    '<p>Moyen de paiement : <strong>Coris Money</strong></p>' +
-                                    '<p>Téléphone : <strong>' + phone + '</strong></p>' +
-                                    '<p>ID Transaction : <strong>' + (response.transaction_id || 'N/A') + '</strong></p>',
-                                confirmButtonText: 'Continuer'
-                            }).then(function () {
+                            var html =
+                                '<p><strong>Moyen de paiement :</strong> Coris Money</p>' +
+                                '<p><strong>Téléphone :</strong> ' + phone + '</p>' +
+                                '<p><strong>ID Transaction :</strong> ' + (response.transaction_id || 'N/A') + '</p>';
+                            $('#corisSuccessBody').html(html);
+                            $('#corisSuccessBtn').off('click').on('click', function () {
                                 window.location.href = response.url;
                             });
+                            $('#corisSuccessModal').modal('show');
                         } else {
                             showMsg('msg_step2', 'danger', response.message || 'Paiement échoué. Veuillez réessayer.');
                         }

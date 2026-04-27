@@ -63,10 +63,24 @@
     </div>
 
 </section>
+
+<!-- Modal confirmation paiement Orange -->
+<div class="modal fade" id="orangeSuccessModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#ff6600; color:#fff;">
+                <h5 class="modal-title"><i class="las la-check-circle mr-2"></i>{{ translate('Payment successful') }}</h5>
+            </div>
+            <div class="modal-body" id="orangeSuccessBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary fw-600" id="orangeSuccessBtn">{{ translate('Continue') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
     function showLoading() {
@@ -108,24 +122,22 @@ $(function() {
                 hideLoading();
                 if (data.success) {
                     var p = data.payment || {};
-                    Swal.fire({
-                        icon: 'success',
-                        title: "{{ translate('Payment successful') }}",
-                        html:
-                            '<p>{{ translate('Payment method') }} : <strong>' + (p.method || 'Orange Money') + '</strong></p>' +
-                            '<p>{{ translate('Phone') }} : <strong>' + (p.phone || '') + '</strong></p>' +
-                            '<p>{{ translate('Transaction ID') }} : <strong>' + (p.transaction_id || '') + '</strong></p>',
-                        confirmButtonText: "{{ translate('Continue') }}"
-                    }).then(function() {
+                    var html =
+                        '<p><strong>{{ translate('Payment method') }} :</strong> ' + (p.method || 'Orange Money') + '</p>' +
+                        '<p><strong>{{ translate('Phone') }} :</strong> ' + (p.phone || '') + '</p>' +
+                        '<p><strong>{{ translate('Transaction ID') }} :</strong> ' + (p.transaction_id || '') + '</p>';
+                    $('#orangeSuccessBody').html(html);
+                    $('#orangeSuccessBtn').off('click').on('click', function() {
                         window.location.href = data.url;
                     });
+                    $('#orangeSuccessModal').modal('show');
                 } else {
-                    Swal.fire({ title: 'Error', text: data.message, icon: 'error', confirmButtonText: 'OK' });
+                    AIZ.plugins.notify('danger', data.message || "{{ translate('An unexpected error occurred') }}");
                 }
             })
             .fail(function() {
                 hideLoading();
-                Swal.fire({ title: 'Error', text: "{{ translate('An unexpected error occurred') }}", icon: 'error', confirmButtonText: 'OK' });
+                AIZ.plugins.notify('danger', "{{ translate('An unexpected error occurred') }}");
             });
     });
 });
