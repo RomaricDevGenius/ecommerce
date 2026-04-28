@@ -68,7 +68,7 @@
 <div class="modal fade" id="orangeSuccessModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header" style="background:#ff6600; color:#fff;">
+            <div class="modal-header" style="background:#28a745; color:#fff;">
                 <h5 class="modal-title"><i class="las la-check-circle mr-2"></i>{{ translate('Payment successful') }}</h5>
             </div>
             <div class="modal-body" id="orangeSuccessBody"></div>

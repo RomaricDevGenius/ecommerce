@@ -1917,6 +1917,8 @@ function get_french_translations_fallback()
         'cash' => 'Espèces',
         'close' => 'Fermer',
         'cancel' => 'Annuler',
+        'payment_successful' => 'Paiement réussi',
+        'continue' => 'Continuer',
     ];
 }
 
