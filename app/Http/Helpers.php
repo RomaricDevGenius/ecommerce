@@ -1919,6 +1919,8 @@ function get_french_translations_fallback()
         'cancel' => 'Annuler',
         'payment_successful' => 'Paiement réussi',
         'continue' => 'Continuer',
+        'pickup_location_for_delivery_boy' => 'Emplacement de collecte pour le livreur',
+        'monthly_earnings' => 'Gains mensuel',
     ];
 }
 

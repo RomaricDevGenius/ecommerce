@@ -22,7 +22,7 @@
                             <input type="hidden" name="types[]" value="delivery_boy_payment_type">
 
                             <label class="col-md-4 col-from-label">
-                                {{ translate('Monthly Salary') }}
+                                {{ translate('Monthly Earnings') }}
                             </label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
