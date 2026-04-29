@@ -1,10 +1,37 @@
 @extends('backend.layouts.app')
 
 @section('content')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map {
+        #pickup-map {
             width: 100%;
-            height: 250px;
+            height: 320px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        #pickup-search-wrapper {
+            position: relative;
+        }
+        #pickup-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.12);
+        }
+        #pickup-search-results .list-group-item {
+            font-size: 13px;
+            padding: 8px 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 
@@ -156,65 +183,49 @@
                     <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        @if (get_setting('google_map') == 1)
-                            <div class="row">
-                                <input id="searchInput" class="controls" type="text"
-                                    placeholder="{{ translate('Enter a location') }}">
-                                <div id="map"></div>
-                                <ul id="geoData">
-                                    <li style="display: none;">Full Address: <span id="location"></span></li>
-                                    <li style="display: none;">Postal Code: <span id="postal_code"></span></li>
-                                    <li style="display: none;">Country: <span id="country"></span></li>
-                                    <li style="display: none;">Latitude: <span id="lat"></span></li>
-                                    <li style="display: none;">Longitude: <span id="lon"></span></li>
-                                </ul>
+                        {{-- ── Sélecteur de point de ramassage OpenStreetMap ── --}}
+                        <div class="form-group row">
+                            <div class="col-12" id="pickup-search-wrapper">
+                                <div class="input-group">
+                                    <input type="text" id="pickup-search" class="form-control"
+                                        placeholder="{{ translate('Search an address…') }}">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" id="pickup-search-btn">
+                                            <i class="la la-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="pickup-search-results" class="list-group bg-white"></div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Longitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="hidden" name="types[]" value="delivery_pickup_longitude">
-                                    <input type="text" class="form-control mb-3" id="longitude"
-                                        name="delivery_pickup_longitude" readonly=""
-                                        value="{{ get_setting('delivery_pickup_longitude') }}">
-                                </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <div id="pickup-map"></div>
+                                <small class="text-muted">
+                                    {{ translate('Click on the map or drag the marker to set the pickup point.') }}
+                                </small>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Latitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="hidden" name="types[]" value="delivery_pickup_latitude">
-                                    <input type="text" class="form-control mb-3" id="latitude"
-                                        name="delivery_pickup_latitude" readonly=""
-                                        value="{{ get_setting('delivery_pickup_latitude') }}">
-                                </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label">Latitude</label>
+                            <div class="col-md-10">
+                                <input type="hidden" name="types[]" value="delivery_pickup_latitude">
+                                <input type="text" class="form-control" id="pickup-lat"
+                                    name="delivery_pickup_latitude" readonly
+                                    value="{{ get_setting('delivery_pickup_latitude') }}">
                             </div>
-                        @else
-                            <div class="form-group row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Longitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="hidden" name="types[]" value="delivery_pickup_longitude">
-                                    <input type="text" class="form-control mb-3" id="longitude"
-                                        name="delivery_pickup_longitude"
-                                        value="{{ get_setting('delivery_pickup_longitude') }}">
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label">Longitude</label>
+                            <div class="col-md-10">
+                                <input type="hidden" name="types[]" value="delivery_pickup_longitude">
+                                <input type="text" class="form-control" id="pickup-lng"
+                                    name="delivery_pickup_longitude" readonly
+                                    value="{{ get_setting('delivery_pickup_longitude') }}">
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Latitude</label>
-                                </div>
-                                <div class="col-md-10" id="">
-                                    <input type="hidden" name="types[]" value="delivery_pickup_latitude">
-                                    <input type="text" class="form-control mb-3" id="latitude"
-                                        name="delivery_pickup_latitude"
-                                        value="{{ get_setting('delivery_pickup_latitude') }}">
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                         </div>
@@ -250,126 +261,96 @@
         })(jQuery);
     </script>
 
-    @if (get_setting('google_map') == 1)
-        <script>
-            let default_longtitude = "{{ get_setting('google_map_longtitude') }}";
-            let default_latitude = "{{ get_setting('google_map_latitude') }}";
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function () {
+        var savedLat = parseFloat('{{ get_setting("delivery_pickup_latitude") ?: "12.3714" }}');
+        var savedLng = parseFloat('{{ get_setting("delivery_pickup_longitude") ?: "-1.5197" }}');
+        var hasPin   = {{ get_setting('delivery_pickup_latitude') ? 'true' : 'false' }};
 
-            function initialize(lat = -33.8688, lang = 151.2195, id_format = '') {
+        var map = L.map('pickup-map').setView([savedLat, savedLng], hasPin ? 15 : 13);
 
-                var long = lang;
-                var lat = lat;
-                if (default_longtitude != '' && default_latitude != '') {
-                    long = default_longtitude;
-                    lat = default_latitude;
-                }
-                
-                @if (get_setting('delivery_pickup_latitude'))
-                    long = {{ get_setting('delivery_pickup_longitude') }};
-                    lat = {{ get_setting('delivery_pickup_latitude') }};
-                @endif
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
 
-                var map = new google.maps.Map(document.getElementById(id_format + 'map'), {
-                    center: {
-                        lat: lat,
-                        lng: long
-                    },
-                    zoom: 13
+        var marker = L.marker([savedLat, savedLng], { draggable: true });
+        if (hasPin) marker.addTo(map);
+
+        function updateFields(lat, lng) {
+            document.getElementById('pickup-lat').value = lat.toFixed(6);
+            document.getElementById('pickup-lng').value = lng.toFixed(6);
+        }
+
+        if (hasPin) updateFields(savedLat, savedLng);
+
+        map.on('click', function (e) {
+            marker.setLatLng(e.latlng);
+            if (!map.hasLayer(marker)) marker.addTo(map);
+            updateFields(e.latlng.lat, e.latlng.lng);
+        });
+
+        marker.on('dragend', function () {
+            var pos = marker.getLatLng();
+            updateFields(pos.lat, pos.lng);
+        });
+
+        // ── Nominatim search ────────────────────────────────────────────────
+        var searchInput   = document.getElementById('pickup-search');
+        var searchResults = document.getElementById('pickup-search-results');
+        var searchTimer;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            var q = this.value.trim();
+            if (q.length < 3) { searchResults.style.display = 'none'; return; }
+            searchTimer = setTimeout(function () { doSearch(q); }, 500);
+        });
+
+        document.getElementById('pickup-search-btn').addEventListener('click', function () {
+            var q = searchInput.value.trim();
+            if (q.length >= 3) doSearch(q);
+        });
+
+        function doSearch(q) {
+            fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
+                  '&format=json&limit=5&countrycodes=bf,ci,sn,ml,ne,tg,bj', {
+                headers: { 'User-Agent': 'DakwariAdmin/1.0 (contact@dakwari.com)' }
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                searchResults.innerHTML = '';
+                if (!data.length) { searchResults.style.display = 'none'; return; }
+                data.forEach(function (item) {
+                    var a = document.createElement('a');
+                    a.className = 'list-group-item list-group-item-action';
+                    a.href = '#';
+                    a.title = item.display_name;
+                    a.textContent = item.display_name;
+                    a.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var lat = parseFloat(item.lat);
+                        var lng = parseFloat(item.lon);
+                        map.setView([lat, lng], 16);
+                        marker.setLatLng([lat, lng]);
+                        if (!map.hasLayer(marker)) marker.addTo(map);
+                        updateFields(lat, lng);
+                        searchInput.value = item.display_name;
+                        searchResults.style.display = 'none';
+                    });
+                    searchResults.appendChild(a);
                 });
+                searchResults.style.display = 'block';
+            })
+            .catch(function () {});
+        }
 
-                var myLatlng = new google.maps.LatLng(lat, long);
-
-                var input = document.getElementById(id_format + 'searchInput');
-                //                console.log(input);
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-                var autocomplete = new google.maps.places.Autocomplete(input);
-
-                autocomplete.bindTo('bounds', map);
-
-                var infowindow = new google.maps.InfoWindow();
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: myLatlng,
-                    anchorPoint: new google.maps.Point(0, -29),
-                    draggable: true,
-                });
-
-                map.addListener('click', function(event) {
-                    marker.setPosition(event.latLng);
-                    document.getElementById(id_format + 'latitude').value = event.latLng.lat();
-                    document.getElementById(id_format + 'longitude').value = event.latLng.lng();
-                    infowindow.setContent('Latitude: ' + event.latLng.lat() + '<br>Longitude: ' + event.latLng.lng());
-                    infowindow.open(map, marker);
-                });
-
-                google.maps.event.addListener(marker, 'dragend', function(event) {
-                    document.getElementById(id_format + 'latitude').value = event.latLng.lat();
-                    document.getElementById(id_format + 'longitude').value = event.latLng.lng();
-                    infowindow.setContent('Latitude: ' + event.latLng.lat() + '<br>Longitude: ' + event.latLng.lng());
-                    infowindow.open(map, marker);
-                });
-
-                autocomplete.addListener('place_changed', function() {
-                    infowindow.close();
-                    marker.setVisible(false);
-                    var place = autocomplete.getPlace();
-
-                    if (!place.geometry) {
-                        window.alert("Autocomplete's returned place contains no geometry");
-                        return;
-                    }
-
-                    // If the place has a geometry, then present it on a map.
-                    if (place.geometry.viewport) {
-                        map.fitBounds(place.geometry.viewport);
-                    } else {
-                        map.setCenter(place.geometry.location);
-                        map.setZoom(17);
-                    }
-                    /*
-                    marker.setIcon(({
-                    	url: place.icon,
-                    	size: new google.maps.Size(71, 71),
-                    	origin: new google.maps.Point(0, 0),
-                    	anchor: new google.maps.Point(17, 34),
-                    	scaledSize: new google.maps.Size(35, 35)
-                    }));
-                    */
-                    marker.setPosition(place.geometry.location);
-                    marker.setVisible(true);
-
-                    var address = '';
-                    if (place.address_components) {
-                        address = [
-                            (place.address_components[0] && place.address_components[0].short_name || ''),
-                            (place.address_components[1] && place.address_components[1].short_name || ''),
-                            (place.address_components[2] && place.address_components[2].short_name || '')
-                        ].join(' ');
-                    }
-
-                    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-                    infowindow.open(map, marker);
-
-                    //Location details
-                    for (var i = 0; i < place.address_components.length; i++) {
-                        if (place.address_components[i].types[0] == 'postal_code') {
-                            document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
-                        }
-                        if (place.address_components[i].types[0] == 'country') {
-                            document.getElementById('country').innerHTML = place.address_components[i].long_name;
-                        }
-                    }
-                    document.getElementById('location').innerHTML = place.formatted_address;
-                    document.getElementById(id_format + 'latitude').value = place.geometry.location.lat();
-                    document.getElementById(id_format + 'longitude').value = place.geometry.location.lng();
-                });
-
+        document.addEventListener('click', function (e) {
+            if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.style.display = 'none';
             }
-        </script>
-
-        <script
-            src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_API_KEY') }}&libraries=places&language=en&callback=initialize"
-            async defer></script>
-    @endif
+        });
+    })();
+    </script>
 @endsection
