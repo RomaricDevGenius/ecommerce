@@ -858,7 +858,8 @@
         function doSearch(q) {
             var url = 'https://nominatim.openstreetmap.org/search'
                 + '?q=' + encodeURIComponent(q)
-                + '&format=json&limit=5&countrycodes=bf,ci,sn,ml,ne,tg,bj';
+                + '&format=json&limit=5&countrycodes=bf'
+                + '&viewbox=-5.5,15.1,2.4,9.4&bounded=1';
             fetch(url, { headers: { 'User-Agent': 'DakwariAdmin/1.0' } })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
