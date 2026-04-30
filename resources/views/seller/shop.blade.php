@@ -224,52 +224,61 @@
                     <input type="hidden" name="shop_id" value="{{ $shop->id }}">
                     @csrf
 
-                    @if (get_setting('google_map') == 1)
-                        <div class="row mb-3">
-                            <input id="searchInput" class="controls" type="text" placeholder="{{translate('Enter a location')}}">
-                            <div id="map"></div>
-                            <ul id="geoData">
-                                <li style="display: none;">{{ translate('Full Address') }}: <span id="location"></span></li>
-                                <li style="display: none;">{{ translate('Postal Code') }}: <span id="postal_code"></span></li>
-                                <li style="display: none;">{{ translate('Country') }}: <span id="country"></span></li>
-                                <li style="display: none;">{{ translate('Latitude') }}: <span id="lat"></span></li>
-                                <li style="display: none;">{{ translate('Longitude') }}: <span id="lon"></span></li>
-                            </ul>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2" id="">
-                                <label for="exampleInputuname">{{ translate('Longitude') }}</label>
-                            </div>
-                            <div class="col-md-10" id="">
-                                <input type="text" class="form-control mb-3" id="longitude" name="delivery_pickup_longitude" readonly="" value="{{ $shop->delivery_pickup_longitude }}">
+                    {{-- Leaflet Map - Pickup Point --}}
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+                    <div class="row mb-2">
+                        <div class="col-12" style="position:relative;">
+                            <input id="mapSearchInput" type="text" class="form-control"
+                                placeholder="{{ translate('Search a place or address') }}…"
+                                autocomplete="off">
+                            <div id="mapSearchResults"
+                                style="display:none; position:absolute; top:100%; left:15px; right:15px;
+                                       background:white; border:1px solid #dee2e6; border-top:none;
+                                       border-radius:0 0 6px 6px; z-index:1002; max-height:220px;
+                                       overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.1);">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2" id="">
-                                <label for="exampleInputuname">{{ translate('Latitude') }}</label>
-                            </div>
-                            <div class="col-md-10" id="">
-                                <input type="text" class="form-control mb-3" id="latitude" name="delivery_pickup_latitude" readonly="" value="{{ $shop->delivery_pickup_latitude }}">
-                            </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12" style="position:relative;">
+                            <div id="pickupMap" style="height:350px; border-radius:8px; border:1px solid #dee2e6; z-index:1;"></div>
+                            <button type="button" id="satelliteToggle"
+                                style="position:absolute; bottom:20px; right:20px; z-index:1000;
+                                       background:white; border:1px solid #aaa; border-radius:6px;
+                                       padding:5px 12px; font-size:12px; font-weight:600;
+                                       cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.2);">
+                                🛰 {{ translate('Satellite') }}
+                            </button>
+                            <small id="mapAttrib"
+                                style="position:absolute; bottom:6px; left:24px; z-index:1000;
+                                       color:#888; font-size:9px; pointer-events:none;">
+                                © OpenStreetMap contributors © CARTO
+                            </small>
                         </div>
-                    @else
-                        <div class="row">
-                            <div class="col-md-2" id="">
-                                <label for="exampleInputuname">{{ translate('Longitude') }}</label>
-                            </div>
-                            <div class="col-md-10" id="">
-                                <input type="text" class="form-control mb-3" id="longitude" name="delivery_pickup_longitude" value="{{ $shop->delivery_pickup_longitude }}">
-                            </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>{{ translate('Longitude') }}</label>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2" id="">
-                                <label for="exampleInputuname">{{ translate('Latitude') }}</label>
-                            </div>
-                            <div class="col-md-10" id="">
-                                <input type="text" class="form-control mb-3" id="latitude" name="delivery_pickup_latitude" value="{{ $shop->delivery_pickup_latitude }}">
-                            </div>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control mb-3" id="longitude"
+                                name="delivery_pickup_longitude"
+                                value="{{ $shop->delivery_pickup_longitude }}" readonly>
                         </div>
-                    @endif
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>{{ translate('Latitude') }}</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control mb-3" id="latitude"
+                                name="delivery_pickup_latitude"
+                                value="{{ $shop->delivery_pickup_latitude }}" readonly>
+                        </div>
+                    </div>
 
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-sm btn-primary">{{translate('Save')}}</button>
@@ -769,132 +778,123 @@
 
 @section('script')
 
-    @if (addon_is_activated('delivery_boy') && get_setting('google_map') == 1)
-            
+    @if (addon_is_activated('delivery_boy'))
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script>
-        function initialize(id_format = '') {
-            let default_longtitude = '';
-            let default_latitude = '';
-            @if (get_setting('google_map_longtitude') != '' && get_setting('google_map_longtitude') != '')
-                default_longtitude = {{ get_setting('google_map_longtitude') }};
-                default_latitude = {{ get_setting('google_map_latitude') }};
-            @endif
+    (function () {
+        var savedLat = parseFloat(document.getElementById('latitude').value) || null;
+        var savedLng = parseFloat(document.getElementById('longitude').value) || null;
+        var defaultLat = 12.3714, defaultLng = -1.5197; // Ouagadougou
 
-            var lat = -33.8688;
-            var long = 151.2195;
+        var map = L.map('pickupMap').setView(
+            [savedLat || defaultLat, savedLng || defaultLng],
+            savedLat ? 15 : 13
+        );
 
-            if (document.getElementById('latitude').value != '' &&
-                document.getElementById('longitude').value != '') {
-                lat = parseFloat(document.getElementById('latitude').value);
-                long = parseFloat(document.getElementById('longitude').value);
-            } else if (default_longtitude != '' &&
-                default_latitude != '') {
-                lat = default_latitude;
-                long = default_longtitude;
-            }
+        var cartoLayer = L.tileLayer(
+            'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+            { maxZoom: 19 }
+        ).addTo(map);
 
+        var satelliteLayer = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            { maxZoom: 19 }
+        );
 
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: {
-                    lat: lat,
-                    lng: long
-                },
-                zoom: 13
-            });
+        var isSatellite = false;
+        var marker = null;
 
-            var myLatlng = new google.maps.LatLng(lat, long);
-
-            var input = document.getElementById(id_format + 'searchInput');
-            // console.log(input);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-            var autocomplete = new google.maps.places.Autocomplete(input);
-
-            autocomplete.bindTo('bounds', map);
-
-            var infowindow = new google.maps.InfoWindow();
-            var marker = new google.maps.Marker({
-                map: map,
-                position: myLatlng,
-                anchorPoint: new google.maps.Point(0, -29),
-                draggable: true,
-            });
-
-            map.addListener('click', function(event) {
-                marker.setPosition(event.latLng);
-                document.getElementById(id_format + 'latitude').value = event.latLng.lat();
-                document.getElementById(id_format + 'longitude').value = event.latLng.lng();
-                infowindow.setContent('Latitude: ' + event.latLng.lat() + '<br>Longitude: ' + event.latLng.lng());
-                infowindow.open(map, marker);
-            });
-
-            google.maps.event.addListener(marker, 'dragend', function(event) {
-                document.getElementById(id_format + 'latitude').value = event.latLng.lat();
-                document.getElementById(id_format + 'longitude').value = event.latLng.lng();
-                infowindow.setContent('Latitude: ' + event.latLng.lat() + '<br>Longitude: ' + event.latLng.lng());
-                infowindow.open(map, marker);
-            });
-
-            autocomplete.addListener('place_changed', function() {
-                infowindow.close();
-                marker.setVisible(false);
-                var place = autocomplete.getPlace();
-
-                if (!place.geometry) {
-                    window.alert("Autocomplete's returned place contains no geometry");
-                    return;
-                }
-
-                // If the place has a geometry, then present it on a map.
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17);
-                }
-                /*
-                marker.setIcon(({
-                    url: place.icon,
-                    size: new google.maps.Size(71, 71),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(17, 34),
-                    scaledSize: new google.maps.Size(35, 35)
-                }));
-                */
-                marker.setPosition(place.geometry.location);
-                marker.setVisible(true);
-
-                var address = '';
-                if (place.address_components) {
-                    address = [
-                        (place.address_components[0] && place.address_components[0].short_name || ''),
-                        (place.address_components[1] && place.address_components[1].short_name || ''),
-                        (place.address_components[2] && place.address_components[2].short_name || '')
-                    ].join(' ');
-                }
-
-                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-                infowindow.open(map, marker);
-
-                //Location details
-                for (var i = 0; i < place.address_components.length; i++) {
-                    if (place.address_components[i].types[0] == 'postal_code') {
-                        document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
-                    }
-                    if (place.address_components[i].types[0] == 'country') {
-                        document.getElementById('country').innerHTML = place.address_components[i].long_name;
-                    }
-                }
-                document.getElementById('location').innerHTML = place.formatted_address;
-                document.getElementById(id_format + 'latitude').value = place.geometry.location.lat();
-                document.getElementById(id_format + 'longitude').value = place.geometry.location.lng();
-            });
-
+        if (savedLat && savedLng) {
+            marker = L.marker([savedLat, savedLng], { draggable: true }).addTo(map);
+            marker.on('dragend', function (e) { setCoords(e.target.getLatLng()); });
         }
+
+        function setCoords(latlng) {
+            document.getElementById('latitude').value  = latlng.lat.toFixed(7);
+            document.getElementById('longitude').value = latlng.lng.toFixed(7);
+        }
+
+        function placeMarker(lat, lng) {
+            var ll = L.latLng(lat, lng);
+            if (marker) {
+                marker.setLatLng(ll);
+            } else {
+                marker = L.marker(ll, { draggable: true }).addTo(map);
+                marker.on('dragend', function (e) { setCoords(e.target.getLatLng()); });
+            }
+            setCoords(ll);
+        }
+
+        map.on('click', function (e) { placeMarker(e.latlng.lat, e.latlng.lng); });
+
+        // ── Satellite toggle ─────────────────────────────────────────────────
+        document.getElementById('satelliteToggle').addEventListener('click', function () {
+            isSatellite = !isSatellite;
+            if (isSatellite) {
+                map.removeLayer(cartoLayer);
+                satelliteLayer.addTo(map);
+                this.textContent = '🗺 {{ translate("Plan") }}';
+                document.getElementById('mapAttrib').textContent = '© Esri, Maxar, Earthstar Geographics';
+            } else {
+                map.removeLayer(satelliteLayer);
+                cartoLayer.addTo(map);
+                this.textContent = '🛰 {{ translate("Satellite") }}';
+                document.getElementById('mapAttrib').textContent = '© OpenStreetMap contributors © CARTO';
+            }
+        });
+
+        // ── Nominatim search ─────────────────────────────────────────────────
+        var searchInput  = document.getElementById('mapSearchInput');
+        var resultsDiv   = document.getElementById('mapSearchResults');
+        var searchTimer  = null;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            var q = this.value.trim();
+            if (q.length < 3) { resultsDiv.style.display = 'none'; return; }
+            searchTimer = setTimeout(function () { doSearch(q); }, 500);
+        });
+
+        function doSearch(q) {
+            var url = 'https://nominatim.openstreetmap.org/search'
+                + '?q=' + encodeURIComponent(q)
+                + '&format=json&limit=5&countrycodes=bf,ci,sn,ml,ne,tg,bj';
+            fetch(url, { headers: { 'User-Agent': 'DakwariAdmin/1.0' } })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    resultsDiv.innerHTML = '';
+                    if (!data.length) {
+                        resultsDiv.innerHTML = '<div style="padding:10px;color:#888;font-size:13px;">Aucun résultat</div>';
+                        resultsDiv.style.display = 'block';
+                        return;
+                    }
+                    data.forEach(function (item) {
+                        var d = document.createElement('div');
+                        d.style.cssText = 'padding:9px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f0f0f0;';
+                        d.textContent = item.display_name;
+                        d.addEventListener('mouseenter', function () { this.style.background = '#f8f9fa'; });
+                        d.addEventListener('mouseleave',  function () { this.style.background = 'white'; });
+                        d.addEventListener('click', function () {
+                            var lat = parseFloat(item.lat), lng = parseFloat(item.lon);
+                            placeMarker(lat, lng);
+                            map.setView([lat, lng], 16);
+                            searchInput.value = item.display_name;
+                            resultsDiv.style.display = 'none';
+                        });
+                        resultsDiv.appendChild(d);
+                    });
+                    resultsDiv.style.display = 'block';
+                })
+                .catch(function () { resultsDiv.style.display = 'none'; });
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#mapSearchInput') && !e.target.closest('#mapSearchResults')) {
+                resultsDiv.style.display = 'none';
+            }
+        });
+    })();
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAP_API_KEY') }}&libraries=places&language=en&callback=initialize" async defer></script>
-
     @endif
 
     <script>
