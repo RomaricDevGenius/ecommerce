@@ -792,8 +792,8 @@
         );
 
         var cartoLayer = L.tileLayer(
-            'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-            { maxZoom: 19 }
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            { maxZoom: 19, attribution: '© OpenStreetMap contributors' }
         ).addTo(map);
 
         var satelliteLayer = L.tileLayer(
