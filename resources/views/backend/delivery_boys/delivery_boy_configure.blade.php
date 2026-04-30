@@ -270,10 +270,28 @@
 
         var map = L.map('pickup-map').setView([savedLat, savedLng], hasPin ? 15 : 13);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        var cartoLayer = L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO',
             maxZoom: 19
         }).addTo(map);
+
+        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri, Maxar, Earthstar Geographics',
+            maxZoom: 19
+        });
+
+        var isSatellite = false;
+        var satBtn = document.createElement('button');
+        satBtn.type = 'button';
+        satBtn.textContent = '🛰 {{ translate("Satellite") }}';
+        satBtn.style.cssText = 'position:absolute;bottom:10px;right:10px;z-index:1000;background:white;border:1px solid #aaa;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);';
+        document.getElementById('pickup-map').style.position = 'relative';
+        document.getElementById('pickup-map').appendChild(satBtn);
+        satBtn.addEventListener('click', function () {
+            isSatellite = !isSatellite;
+            if (isSatellite) { map.removeLayer(cartoLayer); satelliteLayer.addTo(map); satBtn.textContent = '🗺 {{ translate("Plan") }}'; }
+            else { map.removeLayer(satelliteLayer); cartoLayer.addTo(map); satBtn.textContent = '🛰 {{ translate("Satellite") }}'; }
+        });
 
         var marker = L.marker([savedLat, savedLng], { draggable: true });
         if (hasPin) marker.addTo(map);
@@ -315,7 +333,7 @@
 
         function doSearch(q) {
             fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
-                  '&format=json&limit=5&countrycodes=bf,ci,sn,ml,ne,tg,bj', {
+                  '&format=json&limit=5&countrycodes=bf&viewbox=-5.5,15.1,2.4,9.4&bounded=1', {
                 headers: { 'User-Agent': 'DakwariAdmin/1.0 (contact@dakwari.com)' }
             })
             .then(function (r) { return r.json(); })
