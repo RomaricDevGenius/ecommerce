@@ -270,8 +270,8 @@
 
         var map = L.map('pickup-map').setView([savedLat, savedLng], hasPin ? 15 : 13);
 
-        var cartoLayer = L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors © CARTO',
+        var cartoLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
 
