@@ -110,37 +110,33 @@
                 </button>
             </div>
             <div class="card-body p-0">
-                <table class="table table-bordered mb-0">
+                <table class="table aiz-table mb-0">
                     <thead>
                         <tr>
                             <th>{{ translate('Distance') }}</th>
-                            <th>{{ translate('Frais') }}</th>
-                            <th>{{ translate('Mode') }}</th>
+                            <th>{{ translate('Tarif de base') }}</th>
                             <th class="text-center">{{ translate('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($tiers as $tier)
-                        <tr>
+                        <tr @if($tier->is_manual_review) style="background:#fffbf0;" @endif>
                             <td>
                                 @if($tier->is_manual_review)
-                                    <span class="text-danger font-weight-bold">&gt; {{ $tier->min_km }} km</span>
+                                    <i class="las la-exclamation-circle text-warning mr-1"></i>
+                                    <span class="font-weight-500">&gt; {{ $tier->min_km }} km</span>
                                 @else
+                                    <i class="las la-map-marker-alt text-primary mr-1"></i>
                                     {{ $tier->min_km }} – {{ $tier->max_km }} km
                                 @endif
                             </td>
                             <td>
                                 @if($tier->is_manual_review)
-                                    —
+                                    <span class="text-warning font-weight-500">
+                                        <i class="las la-user-cog mr-1"></i>{{ translate('Révision manuelle') }}
+                                    </span>
                                 @else
-                                    <strong>{{ number_format($tier->price, 0, ',', ' ') }} FCFA</strong>
-                                @endif
-                            </td>
-                            <td>
-                                @if($tier->is_manual_review)
-                                    <span class="badge badge-warning">{{ translate('Révision admin') }}</span>
-                                @else
-                                    <span class="badge badge-success">{{ translate('Automatique') }}</span>
+                                    <span class="font-weight-bold">{{ number_format($tier->price, 0, ',', ' ') }} FCFA</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -166,14 +162,17 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-3">{{ translate('Aucun palier défini.') }}</td>
+                            <td colspan="3" class="text-center text-muted py-4">
+                                <i class="las la-route" style="font-size:28px;"></i><br>
+                                {{ translate('Aucun palier défini.') }}
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="card-footer" style="font-size:12px;">
-                <i class="las la-info-circle text-muted"></i>
+            <div class="card-footer bg-white" style="font-size:12px;">
+                <i class="las la-info-circle text-muted mr-1"></i>
                 {{ translate('Point de départ : coordonnées configurées dans "Point de retrait du livreur".') }}
             </div>
         </div>
