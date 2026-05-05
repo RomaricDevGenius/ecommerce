@@ -3,14 +3,11 @@
 @section('content')
 <div class="row">
 
-    {{-- ── Paramètres généraux ──────────────────────────────────────────── --}}
+    {{-- ── Paramètres poids & volume ────────────────────────────────────────── --}}
     <div class="col-lg-6 mb-4">
         <div class="card h-100">
             <div class="card-header">
-                <h5 class="mb-0 h6">
-                    <i class="las la-cog text-warning mr-1"></i>
-                    {{ translate('Paramètres poids & volume') }}
-                </h5>
+                <h5 class="mb-0 h6">{{ translate('Paramètres poids & volume') }}</h5>
             </div>
             <div class="card-body">
                 <form action="{{ route('gps_shipping.config.update') }}" method="POST">
@@ -18,15 +15,15 @@
 
                     {{-- Mode de calcul --}}
                     <div class="form-group row">
-                        <label class="col-md-4 col-form-label">{{ translate('Mode de calcul') }}</label>
-                        <div class="col-md-8">
-                            <div class="d-flex align-items-center mt-1">
-                                <label class="mr-3 mb-0">
+                        <label class="col-md-5 col-from-label">{{ translate('Mode de calcul') }}</label>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center mt-2">
+                                <label class="aiz-radio-inline mr-4 mb-0">
                                     <input type="radio" name="gps_weight_mode" value="weight_only"
                                         {{ get_setting('gps_weight_mode', 'weight_only') == 'weight_only' ? 'checked' : '' }}>
                                     <span class="ml-1">{{ translate('Poids uniquement') }}</span>
                                 </label>
-                                <label class="mb-0">
+                                <label class="aiz-radio-inline mb-0">
                                     <input type="radio" name="gps_weight_mode" value="weight_volume"
                                         {{ get_setting('gps_weight_mode', 'weight_only') == 'weight_volume' ? 'checked' : '' }}>
                                     <span class="ml-1">{{ translate('Poids + Volume') }}</span>
@@ -35,36 +32,29 @@
                         </div>
                     </div>
 
-                    <hr class="my-3">
-                    <p class="font-weight-bold text-muted mb-2" style="font-size:13px;">
-                        {{ translate('Surcharge poids') }}
-                    </p>
-
-                    {{-- Seuil poids --}}
                     <div class="form-group row">
-                        <label class="col-md-4 col-form-label">{{ translate('Seuil (kg)') }}</label>
-                        <div class="col-md-8">
+                        <label class="col-md-5 col-from-label">{{ translate('Poids inclus (kg)') }}</label>
+                        <div class="col-md-7">
                             <div class="input-group">
                                 <input type="number" name="gps_weight_threshold_kg" class="form-control"
                                     step="0.1" min="0"
                                     value="{{ get_setting('gps_weight_threshold_kg', '5') }}">
-                                <div class="input-group-append">
+                                <div class="input-group-prepend">
                                     <span class="input-group-text">kg</span>
                                 </div>
                             </div>
-                            <small class="text-muted">{{ translate('Poids inclus gratuitement dans le frais de base.') }}</small>
+                            <small class="text-muted">{{ translate('Poids inclus gratuitement dans le tarif de base.') }}</small>
                         </div>
                     </div>
 
-                    {{-- Surcharge par kg --}}
                     <div class="form-group row">
-                        <label class="col-md-4 col-form-label">{{ translate('Surcharge / kg excédentaire') }}</label>
-                        <div class="col-md-8">
+                        <label class="col-md-5 col-from-label">{{ translate('Surcharge par kg en plus') }}</label>
+                        <div class="col-md-7">
                             <div class="input-group">
                                 <input type="number" name="gps_weight_surcharge_fcfa" class="form-control"
                                     step="1" min="0"
                                     value="{{ get_setting('gps_weight_surcharge_fcfa', '200') }}">
-                                <div class="input-group-append">
+                                <div class="input-group-prepend">
                                     <span class="input-group-text">FCFA</span>
                                 </div>
                             </div>
@@ -73,19 +63,14 @@
 
                     {{-- Section volume (conditionnelle) --}}
                     <div id="volume-section" style="{{ get_setting('gps_weight_mode', 'weight_only') == 'weight_only' ? 'display:none' : '' }}">
-                        <hr class="my-3">
-                        <p class="font-weight-bold text-muted mb-2" style="font-size:13px;">
-                            {{ translate('Surcharge volume') }}
-                        </p>
-
                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label">{{ translate('Seuil (litres)') }}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-5 col-from-label">{{ translate('Volume inclus (litres)') }}</label>
+                            <div class="col-md-7">
                                 <div class="input-group">
                                     <input type="number" name="gps_volume_threshold_l" class="form-control"
                                         step="0.1" min="0"
                                         value="{{ get_setting('gps_volume_threshold_l', '20') }}">
-                                    <div class="input-group-append">
+                                    <div class="input-group-prepend">
                                         <span class="input-group-text">L</span>
                                     </div>
                                 </div>
@@ -93,13 +78,13 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label">{{ translate('Surcharge / litre excédentaire') }}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-5 col-from-label">{{ translate('Surcharge par litre en plus') }}</label>
+                            <div class="col-md-7">
                                 <div class="input-group">
                                     <input type="number" name="gps_volume_surcharge_fcfa" class="form-control"
                                         step="1" min="0"
                                         value="{{ get_setting('gps_volume_surcharge_fcfa', '100') }}">
-                                    <div class="input-group-append">
+                                    <div class="input-group-prepend">
                                         <span class="input-group-text">FCFA</span>
                                     </div>
                                 </div>
@@ -107,34 +92,31 @@
                         </div>
                     </div>
 
-                    <div class="text-right mt-3">
-                        <button type="submit" class="btn btn-primary">{{ translate('Enregistrer') }}</button>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    {{-- ── Paliers de distance ───────────────────────────────────────────── --}}
+    {{-- ── Paliers de distance ───────────────────────────────────────────────── --}}
     <div class="col-lg-6 mb-4">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 h6">
-                    <i class="las la-route text-warning mr-1"></i>
-                    {{ translate('Paliers de distance') }}
-                </h5>
-                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#addTierModal">
+                <h5 class="mb-0 h6">{{ translate('Paliers de distance') }}</h5>
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addTierModal">
                     <i class="las la-plus"></i> {{ translate('Ajouter') }}
                 </button>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm table-hover mb-0">
-                    <thead class="thead-light">
+                <table class="table table-bordered mb-0">
+                    <thead>
                         <tr>
                             <th>{{ translate('Distance') }}</th>
                             <th>{{ translate('Frais') }}</th>
                             <th>{{ translate('Mode') }}</th>
-                            <th class="text-right">{{ translate('Actions') }}</th>
+                            <th class="text-center">{{ translate('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,32 +131,34 @@
                             </td>
                             <td>
                                 @if($tier->is_manual_review)
-                                    <span class="badge badge-secondary">—</span>
+                                    —
                                 @else
                                     <strong>{{ number_format($tier->price, 0, ',', ' ') }} FCFA</strong>
                                 @endif
                             </td>
                             <td>
                                 @if($tier->is_manual_review)
-                                    <span class="badge badge-warning">Révision admin</span>
+                                    <span class="badge badge-warning">{{ translate('Révision admin') }}</span>
                                 @else
-                                    <span class="badge badge-success">Auto</span>
+                                    <span class="badge badge-success">{{ translate('Automatique') }}</span>
                                 @endif
                             </td>
-                            <td class="text-right">
-                                <button class="btn btn-xs btn-outline-primary btn-edit-tier"
+                            <td class="text-center">
+                                <button class="btn btn-soft-primary btn-icon btn-circle btn-sm btn-edit-tier"
                                     data-id="{{ $tier->id }}"
                                     data-min="{{ $tier->min_km }}"
                                     data-max="{{ $tier->max_km }}"
                                     data-price="{{ $tier->price }}"
                                     data-manual="{{ $tier->is_manual_review ? '1' : '0' }}"
-                                    data-toggle="modal" data-target="#editTierModal">
+                                    data-toggle="modal" data-target="#editTierModal"
+                                    title="{{ translate('Modifier') }}">
                                     <i class="las la-edit"></i>
                                 </button>
                                 <form action="{{ route('gps_shipping.tier.destroy', $tier) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('{{ translate('Supprimer ce palier ?') }}')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-xs btn-outline-danger">
+                                    <button type="submit" class="btn btn-soft-danger btn-icon btn-circle btn-sm"
+                                        title="{{ translate('Supprimer') }}">
                                         <i class="las la-trash"></i>
                                     </button>
                                 </form>
@@ -188,20 +172,18 @@
                     </tbody>
                 </table>
             </div>
-            <div class="card-footer text-muted" style="font-size:12px;">
-                <i class="las la-info-circle"></i>
-                {{ translate('Point de départ : coordonnées configurées dans "Pickup Location For Delivery Boy".') }}
+            <div class="card-footer" style="font-size:12px;">
+                <i class="las la-info-circle text-muted"></i>
+                {{ translate('Point de départ : coordonnées configurées dans "Point de retrait du livreur".') }}
             </div>
         </div>
 
         <div class="card mt-3">
             <div class="card-body text-center">
-                <a href="{{ route('gps_shipping.pending') }}" class="btn btn-warning">
+                <a href="{{ route('gps_shipping.pending') }}" class="btn btn-primary">
                     <i class="las la-clock"></i>
                     {{ translate('Commandes en attente de supplément') }}
-                    @php
-                        $pendingCount = \App\Models\Order::where('gps_shipping_pending', true)->count();
-                    @endphp
+                    @php $pendingCount = \App\Models\Order::where('gps_shipping_pending', true)->count(); @endphp
                     @if($pendingCount > 0)
                         <span class="badge badge-light ml-1">{{ $pendingCount }}</span>
                     @endif
@@ -218,14 +200,14 @@
             <form action="{{ route('gps_shipping.tier.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ translate('Ajouter un palier') }}</h5>
+                    <h5 class="modal-title h6">{{ translate('Ajouter un palier') }}</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     @include('backend.setup_configurations.gps_shipping._tier_form')
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ translate('Annuler') }}</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ translate('Annuler') }}</button>
                     <button type="submit" class="btn btn-primary">{{ translate('Ajouter') }}</button>
                 </div>
             </form>
@@ -240,14 +222,14 @@
             <form id="editTierForm" method="POST">
                 @csrf @method('PUT')
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ translate('Modifier le palier') }}</h5>
+                    <h5 class="modal-title h6">{{ translate('Modifier le palier') }}</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     @include('backend.setup_configurations.gps_shipping._tier_form', ['edit' => true])
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ translate('Annuler') }}</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ translate('Annuler') }}</button>
                     <button type="submit" class="btn btn-primary">{{ translate('Enregistrer') }}</button>
                 </div>
             </form>
@@ -258,50 +240,29 @@
 
 @section('script')
 <script>
-    // Toggle section volume
     $('input[name="gps_weight_mode"]').on('change', function () {
-        if ($(this).val() === 'weight_volume') {
-            $('#volume-section').show();
-        } else {
-            $('#volume-section').hide();
-        }
+        $('#volume-section').toggle($(this).val() === 'weight_volume');
     });
 
-    // Pré-remplir modal édition
-    $('.btn-edit-tier').on('click', function () {
+    $(document).on('click', '.btn-edit-tier', function () {
         var id     = $(this).data('id');
         var min    = $(this).data('min');
         var max    = $(this).data('max');
         var price  = $(this).data('price');
-        var manual = $(this).data('manual');
+        var manual = $(this).data('manual') == '1';
 
         var form = $('#editTierForm');
         form.attr('action', '/admin/gps-shipping/tiers/' + id);
         form.find('[name="min_km"]').val(min);
         form.find('[name="max_km"]').val(max || '');
         form.find('[name="price"]').val(price);
-        form.find('[name="is_manual_review"]').prop('checked', manual == '1');
-
-        // Toggle champ prix
-        if (manual == '1') {
-            form.find('.price-row').hide();
-            form.find('.max-row').hide();
-        } else {
-            form.find('.price-row').show();
-            form.find('.max-row').show();
-        }
+        form.find('[name="is_manual_review"]').prop('checked', manual);
+        form.find('.price-row, .max-row').toggle(!manual);
     });
 
-    // Toggle champ prix/max selon révision manuelle
     $(document).on('change', '[name="is_manual_review"]', function () {
-        var form = $(this).closest('form');
-        if ($(this).is(':checked')) {
-            form.find('.price-row').hide();
-            form.find('.max-row').hide();
-        } else {
-            form.find('.price-row').show();
-            form.find('.max-row').show();
-        }
+        var checked = $(this).is(':checked');
+        $(this).closest('form').find('.price-row, .max-row').toggle(!checked);
     });
 </script>
 @endsection
