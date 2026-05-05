@@ -27,9 +27,9 @@ return new class extends Migration
         ]);
 
         Schema::table('orders', function (Blueprint $table) {
-            $table->boolean('gps_shipping_pending')->default(false)->after('shipping_cost');
-            $table->decimal('gps_distance_km', 8, 2)->nullable()->after('gps_shipping_pending');
-            $table->decimal('gps_supplement', 10, 2)->nullable()->after('gps_distance_km');
+            $table->boolean('gps_shipping_pending')->default(false);
+            $table->decimal('gps_distance_km', 8, 2)->nullable();
+            $table->decimal('gps_supplement', 10, 2)->nullable();
         });
     }
 
