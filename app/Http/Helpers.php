@@ -2144,6 +2144,37 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
             }
         }
         return 0;
+    } elseif ($shipping_type == 'gps_distance_shipping') {
+        // GPS distance-based shipping — calculé une seule fois pour tout le panier,
+        // réparti équitablement entre les articles.
+        $lat = isset($shipping_info['delivery_lat']) ? (float) $shipping_info['delivery_lat'] : null;
+        $lng = isset($shipping_info['delivery_lng']) ? (float) $shipping_info['delivery_lng'] : null;
+
+        if ($lat === null || $lng === null) {
+            return 0;
+        }
+
+        // Calculer le poids total du panier
+        $totalWeightKg = 0.0;
+        $totalVolumeL  = 0.0;
+        $useVolume     = get_setting('gps_weight_mode', 'weight_only') === 'weight_volume';
+
+        foreach ($carts as $cart_item) {
+            $p = Product::find($cart_item['product_id']);
+            if ($p) {
+                $totalWeightKg += (float) $p->weight * (int) $cart_item['quantity'];
+                if ($useVolume && $p->length && $p->breadth && $p->height) {
+                    // L = cm³ / 1000
+                    $totalVolumeL += ($p->length * $p->breadth * $p->height / 1000) * (int) $cart_item['quantity'];
+                }
+            }
+        }
+
+        $result = \App\Services\GpsShippingService::calculate($lat, $lng, $totalWeightKg, $useVolume, $totalVolumeL);
+
+        // Répartir le coût total sur le nombre d'articles du panier
+        $totalItems = count($carts);
+        return $totalItems > 0 ? ($result['total'] / $totalItems) : 0;
     } else {
         if ($product->is_quantity_multiplied && ($shipping_type == 'product_wise_shipping')) {
             return  $product->shipping_cost * $cartItem['quantity'];

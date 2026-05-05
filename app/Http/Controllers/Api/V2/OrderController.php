@@ -97,6 +97,18 @@ class OrderController extends Controller
                 $order->payment_status = 'unpaid';
             }
 
+            // Données GPS de livraison (mode gps_distance_shipping)
+            if (get_setting('shipping_type') === 'gps_distance_shipping'
+                && $request->has('delivery_lat') && $request->has('delivery_lng'))
+            {
+                $gpsResult = \App\Services\GpsShippingService::calculate(
+                    (float) $request->delivery_lat,
+                    (float) $request->delivery_lng
+                );
+                $order->gps_distance_km       = $gpsResult['distance_km'];
+                $order->gps_shipping_pending  = $gpsResult['is_manual_review'];
+            }
+
             $order->save();
 
             $subtotal = 0;
