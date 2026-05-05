@@ -109,11 +109,8 @@
 
                 <!-- GPS Distance Shipping Cost -->
                 <div class="col-md-6 col-lg-4 d-flex">
-                    <div class="card text-center px-3 py-4 w-100 position-relative" data-shipping="Frais par Distance GPS">
-                        <span class="badge badge-warning position-absolute" style="top:10px;right:10px;font-size:10px;">NOUVEAU</span>
-                        <div class="mx-auto mb-3" style="width:80px;height:80px;background:#fff3e0;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                            <i class="las la-map-marker-alt" style="font-size:40px;color:#FF6600;"></i>
-                        </div>
+                    <div class="card text-center px-3 py-4 w-100" data-shipping="Frais par Distance GPS">
+                        <img src="{{ static_asset('assets/img/shipping/area_wise_flat_shipping.png') }}" class="card-img-top mx-auto" alt="Shipping Icon">
 
                         <div class="text-left mx-4">
                             <div class="d-flex align-items-left justify-content-left mb-2">
@@ -126,7 +123,7 @@
                                 {{ translate('Frais calculés selon la distance réelle entre le point de retrait et le client. Paliers configurables + surcharge poids/volume.') }}
                             </p>
                             <div class="mt-2">
-                                <a href="{{ route('gps_shipping.config') }}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation();">
+                                <a href="{{ route('gps_shipping.config') }}" class="btn btn-sm btn-primary" onclick="event.stopPropagation();">
                                     <i class="las la-cog"></i> {{ translate('Configurer') }}
                                 </a>
                             </div>
