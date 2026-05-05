@@ -68,6 +68,7 @@ use App\Http\Controllers\NewUpdateController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ShippingBoxSizeController;
 use App\Http\Controllers\ShippingSystemController;
+use App\Http\Controllers\GpsShippingController;
 
 /*
   |--------------------------------------------------------------------------
@@ -365,7 +366,20 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/shipping_configuration', 'shipping_configuration')->name('shipping_configuration.index');
         Route::post('/shipping_configuration/update', 'shipping_configuration_update')->name('shipping_configuration.update');
         Route::post('/shipping_configuration/has_state', 'stateBasedShippingSettings')->name('shipping_configuration.state');
+    });
 
+    // GPS Distance Shipping
+    Route::controller(GpsShippingController::class)->group(function () {
+        Route::get('/gps-shipping/config',         'config')->name('gps_shipping.config');
+        Route::post('/gps-shipping/config',        'updateConfig')->name('gps_shipping.config.update');
+        Route::post('/gps-shipping/tiers',         'storeTier')->name('gps_shipping.tier.store');
+        Route::put('/gps-shipping/tiers/{tier}',   'updateTier')->name('gps_shipping.tier.update');
+        Route::delete('/gps-shipping/tiers/{tier}','destroyTier')->name('gps_shipping.tier.destroy');
+        Route::get('/gps-shipping/pending',        'pendingOrders')->name('gps_shipping.pending');
+        Route::post('/gps-shipping/supplement/{order}', 'setSupplement')->name('gps_shipping.supplement');
+    });
+
+    Route::controller(BusinessSettingsController::class)->group(function () {
         // Order Configuration
         Route::get('/order-configuration', 'order_configuration')->name('order_configuration.index');
 

@@ -24,6 +24,11 @@ class ShippingController extends Controller
         $tempUserId    = $request->has('temp_user_id') ? $request->temp_user_id : null;
         $main_carts    = ($userId != null) ? Cart::where('user_id', $userId)->active()->get() : Cart::where('temp_user_id', $tempUserId)->active()->get();
         $shipping_info = null;
+
+        // Coordonnées GPS de livraison (mode gps_distance_shipping)
+        $deliveryLat = $request->has('delivery_lat') ? (float) $request->delivery_lat : null;
+        $deliveryLng = $request->has('delivery_lng') ? (float) $request->delivery_lng : null;
+
         foreach ($request->seller_list as $key => $seller) {
             $seller['shipping_cost'] = 0;
 
@@ -43,6 +48,10 @@ class ShippingController extends Controller
                 $shipping_info['city_id'] = $request->city_id;
                 $shipping_info['area_id'] = $request->area_id;
             }
+
+            // Coordonnées GPS toujours transmises à getShippingCost
+            $shipping_info['delivery_lat'] = $deliveryLat;
+            $shipping_info['delivery_lng'] = $deliveryLng;
 
             foreach ($carts as $key => $cartItem) {
                 $cartItem['shipping_cost'] = 0;
@@ -68,7 +77,22 @@ class ShippingController extends Controller
 
         //Total shipping cost $calculate_shipping
         $total_shipping_cost = $main_carts->fresh()->toQuery()->sum('shipping_cost');
-        return response()->json(['result' => true, 'shipping_type' => get_setting('shipping_type'), 'value' => convert_price($total_shipping_cost), 'value_string' => format_price(convert_price($total_shipping_cost))], 200);
+
+        $response = [
+            'result'        => true,
+            'shipping_type' => get_setting('shipping_type'),
+            'value'         => convert_price($total_shipping_cost),
+            'value_string'  => format_price(convert_price($total_shipping_cost)),
+        ];
+
+        // Infos supplémentaires pour le mode GPS
+        if (get_setting('shipping_type') === 'gps_distance_shipping' && $deliveryLat && $deliveryLng) {
+            $gpsResult = \App\Services\GpsShippingService::calculate((float) $deliveryLat, (float) $deliveryLng);
+            $response['gps_distance_km']     = $gpsResult['distance_km'];
+            $response['gps_is_manual_review'] = $gpsResult['is_manual_review'];
+        }
+
+        return response()->json($response, 200);
     }
 
     public function getDeliveryInfo(Request $request)

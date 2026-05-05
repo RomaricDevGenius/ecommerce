@@ -106,6 +106,33 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- GPS Distance Shipping Cost -->
+                <div class="col-md-6 col-lg-4 d-flex">
+                    <div class="card text-center px-3 py-4 w-100 position-relative" data-shipping="Frais par Distance GPS">
+                        <span class="badge badge-warning position-absolute" style="top:10px;right:10px;font-size:10px;">NOUVEAU</span>
+                        <div class="mx-auto mb-3" style="width:80px;height:80px;background:#fff3e0;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                            <i class="las la-map-marker-alt" style="font-size:40px;color:#FF6600;"></i>
+                        </div>
+
+                        <div class="text-left mx-4">
+                            <div class="d-flex align-items-left justify-content-left mb-2">
+                                <input type="radio" hidden id="gpsDistanceShipping" class="mr-2" name="shipping_type" value="gps_distance_shipping" @if(get_setting('shipping_type')=='gps_distance_shipping') checked @endif>
+                                <p for="gpsDistanceShipping" class="mb-0 font-weight-bold">
+                                    {{ translate('Frais par Distance GPS') }}
+                                </p>
+                            </div>
+                            <p class="text-muted mb-0" style="font-size: 12px;">
+                                {{ translate('Frais calculés selon la distance réelle entre le point de retrait et le client. Paliers configurables + surcharge poids/volume.') }}
+                            </p>
+                            <div class="mt-2">
+                                <a href="{{ route('gps_shipping.config') }}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation();">
+                                    <i class="las la-cog"></i> {{ translate('Configurer') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row mx-1 mb-4">
