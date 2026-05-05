@@ -8,6 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::dropIfExists('gps_shipping_tiers');
+
         Schema::create('gps_shipping_tiers', function (Blueprint $table) {
             $table->id();
             $table->decimal('min_km', 8, 2)->default(0);
