@@ -30,7 +30,7 @@ class GpsShippingController extends Controller
 
         foreach ($keys as $key) {
             if ($request->has($key)) {
-                \App\Models\BusinessSetting::updateOrCreate(
+                \DB::table('business_settings')->updateOrInsert(
                     ['type' => $key],
                     ['value' => $request->input($key)]
                 );
