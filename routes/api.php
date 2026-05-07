@@ -204,6 +204,14 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
         Route::post('coris/send-otp', [CorisApiController::class, 'sendOTP'])->middleware('auth:sanctum');
         Route::post('coris/pay', [CorisApiController::class, 'pay'])->middleware('auth:sanctum');
 
+        // Devis de livraison GPS (zones >20km)
+        Route::prefix('gps-quote')->middleware('auth:sanctum')->group(function () {
+            Route::post('submit', [GpsQuoteController::class, 'submit']);
+            Route::get('status',  [GpsQuoteController::class, 'status']);
+            Route::post('accept/{id}', [GpsQuoteController::class, 'accept']);
+            Route::post('refuse/{id}', [GpsQuoteController::class, 'refuse']);
+        });
+
         Route::get('order/cancel/{id}', 'App\Http\Controllers\Api\V2\OrderController@order_cancel')->middleware('auth:sanctum');
 
         Route::get('profile/counters', 'App\Http\Controllers\Api\V2\ProfileController@counters')->middleware('auth:sanctum');
