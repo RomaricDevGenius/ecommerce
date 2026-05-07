@@ -118,21 +118,35 @@ class GpsShippingController extends Controller
             'status'            => 'confirmed',
         ]);
 
-        // Notifier le client par push Firebase
+        $user     = $quote->user;
+        $amount   = number_format($request->supplement, 0, ',', ' ');
+        $siteName = get_setting('site_name', 'Boutique');
+
+        // Push Firebase
         try {
-            $user = $quote->user;
             if ($user && $user->device_token && get_setting('google_firebase') == 1) {
                 NotificationUtility::sendFirebaseNotification(
                     deviceToken : $user->device_token,
                     title       : translate('Devis de livraison confirmé'),
-                    body        : translate('Vos frais de livraison ont été estimés à ') . number_format($request->supplement, 0, ',', ' ') . ' FCFA. Ouvrez l\'app pour confirmer.',
+                    body        : translate('Vos frais de livraison ont été estimés à ') . $amount . ' FCFA. Ouvrez l\'app pour confirmer.',
                     type        : 'gps_quote',
                     typeId      : $quote->id,
                 );
             }
-        } catch (\Throwable $e) {
-            // Ne pas bloquer si la notification échoue
-        }
+        } catch (\Throwable $e) {}
+
+        // Email au client
+        try {
+            if ($user && $user->email) {
+                \Mail::raw(
+                    "Bonjour {$user->name},\n\nVotre devis de livraison a été confirmé.\n\nMontant : {$amount} FCFA\nDistance : " . number_format($quote->distance_km, 1) . " km\n\nOuvrez l'application pour accepter ou refuser ce devis.\n\nCordialement,\n{$siteName}",
+                    function ($msg) use ($user, $amount, $siteName) {
+                        $msg->to($user->email)
+                            ->subject("[{$siteName}] Votre devis de livraison : {$amount} FCFA");
+                    }
+                );
+            }
+        } catch (\Throwable $e) {}
 
         flash(translate('Supplément défini. Le client a été notifié.'))->success();
         return back();

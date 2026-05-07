@@ -33,6 +33,22 @@ class GpsQuoteController extends Controller
             'expires_at'   => now()->addHours(24),
         ]);
 
+        // Notifier l'admin par email
+        try {
+            $admin = get_admin();
+            if ($admin && $admin->email) {
+                $siteName = get_setting('site_name', 'Boutique');
+                $distance = number_format($quote->distance_km, 1);
+                \Mail::raw(
+                    "Bonjour,\n\nUn nouveau devis GPS est en attente.\n\nClient  : {$user->name} ({$user->email})\nDistance : {$distance} km\n\nConnectez-vous à l'administration pour fixer le tarif.",
+                    function ($msg) use ($admin, $user, $siteName) {
+                        $msg->to($admin->email)
+                            ->subject("[{$siteName}] Nouveau devis GPS – {$user->name}");
+                    }
+                );
+            }
+        } catch (\Throwable $e) {}
+
         return response()->json([
             'result'   => true,
             'quote_id' => $quote->id,
