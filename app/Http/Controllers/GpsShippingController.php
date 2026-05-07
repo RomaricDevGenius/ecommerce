@@ -37,6 +37,8 @@ class GpsShippingController extends Controller
             }
         }
 
+        \Cache::forget('business_settings');
+
         flash(translate('Configuration GPS mise à jour.'))->success();
         return back();
     }
