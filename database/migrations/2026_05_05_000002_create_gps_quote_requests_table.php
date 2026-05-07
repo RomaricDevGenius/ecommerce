@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('gps_quote_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('user_id')->index();
             $table->decimal('delivery_lat', 10, 7);
             $table->decimal('delivery_lng', 10, 7);
             $table->decimal('distance_km', 8, 2);
