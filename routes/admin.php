@@ -376,7 +376,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::put('/gps-shipping/tiers/{tier}',   'updateTier')->name('gps_shipping.tier.update');
         Route::delete('/gps-shipping/tiers/{tier}','destroyTier')->name('gps_shipping.tier.destroy');
         Route::get('/gps-shipping/pending',        'pendingOrders')->name('gps_shipping.pending');
-        Route::post('/gps-shipping/supplement/{order}', 'setSupplement')->name('gps_shipping.supplement');
+        Route::post('/gps-shipping/supplement/{quote}', 'setQuoteSupplement')->name('gps_shipping.supplement');
     });
 
     Route::controller(BusinessSettingsController::class)->group(function () {

@@ -101,12 +101,23 @@ class OrderController extends Controller
             if (get_setting('shipping_type') === 'gps_distance_shipping'
                 && $request->has('delivery_lat') && $request->has('delivery_lng'))
             {
-                $gpsResult = \App\Services\GpsShippingService::calculate(
-                    (float) $request->delivery_lat,
-                    (float) $request->delivery_lng
-                );
-                $order->gps_distance_km       = $gpsResult['distance_km'];
-                $order->gps_shipping_pending  = $gpsResult['is_manual_review'];
+                // Si le client a accepté un devis, utiliser la distance du devis
+                if ($request->has('gps_quote_id')) {
+                    $acceptedQuote = \App\Models\GpsQuoteRequest::where('id', $request->gps_quote_id)
+                        ->where('status', 'accepted')
+                        ->first();
+                    if ($acceptedQuote) {
+                        $order->gps_distance_km      = $acceptedQuote->distance_km;
+                        $order->gps_shipping_pending = false;
+                    }
+                } else {
+                    $gpsResult = \App\Services\GpsShippingService::calculate(
+                        (float) $request->delivery_lat,
+                        (float) $request->delivery_lng
+                    );
+                    $order->gps_distance_km      = $gpsResult['distance_km'];
+                    $order->gps_shipping_pending = $gpsResult['is_manual_review'];
+                }
             }
 
             $order->save();

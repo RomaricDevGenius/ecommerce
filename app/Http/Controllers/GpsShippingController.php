@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GpsQuoteRequest;
 use App\Models\GpsShippingTier;
-use App\Models\Order;
-use App\Services\GpsShippingService;
+use App\Utility\NotificationUtility;
 use Illuminate\Http\Request;
 
 class GpsShippingController extends Controller
@@ -21,7 +21,7 @@ class GpsShippingController extends Controller
     public function updateConfig(Request $request)
     {
         $keys = [
-            'gps_weight_mode',           // 'weight_only' | 'weight_volume'
+            'gps_weight_mode',
             'gps_weight_threshold_kg',
             'gps_weight_surcharge_fcfa',
             'gps_volume_threshold_l',
@@ -92,40 +92,44 @@ class GpsShippingController extends Controller
         return back();
     }
 
-    // ── Commandes GPS en attente de supplément ─────────────────────────────
+    // ── Devis GPS en attente ───────────────────────────────────────────────
 
     public function pendingOrders()
     {
-        $orders = Order::where('gps_shipping_pending', true)
-            ->with(['user', 'orderDetails.product'])
+        $quotes = GpsQuoteRequest::with('user')
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->orderByRaw("FIELD(status, 'pending', 'confirmed')")
             ->latest()
             ->paginate(20);
 
-        return view('backend.setup_configurations.gps_shipping.pending_orders', compact('orders'));
+        return view('backend.setup_configurations.gps_shipping.pending_orders', compact('quotes'));
     }
 
-    public function setSupplement(Request $request, Order $order)
+    public function setQuoteSupplement(Request $request, GpsQuoteRequest $quote)
     {
         $request->validate([
             'supplement' => 'required|numeric|min:0',
         ]);
 
-        $order->update([
-            'gps_supplement'      => $request->supplement,
-            'shipping_cost'       => $request->supplement,
-            'gps_shipping_pending'=> false,
+        $quote->update([
+            'supplement_amount' => $request->supplement,
+            'status'            => 'confirmed',
         ]);
 
-        // Notifier le client
+        // Notifier le client par push Firebase
         try {
-            $user = $order->user;
-            if ($user && $user->email) {
-                \Mail::to($user->email)->send(
-                    new \App\Mail\GpsSupplementNotification($order)
+            $user = $quote->user;
+            if ($user && $user->device_token && get_setting('google_firebase') == 1) {
+                NotificationUtility::sendFirebaseNotification(
+                    deviceToken : $user->device_token,
+                    title       : translate('Devis de livraison confirmé'),
+                    body        : translate('Vos frais de livraison ont été estimés à ') . number_format($request->supplement, 0, ',', ' ') . ' FCFA. Ouvrez l\'app pour confirmer.',
+                    type        : 'gps_quote',
+                    typeId      : $quote->id,
                 );
             }
         } catch (\Throwable $e) {
-            // Ne pas bloquer si l'email échoue
+            // Ne pas bloquer si la notification échoue
         }
 
         flash(translate('Supplément défini. Le client a été notifié.'))->success();
