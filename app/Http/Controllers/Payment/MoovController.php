@@ -8,6 +8,17 @@ use Illuminate\Http\Request;
 
 class MoovController extends Controller
 {
+    // Appelé par CheckoutController après sélection du mode de paiement Moov
+    public function pay(Request $request)
+    {
+        $combined_order_id = $request->session()->get('combined_order_id');
+        if (!$combined_order_id) {
+            flash(translate('Session expired. Please try again.'))->error();
+            return redirect()->route('checkout');
+        }
+        return redirect()->route('moov.payment.form');
+    }
+
     public function showPaymentForm(Request $request)
     {
         $combined_order_id = $request->session()->get('combined_order_id');
