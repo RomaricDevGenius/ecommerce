@@ -2,6 +2,7 @@
 
 @section('styles')
 <style>
+    /* ── Badges tableau ── */
     .gps-badge-dist {
         display: inline-flex; align-items: center; gap: 4px;
         background: #eef2ff; color: #4f46e5;
@@ -29,40 +30,59 @@
         width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
     }
 
-    /* Infos trajet dans le modal */
-    .route-info-box {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
+    /* ── Timeline trajet dans le modal ── */
+    #supplementModal .modal-dialog { max-width: 480px; }
+
+    .rt-wrap {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
         overflow: hidden;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
-    .route-info-row {
-        display: flex; align-items: flex-start; gap: 12px;
-        padding: 12px 16px;
+    .rt-step {
+        display: flex; align-items: flex-start; gap: 14px;
+        padding: 14px 18px;
+        background: #fff;
     }
-    .route-info-row + .route-info-row {
-        border-top: 1px solid #e9ecef;
-    }
-    .route-dot {
-        width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
-    }
-    .route-dot.store  { background: #22c55e; }
-    .route-dot.client { background: #ef4444; }
-    .route-info-label { font-size: 11px; color: #6b7280; margin-bottom: 2px; }
-    .route-info-value { font-size: 13px; font-weight: 600; color: #111827; }
-    .route-info-sub   { font-size: 11px; color: #9ca3af; margin-top: 1px; font-family: monospace; }
-    .route-dist-row {
+    .rt-step + .rt-step { border-top: 1px solid #f3f4f6; }
+
+    .rt-icon {
+        width: 36px; height: 36px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        padding: 8px 16px; border-top: 1px solid #e9ecef;
-        gap: 8px; background: #fff;
+        font-size: 16px; flex-shrink: 0;
     }
-    .route-dist-badge {
+    .rt-icon.store  { background: #dcfce7; color: #16a34a; }
+    .rt-icon.client { background: #fee2e2; color: #dc2626; }
+
+    .rt-label {
+        font-size: 10px; font-weight: 700; letter-spacing: .6px;
+        text-transform: uppercase; color: #9ca3af; margin-bottom: 3px;
+    }
+    .rt-name  { font-size: 14px; font-weight: 700; color: #111827; line-height: 1.3; }
+    .rt-addr  { font-size: 12px; color: #6b7280; margin-top: 3px; line-height: 1.4; }
+    .rt-addr.loading { color: #d1d5db; font-style: italic; }
+
+    .rt-middle {
+        display: flex; align-items: center; gap: 0;
+        background: #f9fafb; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;
+        padding: 0 18px;
+    }
+    .rt-vline { width: 2px; height: 20px; background: #d1d5db; margin-left: 17px; flex-shrink: 0; }
+    .rt-dist-pill {
+        margin-left: 14px;
+        display: inline-flex; align-items: center; gap: 5px;
         background: #eff6ff; color: #1d4ed8;
         border: 1px solid #bfdbfe; border-radius: 20px;
-        padding: 3px 14px; font-size: 12px; font-weight: 700;
-        display: flex; align-items: center; gap: 5px;
+        padding: 4px 14px; font-size: 12px; font-weight: 700;
     }
+    .rt-connector {
+        display: flex; flex-direction: column; align-items: flex-start;
+        padding: 0 18px; background: #f9fafb;
+        border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;
+    }
+    .rt-connector-inner { display: flex; align-items: center; gap: 14px; width: 100%; padding: 6px 0; }
+    .rt-vlines { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
+    .rt-vline-seg { width: 2px; height: 14px; background: #d1d5db; }
 </style>
 @endsection
 
@@ -130,7 +150,6 @@
                                         class="btn btn-soft-primary btn-sm btn-fix-quote"
                                         data-quote-id="{{ $quote->id }}"
                                         data-client="{{ $quote->user ? $quote->user->name : '?' }}"
-                                        data-email="{{ $quote->user ? $quote->user->email : '' }}"
                                         data-distance="{{ number_format($quote->distance_km, 1) }}"
                                         data-lat="{{ $quote->delivery_lat }}"
                                         data-lng="{{ $quote->delivery_lng }}"
@@ -159,70 +178,87 @@
     </div>
 </div>
 
-{{-- Modal formulaire --}}
+{{-- ══ Modal : Fixer le devis ══ --}}
 <div class="modal fade" id="supplementModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="mb-0 h6">
-                    <i class="las la-money-bill-wave mr-1"></i>{{ translate('Fixer le devis de livraison') }}
+                    <i class="las la-route mr-1"></i>{{ translate('Fixer le devis de livraison') }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal"></button>
             </div>
 
             <form id="supplementForm" method="POST" action="">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 20px 24px">
 
-                    {{-- Infos trajet --}}
-                    <div class="route-info-box">
-                        <div class="route-info-row">
-                            <div class="route-dot store mt-1"></div>
-                            <div>
-                                <div class="route-info-label">{{ translate('Départ') }}</div>
-                                <div class="route-info-value">{{ get_setting('delivery_pickup_address', translate('Boutique')) }}</div>
-                                <div class="route-info-sub">
-                                    {{ (float) get_setting('delivery_pickup_latitude','—') }},
-                                    {{ (float) get_setting('delivery_pickup_longitude','—') }}
+                    {{-- Timeline départ → arrivée --}}
+                    <div class="rt-wrap">
+
+                        {{-- Départ --}}
+                        <div class="rt-step">
+                            <div class="rt-icon store"><i class="las la-store"></i></div>
+                            <div style="flex:1;min-width:0">
+                                <div class="rt-label">{{ translate('Départ') }}</div>
+                                <div class="rt-name">{{ get_setting('site_name', 'Boutique') }}</div>
+                                <div class="rt-addr" id="modal-store-addr">{{ get_setting('delivery_pickup_address', '—') }}</div>
+                            </div>
+                        </div>
+
+                        {{-- Connecteur distance --}}
+                        <div class="rt-connector">
+                            <div class="rt-connector-inner">
+                                <div class="rt-vlines">
+                                    <div class="rt-vline-seg"></div>
+                                    <div class="rt-vline-seg" style="background:transparent"></div>
+                                    <div class="rt-vline-seg"></div>
+                                </div>
+                                <div class="rt-dist-pill">
+                                    <i class="las la-road"></i>
+                                    <span id="modal-dist-label">—</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="route-dist-row">
-                            <div class="route-dist-badge">
-                                <i class="las la-road"></i>
-                                <span id="modal-dist-label">—</span>
+
+                        {{-- Arrivée --}}
+                        <div class="rt-step">
+                            <div class="rt-icon client"><i class="las la-map-marker"></i></div>
+                            <div style="flex:1;min-width:0">
+                                <div class="rt-label">{{ translate('Arrivée — Client') }}</div>
+                                <div class="rt-name" id="modal-client-name">—</div>
+                                <div class="rt-addr loading" id="modal-client-addr">{{ translate('Chargement de l\'adresse...') }}</div>
                             </div>
                         </div>
-                        <div class="route-info-row">
-                            <div class="route-dot client mt-1"></div>
-                            <div>
-                                <div class="route-info-label">{{ translate('Arrivée — Client') }}</div>
-                                <div class="route-info-value" id="modal-client-name">—</div>
-                                <div class="route-info-sub" id="modal-client-coords">—</div>
-                            </div>
-                        </div>
+
                     </div>
 
-                    {{-- Champ montant --}}
-                    <div class="form-group row">
-                        <label class="col-md-4 col-from-label">
+                    {{-- Bouton Google Maps --}}
+                    <a id="btn-gmaps" href="#" target="_blank" rel="noopener"
+                        class="btn btn-block btn-light mb-4"
+                        style="border:1px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;border-radius:8px;padding:9px">
+                        <i class="las la-external-link-alt mr-1" style="color:#1a73e8"></i>
+                        {{ translate('Voir le trajet sur Google Maps') }}
+                    </a>
+
+                    {{-- Montant --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-md-5 col-from-label" style="padding-top:10px">
                             {{ translate('Frais de livraison') }}
                         </label>
-                        <div class="col-md-8">
+                        <div class="col-md-7">
                             <div class="input-group">
                                 <input type="number" name="supplement" id="modal-supplement-input"
                                     class="form-control" min="0" step="1"
-                                    placeholder="{{ translate('Montant en FCFA') }}" required>
+                                    placeholder="{{ translate('Ex : 3 500') }}" required>
                                 <div class="input-group-append">
-                                    <span class="input-group-text">FCFA</span>
+                                    <span class="input-group-text font-weight-600">FCFA</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <p class="text-muted" style="font-size:12px;margin-top:-8px">
-                        <i class="las la-paper-plane mr-1"></i>{{ translate('Le client sera notifié par push et email.') }}
-                    </p>
                 </div>
 
                 <div class="modal-footer">
@@ -241,22 +277,67 @@
 
 @section('script')
 <script>
-    var SUPP_URL = "{{ route('gps_shipping.supplement', ':id') }}";
+    var SUPP_URL  = "{{ route('gps_shipping.supplement', ':id') }}";
+    var STORE_LAT = {{ (float) get_setting('delivery_pickup_latitude',  '12.3714') }};
+    var STORE_LNG = {{ (float) get_setting('delivery_pickup_longitude', '-1.5197') }};
+
+    /* Reverse geocoding via Nominatim (gratuit, sans clé API) */
+    function reverseGeocode(lat, lng, callback) {
+        $.ajax({
+            url: 'https://nominatim.openstreetmap.org/reverse',
+            data: { format: 'json', lat: lat, lon: lng, 'accept-language': 'fr' },
+            headers: { 'Accept-Language': 'fr' },
+            success: function(data) {
+                if (data && data.address) {
+                    var a = data.address;
+                    /* Construire une adresse lisible : quartier / rue, ville */
+                    var parts = [];
+                    var street = a.road || a.pedestrian || a.neighbourhood || a.suburb || '';
+                    var city   = a.city || a.town || a.village || a.county || '';
+                    if (street) parts.push(street);
+                    if (city && city !== street) parts.push(city);
+                    callback(parts.length ? parts.join(', ') : (data.display_name || null));
+                } else {
+                    callback(null);
+                }
+            },
+            error: function() { callback(null); }
+        });
+    }
 
     $(document).on('click', '.btn-fix-quote', function () {
         var $b   = $(this);
         var lat  = parseFloat($b.data('lat'));
         var lng  = parseFloat($b.data('lng'));
+        var dist = $b.data('distance') || '?';
 
+        /* Infos de base */
         $('#modal-client-name').text($b.data('client') || '—');
-        $('#modal-dist-label').text(($b.data('distance') || '?') + ' km');
-        $('#modal-client-coords').text(
-            (!isNaN(lat) && !isNaN(lng))
-                ? lat.toFixed(5) + ', ' + lng.toFixed(5)
-                : '—'
-        );
+        $('#modal-dist-label').text(dist + ' km');
         $('#modal-supplement-input').val($b.data('current') || '');
         $('#supplementForm').attr('action', SUPP_URL.replace(':id', $b.data('quote-id')));
+
+        /* Lien Google Maps */
+        if (!isNaN(lat) && !isNaN(lng)) {
+            $('#btn-gmaps').attr(
+                'href',
+                'https://www.google.com/maps/dir/' + STORE_LAT + ',' + STORE_LNG + '/' + lat + ',' + lng
+            );
+        } else {
+            $('#btn-gmaps').attr('href', '#');
+        }
+
+        /* Adresse client via reverse geocoding */
+        $('#modal-client-addr').text("{{ translate('Chargement de l\'adresse...') }}").addClass('loading');
+        if (!isNaN(lat) && !isNaN(lng)) {
+            reverseGeocode(lat, lng, function(addr) {
+                $('#modal-client-addr')
+                    .removeClass('loading')
+                    .text(addr || (lat.toFixed(4) + ', ' + lng.toFixed(4)));
+            });
+        } else {
+            $('#modal-client-addr').removeClass('loading').text('—');
+        }
     });
 </script>
 @endsection
