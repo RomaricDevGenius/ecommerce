@@ -16,34 +16,74 @@
         </div>
     </div>
 </section>
+
 <section class="mb-4">
     <div class="container text-left">
-        <div class="row">
-            <div class="col-lg-12">
-                <form action="{{ route('moov.pay') }}" class="form-default" role="form" method="POST" id="moov-payment-form">
-                    @csrf
-                    <div class="card shadow-sm border-0 rounded">
-                        <div class="card-header p-3">
-                            <h3 class="fs-16 fw-600 mb-0">{{ translate('Pay by') }} Moov Money</h3>
-                        </div>
-                        <div class="card-body">
-                            <p>{{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA')) }}</p>
-                            <p style="color:red; font-size: 1.2em;">{{ translate("(If you don't have an account you can go to an Moov money agent)") }}</p>
-                            <p class="font-weight-bold">{{ translate("You will receive a message with instructions to complete the payment on your phone.") }}</p>
-                            <div class="alert alert-block alert-danger d-none" id="error-msg"></div>
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card shadow-sm border-0 rounded">
+                    <div class="card-header p-3 d-flex align-items-center gap-2">
+                        <h3 class="fs-16 fw-600 mb-0">{{ translate('Pay by') }} Moov Money</h3>
+                        <span class="badge badge-light ml-2 fs-12">
+                            {{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA')) }}
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="alert alert-danger d-none" id="error-msg"></div>
+                        <div class="alert alert-success d-none" id="success-msg"></div>
+
+                        {{-- ── Étape 1 : saisie du numéro ── --}}
+                        <div id="step-phone">
+                            <p class="text-muted mb-3">{{ translate('Enter your Moov Money phone number. You will receive an OTP code by SMS to confirm the payment.') }}</p>
                             <div class="form-group">
-                                <label>{{ translate("Your Moov money phone number (no spaces or dashes)") }}</label>
-                                <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="70123456">
+                                <label class="fw-600">{{ translate('Moov Money phone number') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">+226</span>
+                                    </div>
+                                    <input type="text" id="phone_number" class="form-control"
+                                        placeholder="70 12 34 56" maxlength="8">
+                                </div>
+                                <small class="text-muted">{{ translate('8 digits, no spaces or dashes') }}</small>
                             </div>
-                            <button type="submit" class="btn btn-primary fw-600" id="validate_button">{{ translate('Initiate transaction') }}</button>
+                            <button type="button" class="btn btn-primary fw-600" id="btn-request-otp" disabled>
+                                <i class="las la-sms mr-1"></i>{{ translate('Receive OTP code') }}
+                            </button>
+                        </div>
+
+                        {{-- ── Étape 2 : saisie de l'OTP ── --}}
+                        <div id="step-otp" class="d-none">
+                            <div class="alert alert-info">
+                                <i class="las la-check-circle mr-1"></i>
+                                {{ translate('OTP code sent to') }} <strong id="display-phone"></strong>. {{ translate('Valid for 10 minutes.') }}
+                            </div>
+                            <div class="form-group">
+                                <label class="fw-600">{{ translate('OTP code received by SMS') }}</label>
+                                <input type="text" id="otp_code" class="form-control" placeholder="Ex : 464717" maxlength="8">
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-resend-otp">
+                                    <i class="las la-redo-alt mr-1"></i>{{ translate('Resend code') }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-link text-muted" id="btn-change-phone">
+                                    {{ translate('Change number') }}
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-primary fw-600 btn-block" id="btn-confirm">
+                                <i class="las la-paper-plane mr-1"></i>{{ translate('Confirm payment') }}
+                            </button>
                         </div>
                     </div>
-                    <div class="row align-items-center pt-3">
-                        <div class="col-6">
-                            <a href="{{ route('home') }}" class="link link--style-3"><i class="las la-arrow-left"></i> {{ translate('Return to shop') }}</a>
-                        </div>
+                </div>
+
+                <div class="row align-items-center pt-3">
+                    <div class="col-6">
+                        <a href="{{ route('home') }}" class="link link--style-3">
+                            <i class="las la-arrow-left"></i> {{ translate('Return to shop') }}
+                        </a>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -52,58 +92,118 @@
 
 @section('script')
 <script>
-$(function() {
-    $('#validate_button').prop('disabled', true);
+$(function () {
+    var transId   = '';
+    var requestId = '';
 
-    function openLoader(message) {
-        if (typeof HoldOn !== 'undefined') {
-            HoldOn.open({ theme: "sk-circle", message: "<h4>" + message + "</h4>" });
+    var GENERATE_URL = '{{ route('moov.pay') }}';
+    var CONFIRM_URL  = '{{ route('moov.confirm') }}';
+    var CSRF         = '{{ csrf_token() }}';
+
+    function showError(msg)   { $('#error-msg').text(msg).removeClass('d-none'); $('#success-msg').addClass('d-none'); }
+    function showSuccess(msg) { $('#success-msg').text(msg).removeClass('d-none'); $('#error-msg').addClass('d-none'); }
+    function clearAlerts()    { $('#error-msg, #success-msg').addClass('d-none'); }
+
+    function openLoader()  { if (typeof HoldOn !== 'undefined') HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait...') }}</h4>" }); }
+    function closeLoader() { if (typeof HoldOn !== 'undefined') HoldOn.close(); }
+
+    // Validation téléphone
+    $('#phone_number').on('input', function () {
+        var val = $(this).val().replace(/\D/g, '');
+        $(this).val(val);
+        $('#btn-request-otp').prop('disabled', val.length < 8);
+    });
+
+    // Étape 1 → demande OTP
+    $('#btn-request-otp').on('click', function () {
+        clearAlerts();
+        openLoader();
+        $.post(GENERATE_URL, {
+            _token:       CSRF,
+            phone_number: $('#phone_number').val(),
+        })
+        .done(function (data) {
+            closeLoader();
+            if (data.success) {
+                transId   = data.trans_id;
+                requestId = data.request_id;
+                $('#display-phone').text('+226 ' + $('#phone_number').val());
+                $('#step-phone').addClass('d-none');
+                $('#step-otp').removeClass('d-none');
+                showSuccess(data.message);
+            } else {
+                showError(data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
+            }
+        })
+        .fail(function () {
+            closeLoader();
+            showError("{{ translate('An unexpected error occurred, please try again later') }}");
+        });
+    });
+
+    // Renvoi OTP
+    $('#btn-resend-otp').on('click', function () {
+        clearAlerts();
+        openLoader();
+        $.post(GENERATE_URL, {
+            _token:       CSRF,
+            phone_number: $('#phone_number').val(),
+        })
+        .done(function (data) {
+            closeLoader();
+            if (data.success) {
+                transId   = data.trans_id;
+                requestId = data.request_id;
+                showSuccess(data.message);
+            } else {
+                showError(data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
+            }
+        })
+        .fail(function () {
+            closeLoader();
+            showError("{{ translate('An unexpected error occurred, please try again later') }}");
+        });
+    });
+
+    // Changer de numéro
+    $('#btn-change-phone').on('click', function () {
+        clearAlerts();
+        $('#step-otp').addClass('d-none');
+        $('#step-phone').removeClass('d-none');
+        $('#otp_code').val('');
+    });
+
+    // Étape 2 → confirme paiement
+    $('#btn-confirm').on('click', function () {
+        var otp = $('#otp_code').val().trim();
+        if (!otp) {
+            showError("{{ translate('Please enter the OTP code received by SMS') }}");
+            return;
         }
-    }
-
-    function closeLoader() {
-        if (typeof HoldOn !== 'undefined') {
-            HoldOn.close();
-        }
-    }
-
-    function validate_code() {
-        var invalidPhone = "{{ translate('Phone number is not valid') }}";
-        var phone = $('#phone_number').val();
-        if (!/^[0-9]{8,}$/.test(phone)) {
-            $('#error-msg').text(invalidPhone).removeClass('d-none');
-            $('#validate_button').prop('disabled', true);
-        } else {
-            $('#error-msg').addClass('d-none');
-            $('#validate_button').prop('disabled', false);
-        }
-    }
-    $('#phone_number').on('keyup', validate_code);
-
-    $('#moov-payment-form').on('submit', function(e) {
-        e.preventDefault();
-        var url = '{{ route('moov.pay') }}';
-        openLoader("{{ translate('Please wait, do not close or refresh the page') }}");
-        $.post(url, $(this).serialize())
-            .done(function(data) {
-                closeLoader();
-                if (data.success) {
-                    if (data.message) {
-                        AIZ.plugins.notify('success', data.message);
-                        setTimeout(function() {
-                            if (data.url) window.location.href = data.url;
-                        }, 2000);
-                    } else if (data.url) {
-                        window.location.href = data.url;
-                    }
-                } else {
-                    AIZ.plugins.notify('danger', data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
-                }
-            })
-            .fail(function() {
-                closeLoader();
-                AIZ.plugins.notify('danger', "{{ translate('An unexpected error occurred, please try again later') }}");
-            });
+        clearAlerts();
+        openLoader();
+        $.post(CONFIRM_URL, {
+            _token:       CSRF,
+            phone_number: $('#phone_number').val(),
+            otp:          otp,
+            trans_id:     transId,
+            request_id:   requestId,
+        })
+        .done(function (data) {
+            closeLoader();
+            if (data.success) {
+                showSuccess(data.message);
+                setTimeout(function () {
+                    if (data.url) window.location.href = data.url;
+                }, 1500);
+            } else {
+                showError(data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
+            }
+        })
+        .fail(function () {
+            closeLoader();
+            showError("{{ translate('An unexpected error occurred, please try again later') }}");
+        });
     });
 });
 </script>

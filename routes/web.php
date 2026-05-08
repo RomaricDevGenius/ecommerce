@@ -231,10 +231,11 @@ Route::controller(OrangeController::class)->group(function () {
     Route::post('/orange/pay', 'handlePayment')->name('orange.pay');
 });
 
-// Moov Money
+// Moov Money (OTP flow)
 Route::controller(MoovController::class)->group(function () {
     Route::get('/moov/payment/form', 'showPaymentForm')->name('moov.payment.form');
-    Route::post('/moov/pay', 'initPayment')->name('moov.pay');
+    Route::post('/moov/pay',     'generateOtp')->name('moov.pay');
+    Route::post('/moov/confirm', 'confirmPayment')->name('moov.confirm');
 });
 
 // Coris Money
