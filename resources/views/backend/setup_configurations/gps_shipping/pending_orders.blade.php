@@ -36,53 +36,50 @@
     .rt-wrap {
         border: 1px solid #e5e7eb;
         border-radius: 10px;
-        overflow: hidden;
+        padding: 18px 20px;
         margin-bottom: 18px;
+        background: #fafafa;
     }
-    .rt-step {
-        display: flex; align-items: flex-start; gap: 14px;
-        padding: 14px 18px;
-        background: #fff;
-    }
-    .rt-step + .rt-step { border-top: 1px solid #f3f4f6; }
+    /* Rangée = icône gauche + texte droite */
+    .tl-row { display: flex; gap: 14px; align-items: flex-start; }
 
-    .rt-icon {
-        width: 36px; height: 36px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 16px; flex-shrink: 0;
+    /* Colonne gauche : points et ligne */
+    .tl-col-icon {
+        width: 32px; flex-shrink: 0;
+        display: flex; flex-direction: column; align-items: center;
     }
-    .rt-icon.store  { background: #dcfce7; color: #16a34a; }
-    .rt-icon.client { background: #fee2e2; color: #dc2626; }
+    .tl-dot {
+        width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .tl-dot.store  { background: #16a34a; box-shadow: 0 0 0 4px #dcfce7; }
+    .tl-dot.client { background: #dc2626; box-shadow: 0 0 0 4px #fee2e2; }
+    .tl-line {
+        width: 2px; flex: 1; min-height: 36px;
+        background: repeating-linear-gradient(
+            to bottom, #d1d5db 0, #d1d5db 5px, transparent 5px, transparent 10px
+        );
+        margin: 6px 0;
+    }
 
-    .rt-label {
+    /* Colonne droite : textes */
+    .tl-col-text { flex: 1; min-width: 0; }
+    .tl-label {
         font-size: 10px; font-weight: 700; letter-spacing: .6px;
-        text-transform: uppercase; color: #9ca3af; margin-bottom: 3px;
+        text-transform: uppercase; color: #9ca3af; margin-bottom: 2px;
     }
-    .rt-name  { font-size: 14px; font-weight: 700; color: #111827; line-height: 1.3; }
-    .rt-addr  { font-size: 12px; color: #6b7280; margin-top: 3px; line-height: 1.4; }
-    .rt-addr.loading { color: #d1d5db; font-style: italic; }
+    .tl-name  { font-size: 14px; font-weight: 700; color: #111827; }
+    .tl-addr  { font-size: 12px; color: #6b7280; margin-top: 3px; line-height: 1.4; }
+    .tl-addr.loading { color: #d1d5db; font-style: italic; }
 
-    .rt-middle {
-        display: flex; align-items: center; gap: 0;
-        background: #f9fafb; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;
-        padding: 0 18px;
-    }
-    .rt-vline { width: 2px; height: 20px; background: #d1d5db; margin-left: 17px; flex-shrink: 0; }
-    .rt-dist-pill {
-        margin-left: 14px;
+    /* Badge distance entre les deux rangées */
+    .tl-dist-row { display: flex; gap: 14px; align-items: center; margin: 2px 0; }
+    .tl-dist-pill {
         display: inline-flex; align-items: center; gap: 5px;
         background: #eff6ff; color: #1d4ed8;
         border: 1px solid #bfdbfe; border-radius: 20px;
-        padding: 4px 14px; font-size: 12px; font-weight: 700;
+        padding: 3px 13px; font-size: 12px; font-weight: 700;
     }
-    .rt-connector {
-        display: flex; flex-direction: column; align-items: flex-start;
-        padding: 0 18px; background: #f9fafb;
-        border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;
-    }
-    .rt-connector-inner { display: flex; align-items: center; gap: 14px; width: 100%; padding: 6px 0; }
-    .rt-vlines { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
-    .rt-vline-seg { width: 2px; height: 14px; background: #d1d5db; }
 </style>
 @endsection
 
@@ -198,37 +195,38 @@
                     <div class="rt-wrap">
 
                         {{-- Départ --}}
-                        <div class="rt-step">
-                            <div class="rt-icon store"><i class="las la-store"></i></div>
-                            <div style="flex:1;min-width:0">
-                                <div class="rt-label">{{ translate('Départ') }}</div>
-                                <div class="rt-name">{{ get_setting('site_name', 'Boutique') }}</div>
-                                <div class="rt-addr" id="modal-store-addr">{{ get_setting('delivery_pickup_address', '—') }}</div>
+                        <div class="tl-row">
+                            <div class="tl-col-icon">
+                                <div class="tl-dot store"></div>
+                                <div class="tl-line"></div>
+                            </div>
+                            <div class="tl-col-text" style="padding-bottom:12px">
+                                <div class="tl-label">{{ translate('Départ') }}</div>
+                                <div class="tl-name">{{ get_setting('site_name', 'Boutique') }}</div>
+                                <div class="tl-addr loading" id="modal-store-addr">{{ translate('Chargement...') }}</div>
                             </div>
                         </div>
 
-                        {{-- Connecteur distance --}}
-                        <div class="rt-connector">
-                            <div class="rt-connector-inner">
-                                <div class="rt-vlines">
-                                    <div class="rt-vline-seg"></div>
-                                    <div class="rt-vline-seg" style="background:transparent"></div>
-                                    <div class="rt-vline-seg"></div>
-                                </div>
-                                <div class="rt-dist-pill">
-                                    <i class="las la-road"></i>
-                                    <span id="modal-dist-label">—</span>
-                                </div>
+                        {{-- Distance --}}
+                        <div class="tl-dist-row">
+                            <div class="tl-col-icon" style="justify-content:center">
+                                {{-- espace sous la ligne --}}
+                            </div>
+                            <div class="tl-dist-pill">
+                                <i class="las la-road"></i>
+                                <span id="modal-dist-label">—</span>
                             </div>
                         </div>
 
                         {{-- Arrivée --}}
-                        <div class="rt-step">
-                            <div class="rt-icon client"><i class="las la-map-marker"></i></div>
-                            <div style="flex:1;min-width:0">
-                                <div class="rt-label">{{ translate('Arrivée — Client') }}</div>
-                                <div class="rt-name" id="modal-client-name">—</div>
-                                <div class="rt-addr loading" id="modal-client-addr">{{ translate('Chargement de l\'adresse...') }}</div>
+                        <div class="tl-row" style="margin-top:10px">
+                            <div class="tl-col-icon">
+                                <div class="tl-dot client"></div>
+                            </div>
+                            <div class="tl-col-text">
+                                <div class="tl-label">{{ translate('Arrivée — Client') }}</div>
+                                <div class="tl-name" id="modal-client-name">—</div>
+                                <div class="tl-addr loading" id="modal-client-addr">{{ translate('Chargement de l\'adresse...') }}</div>
                             </div>
                         </div>
 
@@ -304,6 +302,13 @@
             error: function() { callback(null); }
         });
     }
+
+    /* Géocoder la boutique une seule fois au chargement (coordonnées fixes) */
+    reverseGeocode(STORE_LAT, STORE_LNG, function(addr) {
+        $('#modal-store-addr')
+            .removeClass('loading')
+            .text(addr || (STORE_LAT.toFixed(4) + ', ' + STORE_LNG.toFixed(4)));
+    });
 
     $(document).on('click', '.btn-fix-quote', function () {
         var $b   = $(this);
