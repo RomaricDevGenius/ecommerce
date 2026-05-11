@@ -99,7 +99,9 @@
                                 <th>{{ translate('Distance') }}</th>
                                 <th>{{ translate('Statut') }}</th>
                                 <th>{{ translate('Date') }}</th>
+                                <th>{{ translate('Base') }}</th>
                                 <th>{{ translate('Supplément') }}</th>
+                                <th>{{ translate('Total') }}</th>
                                 <th class="text-right">{{ translate('Action') }}</th>
                             </tr>
                         </thead>
@@ -121,6 +123,12 @@
                                         <span class="gps-badge-pending">{{ translate('En attente') }}</span>
                                     @elseif($quote->status === 'confirmed')
                                         <span class="gps-badge-confirmed">{{ translate('Devis envoyé') }}</span>
+                                    @elseif($quote->status === 'accepted')
+                                        <span class="badge badge-success">{{ translate('Accepté') }}</span>
+                                    @elseif($quote->status === 'refused')
+                                        <span class="badge badge-danger">{{ translate('Refusé') }}</span>
+                                    @elseif($quote->status === 'expired')
+                                        <span class="badge badge-secondary">{{ translate('Expiré') }}</span>
                                     @endif
                                 </td>
                                 <td>
@@ -128,26 +136,50 @@
                                     <small class="text-muted">{{ $quote->created_at->format('H:i') }}</small>
                                 </td>
                                 <td>
-                                    @if($quote->supplement_amount)
+                                    <span class="text-muted">
+                                        {{ $quote->base_amount > 0 ? number_format($quote->base_amount, 0, ',', ' ').' FCFA' : '—' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        {{ $quote->supplement_amount > 0 ? number_format($quote->supplement_amount, 0, ',', ' ').' FCFA' : '—' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($quote->total_amount > 0)
                                         <span class="text-success font-weight-bold">
-                                            {{ number_format($quote->supplement_amount, 0, ',', ' ') }} FCFA
+                                            {{ number_format($quote->total_amount, 0, ',', ' ') }} FCFA
                                         </span>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
                                 <td class="text-right">
+                                    @if(in_array($quote->status, ['pending', 'confirmed']))
                                     <button type="button"
-                                        class="btn btn-soft-primary btn-sm btn-fix-quote"
+                                        class="btn btn-soft-primary btn-sm btn-fix-quote mr-1"
                                         data-quote-id="{{ $quote->id }}"
                                         data-client="{{ $quote->user ? $quote->user->name : '?' }}"
                                         data-distance="{{ number_format($quote->distance_km, 1) }}"
                                         data-lat="{{ $quote->delivery_lat }}"
                                         data-lng="{{ $quote->delivery_lng }}"
+                                        data-base="{{ $quote->base_amount }}"
                                         data-current="{{ $quote->supplement_amount }}"
+                                        data-dep-lat="{{ $quote->departure_lat ?? (float)get_setting('delivery_pickup_latitude', '12.3714') }}"
+                                        data-dep-lng="{{ $quote->departure_lng ?? (float)get_setting('delivery_pickup_longitude', '-1.5197') }}"
+                                        data-dep-name="{{ ($quote->seller_id && $quote->shop) ? $quote->shop->name : get_setting('site_name', 'Boutique') }}"
                                         data-toggle="modal" data-target="#supplementModal">
                                         <i class="las la-money-bill-wave mr-1"></i>{{ $quote->supplement_amount ? translate('Modifier') : translate('Fixer le devis') }}
                                     </button>
+                                    @endif
+                                    <form action="{{ route('gps_shipping.quote.destroy', $quote->id) }}" method="POST" class="d-inline"
+                                          onsubmit="return confirm('{{ translate('Supprimer ce devis ?') }}')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-soft-danger btn-sm">
+                                            <i class="las la-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty
@@ -195,7 +227,7 @@
                                     <div class="rt-dot store"></div>
                                     <span class="rt-label">{{ translate('Départ') }}</span>
                                 </div>
-                                <div class="rt-name">{{ get_setting('site_name', 'Boutique') }}</div>
+                                <div class="rt-name" id="modal-store-name">—</div>
                                 <div class="rt-addr loading" id="modal-store-addr">{{ translate('Chargement...') }}</div>
                             </div>
 
@@ -230,16 +262,50 @@
                         {{ translate('Voir le trajet sur Google Maps') }}
                     </a>
 
-                    {{-- Montant --}}
-                    <div class="form-group row mb-0">
-                        <label class="col-md-5 col-from-label" style="padding-top:10px">
-                            {{ translate('Frais de livraison') }}
+                    {{-- Base calculée (lecture seule) --}}
+                    <div class="form-group row mb-2">
+                        <label class="col-md-5 col-from-label" style="padding-top:8px;font-size:13px">
+                            {{ translate('Base calculée') }}
+                        </label>
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <input type="text" id="modal-base-display"
+                                    class="form-control bg-light text-muted" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">FCFA</span>
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ translate('Calculé automatiquement par le système') }}</small>
+                        </div>
+                    </div>
+
+                    {{-- Supplément admin --}}
+                    <div class="form-group row mb-2">
+                        <label class="col-md-5 col-from-label" style="padding-top:8px">
+                            {{ translate('Supplément') }}
                         </label>
                         <div class="col-md-7">
                             <div class="input-group">
                                 <input type="number" name="supplement" id="modal-supplement-input"
-                                    class="form-control" min="0" step="1"
-                                    placeholder="{{ translate('Ex : 3 500') }}" required>
+                                    class="form-control" min="0" step="1" value="0"
+                                    placeholder="{{ translate('Ex : 500') }}" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text font-weight-600">FCFA</span>
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ translate('Montant additionnel si zone difficile, etc.') }}</small>
+                        </div>
+                    </div>
+
+                    {{-- Total = base + supplément --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-md-5 col-from-label" style="padding-top:8px;font-weight:700">
+                            {{ translate('Total facturé au client') }}
+                        </label>
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <input type="text" id="modal-total-display"
+                                    class="form-control font-weight-bold text-success bg-light" readonly>
                                 <div class="input-group-append">
                                     <span class="input-group-text font-weight-600">FCFA</span>
                                 </div>
@@ -265,9 +331,11 @@
 
 @section('script')
 <script>
-    var SUPP_URL  = "{{ route('gps_shipping.supplement', ':id') }}";
-    var STORE_LAT = {{ (float) get_setting('delivery_pickup_latitude',  '12.3714') }};
-    var STORE_LNG = {{ (float) get_setting('delivery_pickup_longitude', '-1.5197') }};
+    var SUPP_URL       = "{{ route('gps_shipping.supplement', ':id') }}";
+    var DEFAULT_DEP_LAT = {{ (float) get_setting('delivery_pickup_latitude',  '12.3714') }};
+    var DEFAULT_DEP_LNG = {{ (float) get_setting('delivery_pickup_longitude', '-1.5197') }};
+    var DEFAULT_DEP_NAME = {!! json_encode(get_setting('site_name', 'Boutique')) !!};
+    var LOADING_TEXT   = "{{ translate('Chargement...') }}";
 
     /* Reverse geocoding via Nominatim (gratuit, sans clé API) */
     function reverseGeocode(lat, lng, callback) {
@@ -278,7 +346,6 @@
             success: function(data) {
                 if (data && data.address) {
                     var a = data.address;
-                    /* Construire une adresse lisible : quartier / rue, ville */
                     var parts = [];
                     var street = a.road || a.pedestrian || a.neighbourhood || a.suburb || '';
                     var city   = a.city || a.town || a.village || a.county || '';
@@ -293,39 +360,80 @@
         });
     }
 
-    /* Géocoder la boutique une seule fois au chargement (coordonnées fixes) */
-    reverseGeocode(STORE_LAT, STORE_LNG, function(addr) {
-        $('#modal-store-addr')
-            .removeClass('loading')
-            .text(addr || (STORE_LAT.toFixed(4) + ', ' + STORE_LNG.toFixed(4)));
-    });
+    /* Cache des adresses géocodées par coordonnées */
+    var _geocodeCache = {};
+    function cachedGeocode(lat, lng, callback) {
+        var key = lat.toFixed(5) + ',' + lng.toFixed(5);
+        if (_geocodeCache[key] !== undefined) {
+            callback(_geocodeCache[key]);
+            return;
+        }
+        reverseGeocode(lat, lng, function(addr) {
+            _geocodeCache[key] = addr;
+            callback(addr);
+        });
+    }
+
+    /* Calcul du total en temps réel quand l'admin modifie le supplément */
+    function updateTotal() {
+        var base  = parseFloat($('#modal-base-display').data('raw') || 0);
+        var supp  = parseFloat($('#modal-supplement-input').val() || 0);
+        var total = base + (isNaN(supp) ? 0 : supp);
+        $('#modal-total-display').val(Math.round(total).toLocaleString('fr-FR'));
+    }
+    $(document).on('input', '#modal-supplement-input', updateTotal);
 
     $(document).on('click', '.btn-fix-quote', function () {
-        var $b   = $(this);
-        var lat  = parseFloat($b.data('lat'));
-        var lng  = parseFloat($b.data('lng'));
-        var dist = $b.data('distance') || '?';
+        var $b          = $(this);
+        var lat         = parseFloat($b.data('lat'));
+        var lng         = parseFloat($b.data('lng'));
+        var depLat      = parseFloat($b.data('dep-lat') || DEFAULT_DEP_LAT);
+        var depLng      = parseFloat($b.data('dep-lng') || DEFAULT_DEP_LNG);
+        var depName     = $b.data('dep-name') || DEFAULT_DEP_NAME;
+        var dist        = $b.data('distance') || '?';
+        var baseAmt     = parseFloat($b.data('base') || 0);
+        var currentSupp = parseFloat($b.data('current') || 0);
 
-        /* Infos de base */
+        /* Infos client et distance */
         $('#modal-client-name').text($b.data('client') || '—');
         $('#modal-dist-label').text(dist + ' km');
-        $('#modal-supplement-input').val($b.data('current') || '');
+
+        /* Point de départ — nom + géocodage */
+        $('#modal-store-name').text(depName);
+        $('#modal-store-addr').addClass('loading').text(LOADING_TEXT);
+        cachedGeocode(depLat, depLng, function(addr) {
+            $('#modal-store-addr')
+                .removeClass('loading')
+                .text(addr || (depLat.toFixed(4) + ', ' + depLng.toFixed(4)));
+        });
+
+        /* Base calculée (lecture seule) */
+        $('#modal-base-display')
+            .val(Math.round(baseAmt).toLocaleString('fr-FR'))
+            .data('raw', baseAmt);
+
+        /* Supplément (valeur existante ou 0) */
+        $('#modal-supplement-input').val(currentSupp > 0 ? currentSupp : 0);
+
+        /* Total */
+        updateTotal();
+
         $('#supplementForm').attr('action', SUPP_URL.replace(':id', $b.data('quote-id')));
 
-        /* Lien Google Maps */
+        /* Lien Google Maps avec le bon point de départ */
         if (!isNaN(lat) && !isNaN(lng)) {
             $('#btn-gmaps').attr(
                 'href',
-                'https://www.google.com/maps/dir/' + STORE_LAT + ',' + STORE_LNG + '/' + lat + ',' + lng
+                'https://www.google.com/maps/dir/' + depLat + ',' + depLng + '/' + lat + ',' + lng
             );
         } else {
             $('#btn-gmaps').attr('href', '#');
         }
 
         /* Adresse client via reverse geocoding */
-        $('#modal-client-addr').text("{{ translate('Chargement de l\'adresse...') }}").addClass('loading');
+        $('#modal-client-addr').addClass('loading').text(LOADING_TEXT);
         if (!isNaN(lat) && !isNaN(lng)) {
-            reverseGeocode(lat, lng, function(addr) {
+            cachedGeocode(lat, lng, function(addr) {
                 $('#modal-client-addr')
                     .removeClass('loading')
                     .text(addr || (lat.toFixed(4) + ', ' + lng.toFixed(4)));

@@ -2154,6 +2154,10 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
             return 0;
         }
 
+        // Departure override: vendor shop coords if set, else global store
+        $departureLat = isset($shipping_info['departure_lat']) ? (float) $shipping_info['departure_lat'] : null;
+        $departureLng = isset($shipping_info['departure_lng']) ? (float) $shipping_info['departure_lng'] : null;
+
         // Calculer le poids total du panier
         $totalWeightKg = 0.0;
         $totalVolumeL  = 0.0;
@@ -2170,7 +2174,7 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
             }
         }
 
-        $result = \App\Services\GpsShippingService::calculate($lat, $lng, $totalWeightKg, $useVolume, $totalVolumeL);
+        $result = \App\Services\GpsShippingService::calculate($lat, $lng, $totalWeightKg, $useVolume, $totalVolumeL, $departureLat, $departureLng);
 
         // Répartir le coût total sur le nombre d'articles du panier
         $totalItems = count($carts);

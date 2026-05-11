@@ -41,14 +41,16 @@ class GpsShippingService
      * }
      */
     public static function calculate(
-        float $customerLat,
-        float $customerLng,
-        float $totalWeightKg = 0.0,
-        bool  $useVolume     = false,
-        float $totalVolumeL  = 0.0
+        float  $customerLat,
+        float  $customerLng,
+        float  $totalWeightKg = 0.0,
+        bool   $useVolume     = false,
+        float  $totalVolumeL  = 0.0,
+        ?float $departureLat  = null,
+        ?float $departureLng  = null,
     ): array {
-        $pickupLat = (float) get_setting('delivery_pickup_latitude',  '12.3714');
-        $pickupLng = (float) get_setting('delivery_pickup_longitude', '-1.5197');
+        $pickupLat = $departureLat ?? (float) get_setting('delivery_pickup_latitude',  '12.3714');
+        $pickupLng = $departureLng ?? (float) get_setting('delivery_pickup_longitude', '-1.5197');
 
         $distanceKm = self::distanceKm($pickupLat, $pickupLng, $customerLat, $customerLng);
 
@@ -91,6 +93,8 @@ class GpsShippingService
 
         return [
             'distance_km'      => round($distanceKm, 2),
+            'departure_lat'    => $pickupLat,
+            'departure_lng'    => $pickupLng,
             'base_price'       => $basePrice,
             'weight_surcharge' => $weightExtra,
             'volume_surcharge' => $volumeExtra,

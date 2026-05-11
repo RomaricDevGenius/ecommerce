@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Resources\V2\PickupPointResource;
 use App\Models\Address;
 use App\Models\Cart;
+use App\Models\GpsQuoteRequest;
 use App\Models\PickupPoint;
 use App\Models\Product;
 use App\Models\Shop;
@@ -29,6 +30,27 @@ class ShippingController extends Controller
         $deliveryLat = $request->has('delivery_lat') ? (float) $request->delivery_lat : null;
         $deliveryLng = $request->has('delivery_lng') ? (float) $request->delivery_lng : null;
 
+        // Si un devis GPS a déjà été accepté par ce client, les carts ont
+        // déjà le bon montant — ne pas recalculer ni écraser.
+        if ($userId && get_setting('shipping_type') === 'gps_distance_shipping') {
+            $acceptedQuote = GpsQuoteRequest::where('user_id', $userId)
+                ->where('status', 'accepted')
+                ->latest()
+                ->first();
+
+            if ($acceptedQuote) {
+                $total = $main_carts->fresh()->sum('shipping_cost');
+                return response()->json([
+                    'result'             => true,
+                    'shipping_type'      => 'gps_distance_shipping',
+                    'value'              => convert_price($total),
+                    'value_string'       => format_price(convert_price($total)),
+                    'gps_distance_km'    => $acceptedQuote->distance_km,
+                    'gps_is_manual_review' => false,
+                ], 200);
+            }
+        }
+
         foreach ($request->seller_list as $key => $seller) {
             $seller['shipping_cost'] = 0;
 
@@ -52,6 +74,17 @@ class ShippingController extends Controller
             // Coordonnées GPS toujours transmises à getShippingCost
             $shipping_info['delivery_lat'] = $deliveryLat;
             $shipping_info['delivery_lng'] = $deliveryLng;
+
+            // Point de départ : boutique du vendeur si disponible, sinon dépôt global
+            $shipping_info['departure_lat'] = null;
+            $shipping_info['departure_lng'] = null;
+            if (get_setting('shipping_type') === 'gps_distance_shipping' && $seller['seller_id']) {
+                $sellerShop = Shop::where('user_id', $seller['seller_id'])->first();
+                if ($sellerShop && $sellerShop->delivery_pickup_latitude) {
+                    $shipping_info['departure_lat'] = (float) $sellerShop->delivery_pickup_latitude;
+                    $shipping_info['departure_lng'] = (float) $sellerShop->delivery_pickup_longitude;
+                }
+            }
 
             foreach ($carts as $key => $cartItem) {
                 $cartItem['shipping_cost'] = 0;
