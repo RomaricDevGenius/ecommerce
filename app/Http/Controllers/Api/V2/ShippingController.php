@@ -40,14 +40,18 @@ class ShippingController extends Controller
 
             if ($acceptedQuote) {
                 $total = $main_carts->fresh()->sum('shipping_cost');
-                return response()->json([
-                    'result'             => true,
-                    'shipping_type'      => 'gps_distance_shipping',
-                    'value'              => convert_price($total),
-                    'value_string'       => format_price(convert_price($total)),
-                    'gps_distance_km'    => $acceptedQuote->distance_km,
-                    'gps_is_manual_review' => false,
-                ], 200);
+                // N'utiliser le montant accepté que si les articles ont déjà un coût
+                // (coût = 0 signifie nouveau panier → recalculer normalement)
+                if ($total > 0) {
+                    return response()->json([
+                        'result'               => true,
+                        'shipping_type'        => 'gps_distance_shipping',
+                        'value'                => convert_price($total),
+                        'value_string'         => format_price(convert_price($total)),
+                        'gps_distance_km'      => $acceptedQuote->distance_km,
+                        'gps_is_manual_review' => false,
+                    ], 200);
+                }
             }
         }
 
