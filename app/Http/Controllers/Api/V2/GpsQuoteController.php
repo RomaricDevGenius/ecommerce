@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Models\Cart;
 use App\Models\GpsQuoteRequest;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 
 class GpsQuoteController extends Controller
@@ -24,13 +25,46 @@ class GpsQuoteController extends Controller
             ->whereIn('status', ['pending', 'confirmed'])
             ->update(['status' => 'expired']);
 
+        // Determine departure point: vendor shop if all active cart items share one seller with GPS coords
+        $carts        = Cart::where('user_id', $user->id)->active()->get();
+        $ownerIds     = $carts->pluck('owner_id')->unique()->filter()->values();
+        $sellerId     = null;
+        $departureLat = null;
+        $departureLng = null;
+
+        if ($ownerIds->count() === 1) {
+            $shop = Shop::where('user_id', $ownerIds->first())->first();
+            if ($shop && $shop->delivery_pickup_latitude) {
+                $sellerId     = (int) $ownerIds->first();
+                $departureLat = (float) $shop->delivery_pickup_latitude;
+                $departureLng = (float) $shop->delivery_pickup_longitude;
+            }
+        }
+
+        // Calculate base amount using the correct departure point
+        $gpsResult  = \App\Services\GpsShippingService::calculate(
+            (float) $request->delivery_lat,
+            (float) $request->delivery_lng,
+            0.0, false, 0.0,
+            $departureLat,
+            $departureLng
+        );
+        $baseAmount = $gpsResult['base_price'] + $gpsResult['weight_surcharge'] + $gpsResult['volume_surcharge'];
+
+        // Use server-recalculated distance (authoritative)
+        $distanceKm = $gpsResult['distance_km'];
+
         $quote = GpsQuoteRequest::create([
-            'user_id'      => $user->id,
-            'delivery_lat' => $request->delivery_lat,
-            'delivery_lng' => $request->delivery_lng,
-            'distance_km'  => $request->distance_km,
-            'status'       => 'pending',
-            'expires_at'   => now()->addHours(24),
+            'user_id'       => $user->id,
+            'seller_id'     => $sellerId,
+            'departure_lat' => $gpsResult['departure_lat'],
+            'departure_lng' => $gpsResult['departure_lng'],
+            'delivery_lat'  => $request->delivery_lat,
+            'delivery_lng'  => $request->delivery_lng,
+            'distance_km'   => $distanceKm,
+            'base_amount'   => $baseAmount,
+            'status'        => 'pending',
+            'expires_at'    => now()->addHours(24),
         ]);
 
         // Notifier l'admin par email
@@ -81,7 +115,9 @@ class GpsQuoteController extends Controller
             'result'      => true,
             'quote_id'    => $quote->id,
             'status'      => $quote->status,
-            'amount'      => $quote->supplement_amount,
+            'amount'      => $quote->total_amount,
+            'base_amount' => $quote->base_amount,
+            'supplement'  => $quote->supplement_amount,
             'distance_km' => $quote->distance_km,
         ]);
     }
@@ -100,7 +136,7 @@ class GpsQuoteController extends Controller
         $count = $carts->count();
 
         if ($count > 0) {
-            $perItem = round($quote->supplement_amount / $count, 2);
+            $perItem = round($quote->total_amount / $count, 2);
             foreach ($carts as $cart) {
                 $cart->shipping_cost = $perItem;
                 $cart->save();
@@ -112,7 +148,7 @@ class GpsQuoteController extends Controller
         return response()->json([
             'result'   => true,
             'quote_id' => $quote->id,
-            'amount'   => $quote->supplement_amount,
+            'amount'   => $quote->total_amount,
             'message'  => translate('Devis accepté.'),
         ]);
     }

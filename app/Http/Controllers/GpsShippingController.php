@@ -98,13 +98,19 @@ class GpsShippingController extends Controller
 
     public function pendingOrders()
     {
-        $quotes = GpsQuoteRequest::with('user')
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->orderByRaw("FIELD(status, 'pending', 'confirmed')")
+        $quotes = GpsQuoteRequest::with(['user', 'shop'])
+            ->orderByRaw("FIELD(status, 'pending', 'confirmed', 'accepted', 'refused', 'expired')")
             ->latest()
             ->paginate(20);
 
         return view('backend.setup_configurations.gps_shipping.pending_orders', compact('quotes'));
+    }
+
+    public function destroyQuote(GpsQuoteRequest $quote)
+    {
+        $quote->delete();
+        flash(translate('Devis supprimé.'))->success();
+        return back();
     }
 
     public function setQuoteSupplement(Request $request, GpsQuoteRequest $quote)
@@ -118,9 +124,9 @@ class GpsShippingController extends Controller
             'status'            => 'confirmed',
         ]);
 
-        $user     = $quote->user;
-        $amount   = number_format($request->supplement, 0, ',', ' ');
-        $siteName = get_setting('site_name', 'Boutique');
+        $user        = $quote->user;
+        $totalAmount = number_format($quote->total_amount, 0, ',', ' ');
+        $siteName    = get_setting('site_name', 'Boutique');
 
         // Push Firebase
         try {
@@ -128,7 +134,7 @@ class GpsShippingController extends Controller
                 NotificationUtility::sendFirebaseNotification(
                     deviceToken : $user->device_token,
                     title       : translate('Devis de livraison confirmé'),
-                    body        : translate('Vos frais de livraison ont été estimés à ') . $amount . ' FCFA. Ouvrez l\'app pour confirmer.',
+                    body        : translate('Vos frais de livraison ont été estimés à ') . $totalAmount . ' FCFA. Ouvrez l\'app pour confirmer.',
                     type        : 'gps_quote',
                     typeId      : $quote->id,
                 );
@@ -139,10 +145,10 @@ class GpsShippingController extends Controller
         try {
             if ($user && $user->email) {
                 \Mail::raw(
-                    "Bonjour {$user->name},\n\nVotre devis de livraison a été confirmé.\n\nMontant : {$amount} FCFA\nDistance : " . number_format($quote->distance_km, 1) . " km\n\nOuvrez l'application pour accepter ou refuser ce devis.\n\nCordialement,\n{$siteName}",
-                    function ($msg) use ($user, $amount, $siteName) {
+                    "Bonjour {$user->name},\n\nVotre devis de livraison a été confirmé.\n\nMontant total : {$totalAmount} FCFA\nDistance : " . number_format($quote->distance_km, 1) . " km\n\nOuvrez l'application pour accepter ou refuser ce devis.\n\nCordialement,\n{$siteName}",
+                    function ($msg) use ($user, $totalAmount, $siteName) {
                         $msg->to($user->email)
-                            ->subject("[{$siteName}] Votre devis de livraison : {$amount} FCFA");
+                            ->subject("[{$siteName}] Votre devis de livraison : {$totalAmount} FCFA");
                     }
                 );
             }
