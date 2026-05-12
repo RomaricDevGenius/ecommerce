@@ -2,33 +2,31 @@
 
 @section('styles')
 <style>
-    /* ── Badges tableau ── */
+    /* ── Badge distance ── */
     .gps-badge-dist {
         display: inline-flex; align-items: center; gap: 4px;
         background: #eef2ff; color: #4f46e5;
         border: 1px solid #c7d2fe; border-radius: 20px;
         padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap;
     }
-    .gps-badge-pending {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: #fff7ed; color: #c2410c;
-        border: 1px solid #fed7aa; border-radius: 20px;
-        padding: 3px 10px; font-size: 12px; font-weight: 600;
+
+    /* ── Badges statut unifiés ── */
+    .gps-status {
+        display: inline-flex; align-items: center; gap: 5px;
+        border-radius: 20px; padding: 4px 12px;
+        font-size: 12px; font-weight: 600; white-space: nowrap;
     }
-    .gps-badge-pending::before {
+    .gps-status.pending   { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .gps-status.confirmed { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .gps-status.accepted  { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; }
+    .gps-status.refused   { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .gps-status.expired   { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+    .gps-status.pending::before, .gps-status.confirmed::before {
         content: ''; display: inline-block;
-        width: 7px; height: 7px; border-radius: 50%; background: #fb923c;
+        width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
     }
-    .gps-badge-confirmed {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: #f0fdf4; color: #15803d;
-        border: 1px solid #bbf7d0; border-radius: 20px;
-        padding: 3px 10px; font-size: 12px; font-weight: 600;
-    }
-    .gps-badge-confirmed::before {
-        content: ''; display: inline-block;
-        width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
-    }
+    .gps-status.pending::before   { background: #fb923c; }
+    .gps-status.confirmed::before { background: #22c55e; }
 
     /* ── Timeline trajet dans le modal ── */
     #supplementModal .modal-dialog { max-width: 480px; }
@@ -120,15 +118,15 @@
                                 </td>
                                 <td>
                                     @if($quote->status === 'pending')
-                                        <span class="gps-badge-pending">{{ translate('En attente') }}</span>
+                                        <span class="gps-status pending">{{ translate('En attente') }}</span>
                                     @elseif($quote->status === 'confirmed')
-                                        <span class="gps-badge-confirmed">{{ translate('Devis envoyé') }}</span>
+                                        <span class="gps-status confirmed">{{ translate('Envoyé') }}</span>
                                     @elseif($quote->status === 'accepted')
-                                        <span class="badge badge-success">{{ translate('Accepté') }}</span>
+                                        <span class="gps-status accepted">{{ translate('Accepté') }}</span>
                                     @elseif($quote->status === 'refused')
-                                        <span class="badge badge-danger">{{ translate('Refusé') }}</span>
+                                        <span class="gps-status refused">{{ translate('Refusé') }}</span>
                                     @elseif($quote->status === 'expired')
-                                        <span class="badge badge-secondary">{{ translate('Expiré') }}</span>
+                                        <span class="gps-status expired">{{ translate('Expiré') }}</span>
                                     @endif
                                 </td>
                                 <td>
@@ -172,11 +170,11 @@
                                         <i class="las la-money-bill-wave mr-1"></i>{{ $quote->supplement_amount ? translate('Modifier') : translate('Fixer le devis') }}
                                     </button>
                                     @endif
-                                    <form action="{{ route('gps_shipping.quote.destroy', $quote->id) }}" method="POST" class="d-inline"
-                                          onsubmit="return confirm('{{ translate('Supprimer ce devis ?') }}')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-soft-danger btn-sm">
+                                    <form action="{{ route('gps_shipping.quote.destroy', $quote->id) }}" method="POST"
+                                          class="d-inline" id="del-quote-{{ $quote->id }}">
+                                        @csrf @method('DELETE')
+                                        <button type="button" class="btn btn-soft-danger btn-sm btn-delete-quote"
+                                                data-form-id="del-quote-{{ $quote->id }}">
                                             <i class="las la-trash"></i>
                                         </button>
                                     </form>
@@ -329,8 +327,25 @@
 </div>
 @endsection
 
+@section('modal')
+    @include('modals.delete_modal')
+@endsection
+
 @section('script')
 <script>
+    /* ── Suppression via modal système ── */
+    var _deleteFormId = null;
+    $(document).on('click', '.btn-delete-quote', function () {
+        _deleteFormId = $(this).data('form-id');
+        $('#delete-modal').modal('show');
+    });
+    $(document).on('click', '#delete-link', function (e) {
+        e.preventDefault();
+        if (_deleteFormId) {
+            $('#' + _deleteFormId).submit();
+        }
+    });
+
     var SUPP_URL       = "{{ route('gps_shipping.supplement', ':id') }}";
     var DEFAULT_DEP_LAT = {{ (float) get_setting('delivery_pickup_latitude',  '12.3714') }};
     var DEFAULT_DEP_LNG = {{ (float) get_setting('delivery_pickup_longitude', '-1.5197') }};
