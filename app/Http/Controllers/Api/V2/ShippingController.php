@@ -124,7 +124,9 @@ class ShippingController extends Controller
 
         // Infos supplémentaires pour le mode GPS
         if (get_setting('shipping_type') === 'gps_distance_shipping' && $deliveryLat && $deliveryLng) {
-            $gpsResult = \App\Services\GpsShippingService::calculate((float) $deliveryLat, (float) $deliveryLng);
+            $responseDepartureLat = is_array($shipping_info) ? ($shipping_info['departure_lat'] ?? null) : null;
+            $responseDepartureLng = is_array($shipping_info) ? ($shipping_info['departure_lng'] ?? null) : null;
+            $gpsResult = \App\Services\GpsShippingService::calculate((float) $deliveryLat, (float) $deliveryLng, 0.0, false, 0.0, $responseDepartureLat, $responseDepartureLng);
             $response['gps_distance_km']     = $gpsResult['distance_km'];
             $response['gps_is_manual_review'] = $gpsResult['is_manual_review'];
         }
