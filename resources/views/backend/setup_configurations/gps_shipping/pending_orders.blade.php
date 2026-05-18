@@ -260,8 +260,15 @@
                         {{ translate('Voir le trajet sur Google Maps') }}
                     </a>
 
+                    {{-- Bandeau révision manuelle (visible uniquement si base = 0) --}}
+                    <div id="modal-manual-banner" class="alert alert-warning py-2 px-3 mb-3" style="display:none;font-size:12.5px;border-radius:8px">
+                        <i class="las la-exclamation-triangle mr-1"></i>
+                        <strong>{{ translate('Zone hors paliers automatiques') }}</strong> —
+                        {{ translate('Saisissez le montant total à facturer au client.') }}
+                    </div>
+
                     {{-- Base calculée (lecture seule) --}}
-                    <div class="form-group row mb-2">
+                    <div id="modal-base-row" class="form-group row mb-2">
                         <label class="col-md-5 col-from-label" style="padding-top:8px;font-size:13px">
                             {{ translate('Base calculée') }}
                         </label>
@@ -273,13 +280,13 @@
                                     <span class="input-group-text">FCFA</span>
                                 </div>
                             </div>
-                            <small class="text-muted">{{ translate('Calculé automatiquement par le système') }}</small>
+                            <small class="text-muted" id="modal-base-note">{{ translate('Calculé automatiquement par le système') }}</small>
                         </div>
                     </div>
 
                     {{-- Supplément admin --}}
                     <div class="form-group row mb-2">
-                        <label class="col-md-5 col-from-label" style="padding-top:8px">
+                        <label class="col-md-5 col-from-label" style="padding-top:8px" id="modal-supplement-label">
                             {{ translate('Supplément') }}
                         </label>
                         <div class="col-md-7">
@@ -291,7 +298,7 @@
                                     <span class="input-group-text font-weight-600">FCFA</span>
                                 </div>
                             </div>
-                            <small class="text-muted">{{ translate('Montant additionnel si zone difficile, etc.') }}</small>
+                            <small class="text-muted" id="modal-supplement-note">{{ translate('Montant additionnel si zone difficile, etc.') }}</small>
                         </div>
                     </div>
 
@@ -423,9 +430,14 @@
         });
 
         /* Base calculée (lecture seule) */
+        var isManual = (baseAmt === 0);
         $('#modal-base-display')
-            .val(Math.round(baseAmt).toLocaleString('fr-FR'))
+            .val(isManual ? '—' : Math.round(baseAmt).toLocaleString('fr-FR'))
             .data('raw', baseAmt);
+        $('#modal-manual-banner').toggle(isManual);
+        $('#modal-base-row').toggle(!isManual);
+        $('#modal-supplement-label').text(isManual ? '{{ translate("Prix total de livraison") }}' : '{{ translate("Supplément") }}');
+        $('#modal-supplement-note').text(isManual ? '{{ translate("Montant total à facturer au client pour ce trajet") }}' : '{{ translate("Montant additionnel si zone difficile, etc.") }}');
 
         /* Supplément (valeur existante ou 0) */
         $('#modal-supplement-input').val(currentSupp > 0 ? currentSupp : 0);
