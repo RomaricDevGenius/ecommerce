@@ -16,31 +16,31 @@
                         $first_order = $order->orderDetails->first();
                         $shipping_method = $order->shipping_method ?? null;
                     @endphp
-                    @if ($order->seller_id == $admin_user_id || get_setting('product_manage_by_admin') == 1)
-
-                        <!--Assign Delivery Boy-->
-                        @if (addon_is_activated('delivery_boy'))
-                            @if ($shipping_method != 'shiprocket' && $shipping_method != 'steadfast' && $shipping_method != 'pathao')
-                                <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2">
-                                    <label for="assign_deliver_boy">{{ translate('Assign Deliver Boy') }}</label>
-                                    @if (($delivery_status == 'pending' || $delivery_status == 'confirmed' || $delivery_status == 'picked_up') && auth()->user()->can('assign_delivery_boy_for_orders'))
-                                        <select class="form-control aiz-selectpicker" data-live-search="true"
-                                            data-minimum-results-for-search="Infinity" id="assign_deliver_boy">
-                                            <option value="">{{ translate('Select Delivery Boy') }}</option>
-                                            @foreach ($delivery_boys as $delivery_boy)
-                                                <option value="{{ $delivery_boy->id }}"
-                                                    @if ($order->assign_delivery_boy == $delivery_boy->id) selected @endif>
-                                                    {{ $delivery_boy->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @else
-                                        <input type="text" class="form-control" value="{{ optional($order->delivery_boy)->name }}"
-                                            disabled>
-                                    @endif
-                                </div>
-                            @endif
+                    <!--Assign Delivery Boy-->
+                    @if (addon_is_activated('delivery_boy'))
+                        @if ($shipping_method != 'shiprocket' && $shipping_method != 'steadfast' && $shipping_method != 'pathao')
+                            <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2">
+                                <label for="assign_deliver_boy">{{ translate('Assign Deliver Boy') }}</label>
+                                @if (($delivery_status == 'pending' || $delivery_status == 'confirmed' || $delivery_status == 'picked_up') && auth()->user()->can('assign_delivery_boy_for_orders'))
+                                    <select class="form-control aiz-selectpicker" data-live-search="true"
+                                        data-minimum-results-for-search="Infinity" id="assign_deliver_boy">
+                                        <option value="">{{ translate('Select Delivery Boy') }}</option>
+                                        @foreach ($delivery_boys as $delivery_boy)
+                                            <option value="{{ $delivery_boy->id }}"
+                                                @if ($order->assign_delivery_boy == $delivery_boy->id) selected @endif>
+                                                {{ $delivery_boy->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="text" class="form-control" value="{{ optional($order->delivery_boy)->name }}"
+                                        disabled>
+                                @endif
+                            </div>
                         @endif
+                    @endif
+
+                    @if ($order->seller_id == $admin_user_id || get_setting('product_manage_by_admin') == 1)
 
                         <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2">
                             <label for="update_payment_status">{{ translate('Payment Status') }}</label>
