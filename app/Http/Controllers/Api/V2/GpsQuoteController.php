@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Models\Cart;
 use App\Models\GpsQuoteRequest;
+use App\Models\GpsShippingTier;
+use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 
@@ -41,15 +43,43 @@ class GpsQuoteController extends Controller
             }
         }
 
+        // Calculer le poids et volume réels du panier
+        $totalWeightKg = 0.0;
+        $totalVolumeL  = 0.0;
+        $useVolume     = get_setting('gps_weight_mode', 'weight_only') === 'weight_volume';
+
+        foreach ($carts as $cartItem) {
+            $product = Product::find($cartItem->product_id);
+            if ($product) {
+                $totalWeightKg += (float) $product->weight * (int) $cartItem->quantity;
+                if ($useVolume && $product->length && $product->breadth && $product->height) {
+                    $totalVolumeL += ($product->length * $product->breadth * $product->height / 1000) * (int) $cartItem->quantity;
+                }
+            }
+        }
+
         // Calculate base amount using the correct departure point
-        $gpsResult  = \App\Services\GpsShippingService::calculate(
+        $gpsResult = \App\Services\GpsShippingService::calculate(
             (float) $request->delivery_lat,
             (float) $request->delivery_lng,
-            0.0, false, 0.0,
+            $totalWeightKg,
+            $useVolume,
+            $totalVolumeL,
             $departureLat,
             $departureLng
         );
-        $baseAmount = $gpsResult['base_price'] + $gpsResult['weight_surcharge'] + $gpsResult['volume_surcharge'];
+
+        // Pour les zones en révision manuelle : utiliser le dernier palier automatique comme base de référence
+        if ($gpsResult['is_manual_review']) {
+            $lastAutoTier = GpsShippingTier::where('is_manual_review', false)
+                ->orderByDesc('min_km')
+                ->first();
+            $baseAmount = ($lastAutoTier ? (float) $lastAutoTier->price : 0.0)
+                        + $gpsResult['weight_surcharge']
+                        + $gpsResult['volume_surcharge'];
+        } else {
+            $baseAmount = $gpsResult['base_price'] + $gpsResult['weight_surcharge'] + $gpsResult['volume_surcharge'];
+        }
 
         // Use server-recalculated distance (authoritative)
         $distanceKm = $gpsResult['distance_km'];
