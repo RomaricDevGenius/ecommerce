@@ -324,8 +324,10 @@
                     <button type="button" class="btn btn-light" data-dismiss="modal">
                         {{ translate('Annuler') }}
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="las la-paper-plane mr-1"></i>{{ translate('Envoyer au client') }}
+                    <button type="submit" id="btn-send-quote" class="btn btn-primary">
+                        <i class="las la-paper-plane mr-1" id="btn-send-icon"></i>
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" id="btn-send-spinner" role="status"></span>
+                        <span id="btn-send-text">{{ translate('Envoyer au client') }}</span>
                     </button>
                 </div>
             </form>
@@ -446,6 +448,11 @@
         updateTotal();
 
         $('#supplementForm').attr('action', SUPP_URL.replace(':id', $b.data('quote-id')));
+        /* Reset loader each time the modal opens */
+        $('#btn-send-quote').prop('disabled', false);
+        $('#btn-send-icon').removeClass('d-none');
+        $('#btn-send-spinner').addClass('d-none');
+        $('#btn-send-text').text('{{ translate("Envoyer au client") }}');
 
         /* Lien Google Maps avec le bon point de départ */
         if (!isNaN(lat) && !isNaN(lng)) {
@@ -468,6 +475,14 @@
         } else {
             $('#modal-client-addr').removeClass('loading').text('—');
         }
+    });
+
+    /* Loader sur le bouton Envoyer au client */
+    $('#supplementForm').on('submit', function () {
+        $('#btn-send-quote').prop('disabled', true);
+        $('#btn-send-icon').addClass('d-none');
+        $('#btn-send-spinner').removeClass('d-none');
+        $('#btn-send-text').text('{{ translate("Envoi en cours...") }}');
     });
 </script>
 @endsection
