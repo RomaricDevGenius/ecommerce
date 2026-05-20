@@ -22,7 +22,8 @@ class NotificationCollection extends ResourceCollection
                     'data' => $data->data,
                     'notification_text' => $notifyContent,
                     'image' => uploaded_asset($notificationType->image),
-                    'date' => date("F j Y, g:i a", strtotime($data->created_at))
+                    'date' => date("F j Y, g:i a", strtotime($data->created_at)),
+                    'is_read' => $data->read_at !== null ? 1 : 0,
                 ];
             })
         ];

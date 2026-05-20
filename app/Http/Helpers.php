@@ -1730,6 +1730,21 @@ function get_french_translations_fallback()
         'delivery_status_changed_to_' => 'Statut de livraison changé en ',
         'delivery_status_has_been_changed_successfully' => 'Statut de livraison mis à jour avec succès',
 
+        // Notifications push Firebase - titres et corps
+        'order_updated' => 'Commande mise à jour !',
+        'your_order' => 'Votre commande',
+        'has_been' => 'a été',
+        'an_order' => 'Une commande',
+        'has_been_placed' => 'a été passée',
+
+        // Statuts de livraison (pour les notifications)
+        'processing' => 'En cours de traitement',
+        'picked_up' => 'Récupérée',
+        'on_the_way' => 'En route',
+        'delivered' => 'Livrée',
+        'cancelled' => 'Annulée',
+        'unpaid' => 'Non payée',
+
         // Messages API - Paiement
         'payment_completed_successfully' => 'Paiement effectué avec succès.',
         'payment_cancelled' => 'Paiement annulé',

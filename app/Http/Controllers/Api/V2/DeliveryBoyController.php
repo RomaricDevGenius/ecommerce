@@ -361,7 +361,7 @@ class DeliveryBoyController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => translate('Delivery status changed to ').ucwords(str_replace('_',' ',$request->status))
+            'message' => translate('Delivery status changed to ') . translate($request->status)
         ]);
     }
 
