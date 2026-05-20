@@ -9,8 +9,8 @@ class NotificationController extends Controller
 {
     public function allNotification()
     {
-        auth()->user()->unreadNotifications->markAsRead();
         $notifications = auth()->user()->notifications()->get();
+        auth()->user()->unreadNotifications->markAsRead();
         return new NotificationCollection($notifications);
     }
 

@@ -125,9 +125,8 @@ class OrderController extends Controller
 
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->delivery_status);
-            $request->text = " Your order {$order->code} has been {$status}";
+            $request->title = translate('Order updated !');
+            $request->text = translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->delivery_status);
 
             $request->type = "order";
             $request->id = $order->id;
@@ -182,9 +181,8 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->payment_status);
-            $request->text = " Your order {$order->code} has been {$status}";
+            $request->title = translate('Order updated !');
+            $request->text = translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->payment_status);
 
             $request->type = "order";
             $request->id = $order->id;
