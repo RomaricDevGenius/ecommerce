@@ -137,6 +137,7 @@ class GpsShippingController extends Controller
                     body        : translate('Vos frais de livraison ont été estimés à ') . $totalAmount . ' FCFA. Ouvrez l\'app pour confirmer.',
                     type        : 'gps_quote',
                     typeId      : $quote->id,
+                    userId      : $user->id,
                 );
             }
         } catch (\Throwable $e) {}
