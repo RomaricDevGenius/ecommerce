@@ -10,7 +10,6 @@ class NotificationController extends Controller
     public function allNotification()
     {
         $notifications = auth()->user()->notifications()->get();
-        auth()->user()->unreadNotifications->markAsRead();
         return new NotificationCollection($notifications);
     }
 
@@ -39,15 +38,18 @@ class NotificationController extends Controller
     }
 
     public function notificationMarkAsRead($notificationId) {
-        $notification = auth()->user()->unreadNotifications->where('id',$notificationId)->first();
+        $notification = auth()->user()->unreadNotifications->where('id', $notificationId)->first();
 
-        // Notification mark as read
-        auth()->user()->unreadNotifications->where('id',$notificationId)->markAsRead();
+        if (!$notification) {
+            return response()->json(['result' => true, 'message' => 'Already read']);
+        }
+
+        $notification->markAsRead();
 
         return response()->json([
-            'result' => false,
-            'type' => $notification->type,
-            'data' => $notification->data
+            'result' => true,
+            'type'   => $notification->type,
+            'data'   => $notification->data,
         ]);
     }
 
