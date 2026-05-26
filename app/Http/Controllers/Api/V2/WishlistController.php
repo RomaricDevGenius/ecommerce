@@ -82,7 +82,7 @@ class WishlistController extends Controller
                 'message' => translate('Product is not present in wishlist'),
                 'is_in_wishlist' => false,
                 'product_id' => (integer)$product->id,
-                'wishlist_id' => $wishlist->id
+                'wishlist_id' => null
             ], 200);
         }
        
