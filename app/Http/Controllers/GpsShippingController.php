@@ -134,7 +134,7 @@ class GpsShippingController extends Controller
                 NotificationUtility::sendFirebaseNotification(
                     deviceToken : $user->device_token,
                     title       : translate('Devis de livraison confirmé'),
-                    body        : translate('Vos frais de livraison ont été estimés à ') . $totalAmount . ' FCFA. Ouvrez l\'app pour confirmer.',
+                    body        : translate('Vos frais de livraison ont été estimés à') . ' ' . $totalAmount . ' FCFA. Ouvrez l\'app pour confirmer.',
                     type        : 'gps_quote',
                     typeId      : $quote->id,
                     userId      : $user->id,
