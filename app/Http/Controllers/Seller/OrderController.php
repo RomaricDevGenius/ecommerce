@@ -124,15 +124,14 @@ class OrderController extends Controller
         //Sends Firebase Notifications to user
 
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
-            $request->device_token = $order->user->device_token;
-            $request->title = translate('Order updated !');
-            $request->text = translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->delivery_status);
-
-            $request->type = "order";
-            $request->id = $order->id;
-            $request->user_id = $order->user->id;
-
-            NotificationUtility::sendFirebaseNotification($request);
+            NotificationUtility::sendFirebaseNotification(
+                deviceToken: $order->user->device_token,
+                title:       translate('Order updated !'),
+                body:        translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->delivery_status),
+                type:        'order',
+                typeId:      $order->id,
+                userId:      $order->user->id,
+            );
         }
 
 
@@ -180,15 +179,14 @@ class OrderController extends Controller
         //Sends Firebase Notifications to Admin, seller, Customer
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
-            $request->device_token = $order->user->device_token;
-            $request->title = translate('Order updated !');
-            $request->text = translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->payment_status);
-
-            $request->type = "order";
-            $request->id = $order->id;
-            $request->user_id = $order->user->id;
-
-            NotificationUtility::sendFirebaseNotification($request);
+            NotificationUtility::sendFirebaseNotification(
+                deviceToken: $order->user->device_token,
+                title:       translate('Order updated !'),
+                body:        translate('Your order') . ' ' . $order->code . ' ' . translate('has been') . ' ' . translate($order->payment_status),
+                type:        'order',
+                typeId:      $order->id,
+                userId:      $order->user->id,
+            );
         }
 
 
