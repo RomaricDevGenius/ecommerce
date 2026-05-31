@@ -1936,6 +1936,12 @@ function get_french_translations_fallback()
         'continue' => 'Continuer',
         'pickup_location_for_delivery_boy' => 'Emplacement de collecte pour le livreur',
         'monthly_earnings' => 'Gains mensuel',
+        'dimensions' => 'Dimensions',
+        'in_cm' => 'En cm',
+        'length' => 'Longueur',
+        'width' => 'Largeur',
+        'height' => 'Hauteur',
+        'l_x_w_x_h_used_for_gps_volume_surcharge' => 'L × l × H — surcharge volume GPS',
     ];
 }
 

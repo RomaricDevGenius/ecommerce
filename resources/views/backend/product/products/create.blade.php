@@ -159,7 +159,6 @@
                                                     <input type="number" class="form-control" name="height" value="0.00" step="0.01" placeholder="{{ translate('Height') }}">
                                                 </div>
                                             </div>
-                                            <small class="text-muted">{{ translate('L x W x H — used for GPS volume surcharge') }}</small>
                                         </div>
                                         <!-- Minimum Purchase Qty -->
                                         <div class="form-group mb-2">
