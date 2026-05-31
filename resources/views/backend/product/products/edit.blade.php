@@ -143,6 +143,22 @@
                                             <label class="col-from-label fs-13">{{translate('Weight')}} <small>({{ translate('In Kg') }})</small></label>
                                             <input type="number" class="form-control" name="weight" value="{{ $product->weight}}" step="0.01" placeholder="0.00">
                                         </div>
+                                        <!-- Dimensions -->
+                                        <div class="form-group mb-2">
+                                            <label class="col-from-label fs-13">{{translate('Dimensions')}} <small>({{ translate('In cm') }})</small></label>
+                                            <div class="row no-gutters">
+                                                <div class="col pr-1">
+                                                    <input type="number" class="form-control" name="length" value="{{ $product->length ?? 0.00 }}" step="0.01" placeholder="{{ translate('Length') }}">
+                                                </div>
+                                                <div class="col px-1">
+                                                    <input type="number" class="form-control" name="breadth" value="{{ $product->breadth ?? 0.00 }}" step="0.01" placeholder="{{ translate('Width') }}">
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <input type="number" class="form-control" name="height" value="{{ $product->height ?? 0.00 }}" step="0.01" placeholder="{{ translate('Height') }}">
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ translate('L x W x H — used for GPS volume surcharge') }}</small>
+                                        </div>
                                         <!-- Quantity -->
                                         <div class="form-group mb-2">
                                             <label class="col-from-label fs-13">{{translate('Minimum Purchase Qty')}} <span class="text-danger">*</span></label>
