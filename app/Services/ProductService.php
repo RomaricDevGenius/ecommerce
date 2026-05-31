@@ -24,6 +24,9 @@ class ProductService
         $collection['draft'] = 0;
         $collection['discount']= $collection['discount'] ?? 0.00;
         $collection['weight']= $collection['weight'] ?? 0.00;
+        $collection['length']= $collection['length'] ?? 0.00;
+        $collection['breadth']= $collection['breadth'] ?? 0.00;
+        $collection['height']= $collection['height'] ?? 0.00;
 
         if(!isset($collection['gst_rate']) && addon_is_activated('gst_system')){
             $collection['tax'] = 0;
@@ -170,6 +173,9 @@ class ProductService
         $slug = Str::slug($collection['slug'] ?? $collection['name']);
         $collection['discount']= $collection['discount'] ?? 0.00;
         $collection['weight']= $collection['weight'] ?? 0.00;
+        $collection['length']= $collection['length'] ?? 0.00;
+        $collection['breadth']= $collection['breadth'] ?? 0.00;
+        $collection['height']= $collection['height'] ?? 0.00;
         $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
         $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
         $slug .= $slug_suffix;
@@ -526,6 +532,9 @@ class ProductService
         $collection = collect($data);
         $collection['discount']= $collection['discount'] ?? 0.00;
         $collection['weight']= $collection['weight'] ?? 0.00;
+        $collection['length']= $collection['length'] ?? 0.00;
+        $collection['breadth']= $collection['breadth'] ?? 0.00;
+        $collection['height']= $collection['height'] ?? 0.00;
 
         $user_id= auth()->user()->user_type == 'seller' ? auth()->user()->id : User::where('user_type', 'admin')->first()->id;
         $approved = 1;
