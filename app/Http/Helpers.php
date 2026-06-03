@@ -3068,11 +3068,19 @@ if (!function_exists('moovRequest')) {
         $username = env('MOOV_MONEY_MERCHANT_ID');
         $password = env('MOOV_MONEY_MERCHANT_PASSWORD');
         $url      = rtrim(env('MOOV_OTP_URL', 'https://uat.moov-money.bf:38443/apiaccess/otpRequest'), '/');
+        $bodyJson = json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        \Log::info('[MOOV] REQUEST', [
+            'url'        => $url,
+            'command-id' => $commandId,
+            'username'   => $username,
+            'body'       => $body,
+        ]);
 
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            CURLOPT_POSTFIELDS     => $bodyJson,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_TIMEOUT        => 30,
@@ -3082,8 +3090,18 @@ if (!function_exists('moovRequest')) {
                 'command-id: ' . $commandId,
             ],
         ]);
-        $result = curl_exec($ch);
+        $result   = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
         curl_close($ch);
+
+        \Log::info('[MOOV] RESPONSE', [
+            'http_code' => $httpCode,
+            'curl_error' => $curlErr ?: null,
+            'raw' => $result,
+            'decoded' => $result ? json_decode($result) : null,
+        ]);
+
         return $result ? json_decode($result) : null;
     }
 }
