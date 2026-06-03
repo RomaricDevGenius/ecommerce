@@ -28,7 +28,15 @@ class MoovController extends Controller
         $result   = moovGenerateOtp((int) $order->grand_total, $phone);
         $response = $result['response'];
 
-        if (!$response || !isset($response->status)) {
+        if (!$response) {
+            return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
+        }
+
+        if (isset($response->errorCode)) {
+            return response()->json(['success' => false, 'message' => $response->errorMsg ?? translate('The service is temporarily unavailable, please try later')], 400);
+        }
+
+        if (!isset($response->status)) {
             return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
         }
 
@@ -64,7 +72,15 @@ class MoovController extends Controller
         $result   = moovResendOtp((int) $order->grand_total, $request->phone_number, $request->original_request_id);
         $response = $result['response'];
 
-        if (!$response || !isset($response->status)) {
+        if (!$response) {
+            return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
+        }
+
+        if (isset($response->errorCode)) {
+            return response()->json(['success' => false, 'message' => $response->errorMsg ?? translate('The service is temporarily unavailable, please try later')], 400);
+        }
+
+        if (!isset($response->status)) {
             return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
         }
 
@@ -106,7 +122,15 @@ class MoovController extends Controller
             $request->request_id
         );
 
-        if (!$response || !isset($response->status)) {
+        if (!$response) {
+            return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
+        }
+
+        if (isset($response->errorCode)) {
+            return response()->json(['success' => false, 'message' => $response->errorMsg ?? translate('The service is temporarily unavailable, please try later')], 400);
+        }
+
+        if (!isset($response->status)) {
             return response()->json(['success' => false, 'message' => translate('The service is temporarily unavailable, please try later')], 503);
         }
 
