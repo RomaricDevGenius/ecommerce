@@ -173,3 +173,33 @@
     });
 
 </script>
+
+<script>
+    // Spinner de chargement sur le bouton de soumission des pages d'authentification.
+    // Indique a l'utilisateur que sa demande est en cours de traitement et evite les double-clics
+    // (les formulaires d'auth sont des POST classiques : sans retour visuel, l'utilisateur reclique).
+    (function ($) {
+        "use strict";
+        $(document).on('submit', 'form', function () {
+            var $btn = $(this).find('button[type="submit"]').first();
+            // Rien a faire si pas de bouton submit, ou si une soumission est deja en cours.
+            if (!$btn.length || $btn.data('aizSubmitting')) {
+                return;
+            }
+            $btn.data('aizSubmitting', true);
+            $btn.data('aizOriginalHtml', $btn.html());
+            $btn.prop('disabled', true);
+            $btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+            // Filet de securite : si l'envoi est annule cote client (validation), on restaure le bouton
+            // au lieu de le laisser bloque. En cas d'envoi normal la page change avant ce delai.
+            setTimeout(function () {
+                if ($btn.data('aizSubmitting')) {
+                    $btn.html($btn.data('aizOriginalHtml'));
+                    $btn.prop('disabled', false);
+                    $btn.removeData('aizSubmitting');
+                }
+            }, 15000);
+        });
+    })(jQuery);
+</script>
