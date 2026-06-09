@@ -882,7 +882,7 @@
                     @endforeach
                 ],
                 datasets: [{
-                    label: 'Sales ($)',
+                    label: '{{ translate('Sales') }}',
                     data: [
                         @foreach ($last_7_days_sales as $key => $last_7_days_sale)
                             '{{ $last_7_days_sale }}',
