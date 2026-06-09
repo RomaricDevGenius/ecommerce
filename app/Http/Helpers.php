@@ -929,6 +929,10 @@ if (!function_exists('renderStarRatingLatest')) {
 function get_french_translations_fallback()
 {
     return [
+        // Tableau de bord vendeur — type & taux de commission
+        'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
+        'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
+        'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
         'hot_categories' => 'Catégories à la une',
         'featured_categories' => 'Catégories en vedette',
         'categories_catching_eyes_winning_hearts_across_our_marketplace' => 'Catégories qui attirent l\'œil et séduisent sur notre marketplace',
