@@ -121,7 +121,7 @@
                                 {!! $notifyContent !!}
                             </p>
                             <small class="text-muted">
-                                {{ date('F j Y, g:i a', strtotime($notification->created_at)) }}
+                                {{ \Carbon\Carbon::parse($notification->created_at)->locale(app()->getLocale())->translatedFormat('j F Y, H:i') }}
                             </small>
                         </div>
                     </div>
