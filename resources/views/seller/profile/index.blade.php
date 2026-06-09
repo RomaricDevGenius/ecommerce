@@ -72,6 +72,13 @@
         </div>
     </div>
 
+    {{--
+      SECTION "Parametre de paiement" MASQUEE intentionnellement (2026-06).
+      Raison : remplacee par le systeme de demandes de retrait, ou le vendeur
+      choisit son moyen (Orange/Moov/Coris/Cash) et saisit son numero a chaque demande.
+      Reversible : retirer les balises de commentaire Blade autour de ce bloc pour reafficher.
+      Aucune colonne supprimee en base.
+
     <!-- Payment System -->
     <div class="card">
         <div class="card-header">
@@ -134,6 +141,7 @@
             </div>
         </div>
     </div>
+    --}}
 
     <div class="form-group mb-0 text-right">
         <button type="submit" class="btn btn-primary">{{translate('Update Profile')}}</button>
