@@ -96,6 +96,27 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
+                                    <label>{{ translate('Payment Method')}} <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <select name="payment_method" id="withdraw_payment_method" class="form-control mb-3" required onchange="toggle_account_number()">
+                                        <option value="">{{ translate('Select Payment Method') }}</option>
+                                        @foreach ($withdraw_methods as $method)
+                                            <option value="{{ $method['value'] }}">{{ $method['label'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" id="account_number_row" style="display:none;">
+                                <div class="col-md-3">
+                                    <label>{{ translate('Account Number')}} <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control mb-3" name="account_number" id="withdraw_account_number" placeholder="{{ translate('Phone / Account number') }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
                                     <label>{{ translate('Message')}}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -122,7 +143,23 @@
 @section('script')
     <script type="text/javascript">
         function show_request_modal(){
+            toggle_account_number();
             $('#request_modal').modal('show');
+        }
+
+        // Affiche le champ "Numéro de compte" sauf si le moyen choisi est Cash
+        function toggle_account_number(){
+            var method = document.getElementById('withdraw_payment_method');
+            var row    = document.getElementById('account_number_row');
+            var input  = document.getElementById('withdraw_account_number');
+            if (!method || !row || !input) return;
+            if (method.value === 'cash' || method.value === '') {
+                row.style.display = 'none';
+                input.required = false;
+            } else {
+                row.style.display = '';
+                input.required = true;
+            }
         }
 
         function show_message_modal(id){
