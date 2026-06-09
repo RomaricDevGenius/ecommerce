@@ -930,6 +930,7 @@ function get_french_translations_fallback()
 {
     return [
         // Tableau de bord vendeur — type & taux de commission
+        'seller_paid_to_admin' => 'Versement du vendeur à l\'admin',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
