@@ -20,6 +20,18 @@
                         <td>{{ single_price($seller_withdraw_request->amount) }}</td>
                     @endif
                 </tr>
+                @if (!empty($seller_withdraw_request->payment_method))
+                    <tr>
+                        <td>{{ translate('Requested Method') }}</td>
+                        <td><strong>{{ ucwords(str_replace('_', ' ', $seller_withdraw_request->payment_method)) }}</strong></td>
+                    </tr>
+                    @if (!empty($seller_withdraw_request->account_number))
+                        <tr>
+                            <td>{{ translate('Account Number') }}</td>
+                            <td><strong>{{ $seller_withdraw_request->account_number }}</strong></td>
+                        </tr>
+                    @endif
+                @endif
                 @if ($user->shop->bank_payment_status == 1)
                     <tr>
                         <td>{{ translate('Bank Name') }}</td>
@@ -56,20 +68,32 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-3 col-from-label" for="payment_option">{{translate('Payment Method')}}</label>
-                <div class="col-sm-9">
-                    <select name="payment_option" id="payment_option" class="form-control demo-select2-placeholder" required>
-                        <option value="">{{translate('Select Payment Method')}}</option>
-                        @if($user->shop->cash_on_delivery_status == 1)
-                            <option value="cash">{{translate('Cash')}}</option>
-                        @endif
-                        @if($user->shop->bank_payment_status == 1)
-                            <option value="bank_payment">{{translate('Bank Payment')}}</option>
-                        @endif
-                    </select>
+            @if (!empty($seller_withdraw_request->payment_method))
+                {{-- Le vendeur a choisi un moyen précis : l'admin paie via ce moyen puis confirme --}}
+                <input type="hidden" name="payment_option" value="{{ $seller_withdraw_request->payment_method }}">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-from-label">{{translate('Payment Method')}}</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" value="{{ ucwords(str_replace('_', ' ', $seller_withdraw_request->payment_method)) }}" readonly>
+                    </div>
                 </div>
-            </div>
+            @else
+                {{-- Ancien format (demande créée avant l'ajout des moyens) : menu cash/bank historique --}}
+                <div class="form-group row">
+                    <label class="col-sm-3 col-from-label" for="payment_option">{{translate('Payment Method')}}</label>
+                    <div class="col-sm-9">
+                        <select name="payment_option" id="payment_option" class="form-control demo-select2-placeholder" required>
+                            <option value="">{{translate('Select Payment Method')}}</option>
+                            @if($user->shop->cash_on_delivery_status == 1)
+                                <option value="cash">{{translate('Cash')}}</option>
+                            @endif
+                            @if($user->shop->bank_payment_status == 1)
+                                <option value="bank_payment">{{translate('Bank Payment')}}</option>
+                            @endif
+                        </select>
+                    </div>
+                </div>
+            @endif
             
             <div class="form-group row" id="txn_div">
                 <label class="col-md-3 col-from-label" for="txn_code">{{translate('Txn Code')}}</label>
@@ -100,7 +124,11 @@ $(document).ready(function(){
         $("#txn_div").hide();
       }
     });
-    $("#txn_div").hide();
+    @if (!empty($seller_withdraw_request->payment_method) && $seller_withdraw_request->payment_method != 'cash')
+        $("#txn_div").show(); // moyen mobile/banque demandé : référence de transaction utile
+    @else
+        $("#txn_div").hide();
+    @endif
     AIZ.plugins.bootstrapSelect('refresh');
 });
 </script>

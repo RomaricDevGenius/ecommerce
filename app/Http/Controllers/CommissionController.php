@@ -34,10 +34,9 @@ class CommissionController extends Controller
         $request->session()->put('payment_type', 'seller_payment');
         $request->session()->put('payment_data', $data);
 
-        if ($request->payment_option == 'cash') {
-            return $this->seller_payment_done($request->session()->get('payment_data'), null);
-        }
-        elseif ($request->payment_option == 'bank_payment') {
+        // Retraits payés manuellement par l'admin : débitent le solde du vendeur (admin_to_pay).
+        // Inclut les moyens mobiles BF (Orange/Moov/Coris) en plus de cash/bank historiques.
+        if (in_array($request->payment_option, ['cash', 'bank_payment', 'orange_money', 'moov_money', 'coris_money'])) {
             return $this->seller_payment_done($request->session()->get('payment_data'), null);
         }
         else {
