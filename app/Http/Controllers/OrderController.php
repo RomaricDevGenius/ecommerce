@@ -652,6 +652,22 @@ class OrderController extends Controller
                 } catch (\Exception $e) {
                 }
             }
+
+            // Push Firebase au livreur assigné (si Firebase actif et token présent).
+            // Inoffensif sinon : pas de token => bloc ignoré, email/SMS inchangés.
+            if (get_setting('google_firebase') == 1 && $order->delivery_boy && $order->delivery_boy->device_token != null) {
+                try {
+                    NotificationUtility::sendFirebaseNotification(
+                        deviceToken: $order->delivery_boy->device_token,
+                        title:       translate('Nouvelle livraison assignée'),
+                        body:        translate('La commande') . ' ' . $order->code . ' ' . translate('vous a été assignée'),
+                        type:        'delivery_assigned',
+                        typeId:      $order->id,
+                        userId:      $order->delivery_boy->id,
+                    );
+                } catch (\Throwable $e) {
+                }
+            }
         }
 
         return 1;
