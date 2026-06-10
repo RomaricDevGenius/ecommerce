@@ -934,6 +934,8 @@ function get_french_translations_fallback()
         // Modal admin "Pay to seller" — paiement direct désormais via demande de retrait
         'seller_payments_are_now_made_from_their_withdrawal_request' => 'Le paiement du vendeur se fait depuis sa demande de retrait (il y choisit son moyen Orange/Moov/Coris/Cash et son numéro).',
         'view_withdrawal_requests' => 'Voir les demandes de retrait',
+        // Carte tableau de bord vendeur — ex "Paramètres de paiement" devenue gestion du profil
+        'manage_my_profile' => 'Gérer mon profil',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
