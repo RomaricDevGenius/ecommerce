@@ -32,9 +32,11 @@
                             <!-- Delivery Location (GPS) -->
                             @if (get_setting('shipping_type') == 'gps_distance_shipping')
                             <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem;">
-                                <div class="card-header border-bottom-0 py-3 py-xl-4">
+                                <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryLocation">
                                     <div class="d-flex align-items-center">
-                                        <i class="las la-map-marker-alt fs-20" style="color:#9d9da6;"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                            <path id="Path_42357" data-name="Path 42357" d="M58,48A10,10,0,1,0,68,58,10,10,0,0,0,58,48ZM56.457,61.543a.663.663,0,0,1-.423.212.693.693,0,0,1-.428-.216l-2.692-2.692.856-.856,2.269,2.269,6-6.043.841.87Z" transform="translate(-48 -48)" fill="#9d9da6"/>
+                                        </svg>
                                         <span class="ml-2 fs-19 fw-700">{{ translate('Delivery Location') }}</span>
                                     </div>
                                 </div>
@@ -165,6 +167,7 @@
                             </button>
                         </div>
                     </div>
+                    <div id="delivery_map_suggestions" class="list-group mb-2" style="max-height:180px; overflow-y:auto; display:none;"></div>
                     <p class="fs-13 text-muted mb-2">{{ translate('Tap on the map to place the marker on your exact location.') }}</p>
                     <div id="delivery_map" style="height: 360px; width: 100%; border-radius: 6px;"></div>
                 </div>
@@ -761,17 +764,76 @@
             }
         }
 
-        // Recherche d'une localité via Nominatim (OpenStreetMap) — comme l'app mobile
+        // Paramètres Nominatim filtrés Burkina Faso (comme l'app mobile)
+        function _nominatimParams(q, limit) {
+            return {
+                q: q,
+                format: 'json',
+                limit: limit,
+                countrycodes: 'bf',
+                viewbox: '-5.5,15.1,2.4,9.4',
+                bounded: 1,
+                addressdetails: 1
+            };
+        }
+
+        // Suggestions en temps réel pendant la frappe (anti-rebond 600 ms, dès 3 caractères)
+        var _searchDebounce = null;
+        $(document).on('input', '#delivery_map_search', function() {
+            var q = $(this).val();
+            if (_searchDebounce) { clearTimeout(_searchDebounce); }
+            if (!q || q.trim().length < 3) {
+                $('#delivery_map_suggestions').html('').hide();
+                return;
+            }
+            _searchDebounce = setTimeout(function() { fetchDeliverySuggestions(q.trim()); }, 600);
+        });
+
+        function fetchDeliverySuggestions(q) {
+            $.ajax({
+                url: 'https://nominatim.openstreetmap.org/search',
+                data: _nominatimParams(q, 5),
+                dataType: 'json',
+                success: function(res) {
+                    var box = $('#delivery_map_suggestions');
+                    box.html('');
+                    if (res && res.length > 0) {
+                        res.forEach(function(item) {
+                            var lat = parseFloat(item.lat);
+                            var lng = parseFloat(item.lon);
+                            var name = item.display_name;
+                            var a = $('<a href="javascript:void(0)" class="list-group-item list-group-item-action fs-13 py-2"></a>').text(name);
+                            a.on('click', function() {
+                                $('#delivery_map_search').val(name);
+                                box.html('').hide();
+                                if (_deliveryMap) {
+                                    _deliveryMap.setView([lat, lng], 15);
+                                    placeMapMarker(lat, lng);
+                                }
+                            });
+                            box.append(a);
+                        });
+                        box.show();
+                    } else {
+                        box.hide();
+                    }
+                },
+                error: function() { $('#delivery_map_suggestions').hide(); }
+            });
+        }
+
+        // Recherche au clic sur le bouton (Burkina Faso uniquement)
         function searchDeliveryLocation() {
             var q = $('#delivery_map_search').val();
             if (!q || q.trim() === '') return;
             $('.aiz-refresh').addClass('active');
             $.ajax({
                 url: 'https://nominatim.openstreetmap.org/search',
-                data: { format: 'json', q: q, limit: 1 },
+                data: _nominatimParams(q.trim(), 1),
                 dataType: 'json',
                 success: function(res) {
                     $('.aiz-refresh').removeClass('active');
+                    $('#delivery_map_suggestions').html('').hide();
                     if (res && res.length > 0 && _deliveryMap) {
                         var lat = parseFloat(res[0].lat);
                         var lng = parseFloat(res[0].lon);
@@ -809,6 +871,7 @@
                 gps_chosen = true;
                 _pickedLat = lat;
                 _pickedLng = lng;
+                $('#headingDeliveryLocation svg *').css('fill', '#15a405');
                 $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
                     '{{ translate('Location set') }} (' + Number(lat).toFixed(5) + ', ' + Number(lng).toFixed(5) + ')');
                 stepCompletionDeliveryInfo();
