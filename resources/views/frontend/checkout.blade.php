@@ -29,6 +29,35 @@
                                 </div>
                             </div>
 
+                            <!-- Delivery Location (GPS) -->
+                            @if (get_setting('shipping_type') == 'gps_distance_shipping')
+                            <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem;">
+                                <div class="card-header border-bottom-0 py-3 py-xl-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="las la-map-marker-alt fs-20" style="color:#9d9da6;"></i>
+                                        <span class="ml-2 fs-19 fw-700">{{ translate('Delivery Location') }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="row gutters-5">
+                                        <div class="col-sm-6 mb-2">
+                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="useCurrentLocation()">
+                                                <i class="las la-location-arrow"></i> {{ translate('My current location') }}
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-6 mb-2">
+                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="openDeliveryMap()">
+                                                <i class="las la-map"></i> {{ translate('Choose on map') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="gps_location_status" class="mt-2 fs-13 text-muted">
+                                        {{ translate('Please choose your delivery location to calculate the shipping cost.') }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                             <!-- Delivery Info -->
                             <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem; overflow: visible !important;">
                                 <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryInfo" type="button" data-toggle="collapse" data-target="#collapseDeliveryInfo" aria-expanded="true" aria-controls="collapseDeliveryInfo">
@@ -114,6 +143,28 @@
     @if(Auth::check())
         @include('frontend.partials.address.address_modal')
          @include('frontend.partials.address.billing_address_modal')
+    @endif
+
+    <!-- Delivery Location Map Modal (GPS) -->
+    @if (get_setting('shipping_type') == 'gps_distance_shipping')
+    <div class="modal fade" id="delivery_map_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ translate('Choose your location on the map') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fs-13 text-muted mb-2">{{ translate('Tap on the map to place the marker on your exact location.') }}</p>
+                    <div id="delivery_map" style="height: 360px; width: 100%; border-radius: 6px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ translate('Cancel') }}</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmMapLocation()">{{ translate('Confirm location') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 @endsection
 
@@ -367,6 +418,12 @@
         });
 
         function stepCompletionDeliveryInfo() {
+            // Mode livraison GPS : la position doit être choisie avant de continuer.
+            if (typeof gps_required !== 'undefined' && gps_required && !gps_chosen) {
+                $('#headingDeliveryInfo svg *').css('fill', '#9d9da6');
+                $("#submitOrderBtn").prop('disabled', true);
+                return false;
+            }
             var headColor = '#9d9da6';
             var btnDisable = true;
             var allOk = false;
@@ -631,6 +688,100 @@
 
     @if (get_setting('google_map') == 1)
         @include('frontend.partials.google_map')
+    @endif
+
+    {{-- Sélection de la position de livraison (GPS / carte OSM) — checkout web --}}
+    @if (get_setting('shipping_type') == 'gps_distance_shipping')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="text/javascript">
+        var gps_required = true;
+        var gps_chosen   = {{ (session('checkout_delivery_lat') !== null) ? 'true' : 'false' }};
+        var _deliveryMap = null;
+        var _deliveryMarker = null;
+        var _pickedLat = {{ session('checkout_delivery_lat') !== null ? (float) session('checkout_delivery_lat') : 'null' }};
+        var _pickedLng = {{ session('checkout_delivery_lng') !== null ? (float) session('checkout_delivery_lng') : 'null' }};
+        var _defaultLat = {{ (float) get_setting('delivery_pickup_latitude', '12.3714') }};
+        var _defaultLng = {{ (float) get_setting('delivery_pickup_longitude', '-1.5197') }};
+
+        // Option 1 : position actuelle via le navigateur
+        function useCurrentLocation() {
+            if (!navigator.geolocation) {
+                AIZ.plugins.notify('danger', '{{ translate('Geolocation is not supported by your browser.') }}');
+                return;
+            }
+            $('.aiz-refresh').addClass('active');
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                setDeliveryLocation(pos.coords.latitude, pos.coords.longitude);
+            }, function() {
+                $('.aiz-refresh').removeClass('active');
+                AIZ.plugins.notify('danger', '{{ translate('Unable to get your position. Please allow location access or choose on the map.') }}');
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        }
+
+        // Option 2 : choisir un point sur la carte OpenStreetMap
+        function openDeliveryMap() {
+            $('#delivery_map_modal').modal('show');
+            setTimeout(function() {
+                var startLat = _pickedLat !== null ? _pickedLat : _defaultLat;
+                var startLng = _pickedLng !== null ? _pickedLng : _defaultLng;
+                if (_deliveryMap === null) {
+                    _deliveryMap = L.map('delivery_map').setView([startLat, startLng], 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap'
+                    }).addTo(_deliveryMap);
+                    _deliveryMap.on('click', function(e) {
+                        placeMapMarker(e.latlng.lat, e.latlng.lng);
+                    });
+                }
+                _deliveryMap.invalidateSize();
+                _deliveryMap.setView([startLat, startLng], 13);
+                if (_pickedLat !== null) { placeMapMarker(_pickedLat, _pickedLng); }
+            }, 300);
+        }
+
+        function placeMapMarker(lat, lng) {
+            _pickedLat = lat;
+            _pickedLng = lng;
+            if (_deliveryMarker === null) {
+                _deliveryMarker = L.marker([lat, lng]).addTo(_deliveryMap);
+            } else {
+                _deliveryMarker.setLatLng([lat, lng]);
+            }
+        }
+
+        function confirmMapLocation() {
+            if (_pickedLat === null || _pickedLng === null) {
+                AIZ.plugins.notify('danger', '{{ translate('Please tap on the map to choose your location.') }}');
+                return;
+            }
+            $('#delivery_map_modal').modal('hide');
+            setDeliveryLocation(_pickedLat, _pickedLng);
+        }
+
+        // Envoie la position au serveur, recalcule les frais et rafraîchit le récapitulatif
+        function setDeliveryLocation(lat, lng) {
+            $('.aiz-refresh').addClass('active');
+            $.post('{{ route('checkout.set_delivery_location') }}', {
+                _token: AIZ.data.csrf,
+                delivery_lat: lat,
+                delivery_lng: lng
+            }, function(data) {
+                $('#cart_summary').html(data);
+                gps_chosen = true;
+                _pickedLat = lat;
+                _pickedLng = lng;
+                $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
+                    '{{ translate('Location set') }} (' + Number(lat).toFixed(5) + ', ' + Number(lng).toFixed(5) + ')');
+                stepCompletionDeliveryInfo();
+                $('.aiz-refresh').removeClass('active');
+            }).fail(function() {
+                $('.aiz-refresh').removeClass('active');
+                AIZ.plugins.notify('danger', '{{ translate('Could not save the location. Please try again.') }}');
+            });
+        }
+    </script>
     @endif
 
 @endsection

@@ -936,6 +936,19 @@ function get_french_translations_fallback()
         'view_withdrawal_requests' => 'Voir les demandes de retrait',
         // Carte tableau de bord vendeur — ex "Paramètres de paiement" devenue gestion du profil
         'manage_my_profile' => 'Gérer mon profil',
+        // Checkout web — sélection du lieu de livraison (GPS / carte)
+        'delivery_location' => 'Lieu de livraison',
+        'my_current_location' => 'Ma position actuelle',
+        'choose_on_map' => 'Choisir sur la carte',
+        'please_choose_your_delivery_location_to_calculate_the_shipping_cost' => 'Choisissez votre lieu de livraison pour calculer les frais.',
+        'choose_your_location_on_the_map' => 'Choisissez votre position sur la carte',
+        'tap_on_the_map_to_place_the_marker_on_your_exact_location' => 'Touchez la carte pour placer le repère sur votre position exacte.',
+        'confirm_location' => 'Confirmer la position',
+        'location_set' => 'Position enregistrée',
+        'geolocation_is_not_supported_by_your_browser' => 'La géolocalisation n\'est pas supportée par votre navigateur.',
+        'unable_to_get_your_position_please_allow_location_access_or_choose_on_the_map' => 'Impossible d\'obtenir votre position. Autorisez la localisation ou choisissez sur la carte.',
+        'please_tap_on_the_map_to_choose_your_location' => 'Touchez la carte pour choisir votre position.',
+        'could_not_save_the_location_please_try_again' => 'Impossible d\'enregistrer la position. Réessayez.',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
@@ -2178,8 +2191,11 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
     } elseif ($shipping_type == 'gps_distance_shipping') {
         // GPS distance-based shipping — calculé une seule fois pour tout le panier,
         // réparti équitablement entre les articles.
-        $lat = isset($shipping_info['delivery_lat']) ? (float) $shipping_info['delivery_lat'] : null;
-        $lng = isset($shipping_info['delivery_lng']) ? (float) $shipping_info['delivery_lng'] : null;
+        // Coords explicites (API mobile) sinon repli sur la session (checkout web).
+        $lat = isset($shipping_info['delivery_lat']) ? (float) $shipping_info['delivery_lat']
+             : (session('checkout_delivery_lat') !== null ? (float) session('checkout_delivery_lat') : null);
+        $lng = isset($shipping_info['delivery_lng']) ? (float) $shipping_info['delivery_lng']
+             : (session('checkout_delivery_lng') !== null ? (float) session('checkout_delivery_lng') : null);
 
         if ($lat === null || $lng === null) {
             return 0;

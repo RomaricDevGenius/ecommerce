@@ -291,6 +291,7 @@ Route::group(['prefix' => 'checkout'], function () {
         Route::post('/updateDeliveryAddress', 'updateDeliveryAddress')->name('checkout.updateDeliveryAddress');
         Route::post('/updateBillingAddress', 'updateBillingAddress')->name('checkout.updateBillingAddress');
         Route::post('/updateDeliveryInfo', 'updateDeliveryInfo')->name('checkout.updateDeliveryInfo');
+        Route::post('/set-delivery-location', 'set_delivery_location')->name('checkout.set_delivery_location');
     });
 });
 

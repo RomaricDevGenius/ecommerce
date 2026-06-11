@@ -225,6 +225,23 @@ class OrderController extends Controller
             $order->date = strtotime('now');
             $order->save();
 
+            // Livraison par distance GPS (web) : enregistre la distance et le flag de révision
+            // manuelle, à partir de la position choisie au checkout (stockée en session).
+            if (get_setting('shipping_type') === 'gps_distance_shipping'
+                && session('checkout_delivery_lat') !== null
+                && session('checkout_delivery_lng') !== null) {
+                try {
+                    $gpsResult = \App\Services\GpsShippingService::calculate(
+                        (float) session('checkout_delivery_lat'),
+                        (float) session('checkout_delivery_lng')
+                    );
+                    $order->gps_distance_km      = $gpsResult['distance_km'];
+                    $order->gps_shipping_pending = $gpsResult['is_manual_review'];
+                    $order->save();
+                } catch (\Throwable $e) {
+                }
+            }
+
             $subtotal = 0;
             $tax = 0;
             $shipping = 0;
