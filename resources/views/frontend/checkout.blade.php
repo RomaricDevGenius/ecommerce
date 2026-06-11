@@ -56,6 +56,7 @@
                                     <div id="gps_location_status" class="mt-2 fs-13 text-muted">
                                         {{ translate('Please choose your delivery location to calculate the shipping cost.') }}
                                     </div>
+                                    <div id="gps_quote_box" class="mt-3" style="display:none;"></div>
                                 </div>
                             </div>
                             @endif
@@ -431,11 +432,14 @@
         });
 
         function stepCompletionDeliveryInfo() {
-            // Mode livraison GPS : la position doit être choisie avant de continuer.
-            if (typeof gps_required !== 'undefined' && gps_required && !gps_chosen) {
-                $('#headingDeliveryInfo svg *').css('fill', '#9d9da6');
-                $("#submitOrderBtn").prop('disabled', true);
-                return false;
+            // Mode livraison GPS : autorisé si (<=20km position choisie) OU (>20km devis accepté).
+            if (typeof gps_required !== 'undefined' && gps_required) {
+                var gpsOk = (!gps_manual && gps_chosen) || (gps_quote_status === 'accepted');
+                if (!gpsOk) {
+                    $('#headingDeliveryInfo svg *').css('fill', '#9d9da6');
+                    $("#submitOrderBtn").prop('disabled', true);
+                    return false;
+                }
             }
             var headColor = '#9d9da6';
             var btnDisable = true;
@@ -710,6 +714,12 @@
     <script type="text/javascript">
         var gps_required = true;
         var gps_chosen   = {{ (session('checkout_delivery_lat') !== null) ? 'true' : 'false' }};
+        // Devis GPS (zone >20km)
+        var gps_quote_status = '{{ (auth()->check() && \App\Models\GpsQuoteRequest::where('user_id', auth()->id())->where('status','accepted')->exists()) ? 'accepted' : 'none' }}';
+        var gps_manual       = (gps_quote_status === 'accepted');
+        var gps_quote_id     = null;
+        var gps_quote_amount = 0;
+        var gps_last_distance = 0;
         var _deliveryMap = null;
         var _deliveryMarker = null;
         var _pickedLat = {{ session('checkout_delivery_lat') !== null ? (float) session('checkout_delivery_lat') : 'null' }};
@@ -867,13 +877,31 @@
                 delivery_lat: lat,
                 delivery_lng: lng
             }, function(data) {
-                $('#cart_summary').html(data);
-                gps_chosen = true;
+                $('#cart_summary').html(data.cart_summary);
                 _pickedLat = lat;
                 _pickedLng = lng;
+                gps_last_distance = data.distance_km;
                 $('#headingDeliveryLocation svg *').css('fill', '#15a405');
                 $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
                     '{{ translate('Location set') }} (' + Number(lat).toFixed(5) + ', ' + Number(lng).toFixed(5) + ')');
+
+                if (data.manual_review === true) {
+                    // Zone > 20 km : un devis est nécessaire, la commande reste bloquée.
+                    gps_manual = true;
+                    gps_chosen = false;
+                    if (gps_quote_status !== 'accepted') {
+                        gps_quote_status = 'none';
+                        checkExistingQuote();
+                    }
+                } else {
+                    // Zone <= 20 km : frais auto, commande autorisée.
+                    gps_manual = false;
+                    gps_chosen = true;
+                    gps_quote_status = 'none';
+                    gps_quote_id = null;
+                    $('#gps_quote_box').hide().html('');
+                }
+                renderQuoteBox();
                 stepCompletionDeliveryInfo();
                 $('.aiz-refresh').removeClass('active');
             }).fail(function() {
@@ -881,6 +909,133 @@
                 AIZ.plugins.notify('danger', '{{ translate('Could not save the location. Please try again.') }}');
             });
         }
+
+        // ── Devis GPS (>20 km) ─────────────────────────────────────────────
+        function format_amount(v) {
+            return Number(v).toLocaleString('fr-FR') + ' FCFA';
+        }
+
+        function checkExistingQuote() {
+            $.get('{{ route('checkout.gps_quote.status') }}', function(resp) {
+                if (resp && resp.status && ['pending','confirmed','accepted'].indexOf(resp.status) !== -1) {
+                    gps_quote_id     = resp.quote_id;
+                    gps_quote_status = resp.status;
+                    gps_quote_amount = resp.amount || 0;
+                }
+                renderQuoteBox();
+                stepCompletionDeliveryInfo();
+            });
+        }
+
+        function renderQuoteBox() {
+            var box = $('#gps_quote_box');
+            if (!gps_manual) { box.hide().html(''); return; }
+            var html = '';
+            if (gps_quote_status === 'none') {
+                html = '<div class="alert alert-warning mb-2">{{ translate('Remote area') }} (' + Number(gps_last_distance).toFixed(1) + ' km). {{ translate('Shipping cost requires a quote.') }}</div>' +
+                    '<button type="button" class="btn btn-primary btn-block fw-600" onclick="submitQuote()">{{ translate('Request a quote') }}</button>';
+            } else if (gps_quote_status === 'pending') {
+                html = '<div class="alert alert-info mb-2">{{ translate('Quote requested — waiting for validation.') }}</div>' +
+                    '<button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="refreshQuoteStatus()"><i class="las la-sync"></i> {{ translate('Refresh') }}</button>';
+            } else if (gps_quote_status === 'confirmed') {
+                html = '<div class="alert alert-success mb-2">{{ translate('Proposed shipping cost') }} : <strong>' + format_amount(gps_quote_amount) + '</strong></div>' +
+                    '<div class="row gutters-5"><div class="col-6"><button type="button" class="btn btn-primary btn-block fw-600" onclick="acceptQuote()">{{ translate('Accept') }}</button></div>' +
+                    '<div class="col-6"><button type="button" class="btn btn-light btn-block fw-600" onclick="refuseQuote()">{{ translate('Refuse') }}</button></div></div>';
+            } else if (gps_quote_status === 'accepted') {
+                html = '<div class="alert alert-success mb-0"><i class="las la-check-circle"></i> {{ translate('Quote accepted') }}' + (gps_quote_amount ? ' (' + format_amount(gps_quote_amount) + ')' : '') + '</div>';
+            }
+            box.html(html).show();
+        }
+
+        function submitQuote() {
+            $('.aiz-refresh').addClass('active');
+            $.post('{{ route('checkout.gps_quote.submit') }}', {
+                _token: AIZ.data.csrf,
+                delivery_lat: _pickedLat,
+                delivery_lng: _pickedLng,
+                distance_km: gps_last_distance
+            }, function(resp) {
+                $('.aiz-refresh').removeClass('active');
+                if (resp && resp.result) {
+                    gps_quote_id = resp.quote_id;
+                    gps_quote_status = 'pending';
+                    renderQuoteBox();
+                    AIZ.plugins.notify('success', '{{ translate('Votre demande de devis a été soumise.') }}');
+                }
+            }).fail(function() {
+                $('.aiz-refresh').removeClass('active');
+                AIZ.plugins.notify('danger', '{{ translate('Could not submit the quote. Please try again.') }}');
+            });
+        }
+
+        function refreshQuoteStatus() {
+            $('.aiz-refresh').addClass('active');
+            $.get('{{ route('checkout.gps_quote.status') }}', function(resp) {
+                $('.aiz-refresh').removeClass('active');
+                if (!resp) return;
+                if (resp.status === 'confirmed') {
+                    gps_quote_id = resp.quote_id;
+                    gps_quote_amount = resp.amount || 0;
+                    gps_quote_status = 'confirmed';
+                } else if (resp.status === 'pending') {
+                    gps_quote_status = 'pending';
+                    AIZ.plugins.notify('info', '{{ translate('Quote still pending.') }}');
+                } else {
+                    gps_quote_status = 'none';
+                    gps_quote_id = null;
+                }
+                renderQuoteBox();
+                stepCompletionDeliveryInfo();
+            }).fail(function() { $('.aiz-refresh').removeClass('active'); });
+        }
+
+        function acceptQuote() {
+            if (!gps_quote_id) return;
+            $('.aiz-refresh').addClass('active');
+            $.post('{{ url('checkout/gps-quote/accept') }}/' + gps_quote_id, {
+                _token: AIZ.data.csrf
+            }, function(resp) {
+                if (resp && resp.result) {
+                    gps_quote_status = 'accepted';
+                    gps_quote_amount = resp.amount || gps_quote_amount;
+                    $.get('{{ route('checkout.cart_summary') }}', function(html) {
+                        $('#cart_summary').html(html);
+                        $('.aiz-refresh').removeClass('active');
+                        renderQuoteBox();
+                        stepCompletionDeliveryInfo();
+                    });
+                } else {
+                    $('.aiz-refresh').removeClass('active');
+                }
+            }).fail(function() {
+                $('.aiz-refresh').removeClass('active');
+                AIZ.plugins.notify('danger', '{{ translate('Could not accept the quote. Please try again.') }}');
+            });
+        }
+
+        function refuseQuote() {
+            if (!gps_quote_id) return;
+            $('.aiz-refresh').addClass('active');
+            $.post('{{ url('checkout/gps-quote/refuse') }}/' + gps_quote_id, {
+                _token: AIZ.data.csrf
+            }, function(resp) {
+                $('.aiz-refresh').removeClass('active');
+                gps_quote_status = 'none';
+                gps_quote_id = null;
+                renderQuoteBox();
+                stepCompletionDeliveryInfo();
+            }).fail(function() { $('.aiz-refresh').removeClass('active'); });
+        }
+
+        $(document).ready(function() {
+            if (gps_quote_status === 'accepted') {
+                gps_manual = true;
+                $('#headingDeliveryLocation svg *').css('fill', '#15a405');
+                $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> {{ translate('Delivery location confirmed via quote.') }}');
+            }
+            renderQuoteBox();
+            stepCompletionDeliveryInfo();
+        });
     </script>
     @endif
 
