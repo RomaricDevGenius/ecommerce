@@ -292,6 +292,15 @@ Route::group(['prefix' => 'checkout'], function () {
         Route::post('/updateBillingAddress', 'updateBillingAddress')->name('checkout.updateBillingAddress');
         Route::post('/updateDeliveryInfo', 'updateDeliveryInfo')->name('checkout.updateDeliveryInfo');
         Route::post('/set-delivery-location', 'set_delivery_location')->name('checkout.set_delivery_location');
+        Route::get('/cart-summary', 'cart_summary')->name('checkout.cart_summary');
+    });
+
+    // Devis GPS (zone >20km) — réutilise la logique du contrôleur API, en session web
+    Route::middleware('auth')->controller(\App\Http\Controllers\Api\V2\GpsQuoteController::class)->group(function () {
+        Route::post('/gps-quote/submit',      'submit')->name('checkout.gps_quote.submit');
+        Route::get('/gps-quote/status',       'status')->name('checkout.gps_quote.status');
+        Route::post('/gps-quote/accept/{id}', 'accept')->name('checkout.gps_quote.accept');
+        Route::post('/gps-quote/refuse/{id}', 'refuse')->name('checkout.gps_quote.refuse');
     });
 });
 

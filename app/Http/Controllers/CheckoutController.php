@@ -179,6 +179,12 @@ class CheckoutController extends Controller
         // Position GPS consommée : on la retire de la session.
         $request->session()->forget(['checkout_delivery_lat', 'checkout_delivery_lng']);
 
+        // Devis GPS éventuel : consommé une fois la commande passée.
+        if (auth()->check()) {
+            \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
+                ->where('status', 'accepted')->update(['status' => 'expired']);
+        }
+
         $request->session()->put('payment_type', 'cart_payment');
 
         $data['combined_order_id'] = $request->session()->get('combined_order_id');
@@ -858,6 +864,20 @@ class CheckoutController extends Controller
             'checkout_delivery_lng' => (float) $request->delivery_lng,
         ]);
 
+        // Distance + révision manuelle (zone >20km) pour ce point.
+        $gpsResult    = \App\Services\GpsShippingService::calculate(
+            (float) $request->delivery_lat,
+            (float) $request->delivery_lng
+        );
+        $manualReview = (bool) $gpsResult['is_manual_review'];
+
+        // Point dans la zone auto (<=20km) : un éventuel devis en cours n'a plus lieu d'être.
+        if (!$manualReview && auth()->check()) {
+            \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'confirmed', 'accepted'])
+                ->update(['status' => 'expired']);
+        }
+
         $user = auth()->user();
         $carts = $user != null
             ? Cart::where('user_id', $user->id)->active()->get()
@@ -866,20 +886,35 @@ class CheckoutController extends Controller
                 : null);
 
         $proceed = 0;
-        if ($carts == null || $carts->isEmpty()) {
-            return view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render();
-        }
-
-        // Recalcule le coût livraison à domicile (distance GPS) pour chaque article.
-        $shipping_info = [];
-        foreach ($carts as $key => $cartItem) {
-            if (($cartItem['shipping_type'] ?? 'home_delivery') == 'home_delivery') {
-                $cartItem['shipping_cost'] = getShippingCost($carts, $key, $shipping_info);
-                $cartItem->save();
+        if ($carts != null && !$carts->isEmpty()) {
+            // Recalcule le coût livraison à domicile (distance GPS) pour chaque article.
+            $shipping_info = [];
+            foreach ($carts as $key => $cartItem) {
+                if (($cartItem['shipping_type'] ?? 'home_delivery') == 'home_delivery') {
+                    $cartItem['shipping_cost'] = getShippingCost($carts, $key, $shipping_info);
+                    $cartItem->save();
+                }
             }
+            $carts = $carts->fresh();
         }
 
-        $carts = $carts->fresh();
+        return response()->json([
+            'cart_summary'  => view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render(),
+            'manual_review' => $manualReview,
+            'distance_km'   => $gpsResult['distance_km'],
+        ]);
+    }
+
+    // Renvoie le récapitulatif rafraîchi (utilisé après acceptation d'un devis GPS).
+    public function cart_summary(Request $request)
+    {
+        $user = auth()->user();
+        $carts = $user != null
+            ? Cart::where('user_id', $user->id)->active()->get()
+            : (($tid = $request->session()->get('temp_user_id')) != null
+                ? Cart::where('temp_user_id', $tid)->active()->get()
+                : null);
+        $proceed = 0;
         return view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render();
     }
 

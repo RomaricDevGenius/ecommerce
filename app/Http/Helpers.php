@@ -962,6 +962,20 @@ function get_french_translations_fallback()
         'use_this_as_billing_address' => 'Utiliser comme adresse de facturation',
         'save_changes' => 'Enregistrer',
         'address_not_valid_choose_another' => 'Adresse non valide, choisissez-en une autre',
+        // Checkout web — devis GPS (zone > 20 km)
+        'remote_area' => 'Zone éloignée',
+        'shipping_cost_requires_a_quote' => 'Les frais de livraison nécessitent un devis.',
+        'request_a_quote' => 'Demander un devis',
+        'quote_requested_waiting_for_validation' => 'Devis demandé — en attente de validation.',
+        'refresh' => 'Actualiser',
+        'proposed_shipping_cost' => 'Frais de livraison proposés',
+        'accept' => 'Accepter',
+        'refuse' => 'Refuser',
+        'quote_accepted' => 'Devis accepté',
+        'quote_still_pending' => 'Devis toujours en attente.',
+        'delivery_location_confirmed_via_quote' => 'Lieu de livraison confirmé via devis.',
+        'could_not_submit_the_quote_please_try_again' => 'Impossible de soumettre le devis. Réessayez.',
+        'could_not_accept_the_quote_please_try_again' => 'Impossible d\'accepter le devis. Réessayez.',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
@@ -2202,6 +2216,17 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
         }
         return 0;
     } elseif ($shipping_type == 'gps_distance_shipping') {
+        // Zone >20km : si le client a un devis ACCEPTÉ, son montant fait foi
+        // (prioritaire sur le calcul auto, et stable même après rechargement de page).
+        if (auth()->check()) {
+            $acceptedQuote = \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
+                ->where('status', 'accepted')->latest()->first();
+            if ($acceptedQuote) {
+                $totalItems = count($carts);
+                return $totalItems > 0 ? ($acceptedQuote->total_amount / $totalItems) : 0;
+            }
+        }
+
         // GPS distance-based shipping — calculé une seule fois pour tout le panier,
         // réparti équitablement entre les articles.
         // Coords explicites (API mobile) sinon repli sur la session (checkout web).
