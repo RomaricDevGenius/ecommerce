@@ -172,6 +172,9 @@ class CheckoutController extends Controller
             $carts->toQuery()->delete();
         }
 
+        // Position GPS consommée : on la retire de la session.
+        $request->session()->forget(['checkout_delivery_lat', 'checkout_delivery_lng']);
+
         $request->session()->put('payment_type', 'cart_payment');
 
         $data['combined_order_id'] = $request->session()->get('combined_order_id');
@@ -833,6 +836,46 @@ class CheckoutController extends Controller
 
         $carts = $carts->fresh();
 
+        return view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render();
+    }
+
+    // Checkout web : enregistre la position GPS choisie (position actuelle ou point sur la carte),
+    // recalcule les frais de livraison à distance, et renvoie le récapitulatif rafraîchi.
+    public function set_delivery_location(Request $request)
+    {
+        $request->validate([
+            'delivery_lat' => 'required|numeric',
+            'delivery_lng' => 'required|numeric',
+        ]);
+
+        // Mémorise la position pour tout le checkout (lue par getShippingCost via la session).
+        session([
+            'checkout_delivery_lat' => (float) $request->delivery_lat,
+            'checkout_delivery_lng' => (float) $request->delivery_lng,
+        ]);
+
+        $user = auth()->user();
+        $carts = $user != null
+            ? Cart::where('user_id', $user->id)->active()->get()
+            : (($tid = $request->session()->get('temp_user_id')) != null
+                ? Cart::where('temp_user_id', $tid)->active()->get()
+                : null);
+
+        $proceed = 0;
+        if ($carts == null || $carts->isEmpty()) {
+            return view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render();
+        }
+
+        // Recalcule le coût livraison à domicile (distance GPS) pour chaque article.
+        $shipping_info = [];
+        foreach ($carts as $key => $cartItem) {
+            if (($cartItem['shipping_type'] ?? 'home_delivery') == 'home_delivery') {
+                $cartItem['shipping_cost'] = getShippingCost($carts, $key, $shipping_info);
+                $cartItem->save();
+            }
+        }
+
+        $carts = $carts->fresh();
         return view('frontend.partials.cart.cart_summary', compact('carts', 'proceed'))->render();
     }
 
