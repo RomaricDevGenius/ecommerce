@@ -949,6 +949,11 @@ function get_french_translations_fallback()
         'unable_to_get_your_position_please_allow_location_access_or_choose_on_the_map' => 'Impossible d\'obtenir votre position. Autorisez la localisation ou choisissez sur la carte.',
         'please_tap_on_the_map_to_choose_your_location' => 'Touchez la carte pour choisir votre position.',
         'could_not_save_the_location_please_try_again' => 'Impossible d\'enregistrer la position. Réessayez.',
+        'search_a_locality' => 'Rechercher une localité…',
+        'no_result_found_for_this_search' => 'Aucun résultat pour cette recherche.',
+        'search_failed_please_try_again' => 'La recherche a échoué. Réessayez.',
+        // Récapitulatif checkout — libellé plus clair pour les frais de livraison
+        'total_shipping' => 'Frais de livraison',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
