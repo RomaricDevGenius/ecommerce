@@ -954,6 +954,14 @@ function get_french_translations_fallback()
         'search_failed_please_try_again' => 'La recherche a échoué. Réessayez.',
         // Récapitulatif checkout — libellé plus clair pour les frais de livraison
         'total_shipping' => 'Frais de livraison',
+        // Checkout web — adresse / livraison
+        'change' => 'Modifier',
+        'choose_address' => 'Choisir une adresse',
+        'choose_another_address' => 'Choisir une autre adresse',
+        'choose_another_billing_address' => 'Choisir une autre adresse de facturation',
+        'use_this_as_billing_address' => 'Utiliser comme adresse de facturation',
+        'save_changes' => 'Enregistrer',
+        'address_not_valid_choose_another' => 'Adresse non valide, choisissez-en une autre',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
