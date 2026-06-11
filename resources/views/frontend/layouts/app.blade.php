@@ -637,7 +637,7 @@
             }, function(data){
                 updateNavCart(data.nav_cart_view,data.cart_count);
                 $('#cart-details').html(data.cart_view);
-                AIZ.plugins.notify('danger', "{{ translate('Item has been removed from cart') }}");
+                AIZ.plugins.notify('success', "{{ translate('Item has been removed from cart') }}");
                 $('#cart_items_sidenav').html(parseInt($('#cart_items_sidenav').html())-1);
             });
         }
