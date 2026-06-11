@@ -40,6 +40,10 @@ class CheckoutController extends Controller
             return redirect()->route('verification.notice');
         }
 
+        // Livraison GPS : on repart d'une position non définie à chaque arrivée sur le checkout
+        // (les frais restent à 0 tant que le client n'a pas choisi son lieu de livraison).
+        $request->session()->forget(['checkout_delivery_lat', 'checkout_delivery_lng']);
+
         $country_id = 0;
         $city_id = 0;
         $area_id=0;

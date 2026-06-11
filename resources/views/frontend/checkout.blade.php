@@ -155,6 +155,16 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
+                    <div class="input-group mb-2">
+                        <input type="text" id="delivery_map_search" class="form-control"
+                            placeholder="{{ translate('Search a locality...') }}"
+                            onkeydown="if(event.key==='Enter'){event.preventDefault();searchDeliveryLocation();}">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" onclick="searchDeliveryLocation()">
+                                <i class="las la-search"></i>
+                            </button>
+                        </div>
+                    </div>
                     <p class="fs-13 text-muted mb-2">{{ translate('Tap on the map to place the marker on your exact location.') }}</p>
                     <div id="delivery_map" style="height: 360px; width: 100%; border-radius: 6px;"></div>
                 </div>
@@ -749,6 +759,33 @@
             } else {
                 _deliveryMarker.setLatLng([lat, lng]);
             }
+        }
+
+        // Recherche d'une localité via Nominatim (OpenStreetMap) — comme l'app mobile
+        function searchDeliveryLocation() {
+            var q = $('#delivery_map_search').val();
+            if (!q || q.trim() === '') return;
+            $('.aiz-refresh').addClass('active');
+            $.ajax({
+                url: 'https://nominatim.openstreetmap.org/search',
+                data: { format: 'json', q: q, limit: 1 },
+                dataType: 'json',
+                success: function(res) {
+                    $('.aiz-refresh').removeClass('active');
+                    if (res && res.length > 0 && _deliveryMap) {
+                        var lat = parseFloat(res[0].lat);
+                        var lng = parseFloat(res[0].lon);
+                        _deliveryMap.setView([lat, lng], 15);
+                        placeMapMarker(lat, lng);
+                    } else {
+                        AIZ.plugins.notify('warning', '{{ translate('No result found for this search.') }}');
+                    }
+                },
+                error: function() {
+                    $('.aiz-refresh').removeClass('active');
+                    AIZ.plugins.notify('danger', '{{ translate('Search failed. Please try again.') }}');
+                }
+            });
         }
 
         function confirmMapLocation() {
