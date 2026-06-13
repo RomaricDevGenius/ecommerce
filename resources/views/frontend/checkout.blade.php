@@ -709,17 +709,26 @@
 
     {{-- Sélection de la position de livraison (GPS / carte OSM) — checkout web --}}
     @if (get_setting('shipping_type') == 'gps_distance_shipping')
+    @php
+        // Devis GPS en cours pour ce client (permet de reprendre où il en était au retour).
+        $activeGpsQuote = null;
+        if (auth()->check()) {
+            $activeGpsQuote = \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'confirmed', 'accepted'])
+                ->latest()->first();
+        }
+    @endphp
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="text/javascript">
         var gps_required = true;
         var gps_chosen   = {{ (session('checkout_delivery_lat') !== null) ? 'true' : 'false' }};
-        // Devis GPS (zone >20km)
-        var gps_quote_status = '{{ (auth()->check() && \App\Models\GpsQuoteRequest::where('user_id', auth()->id())->where('status','accepted')->exists()) ? 'accepted' : 'none' }}';
-        var gps_manual       = (gps_quote_status === 'accepted');
-        var gps_quote_id     = null;
-        var gps_quote_amount = 0;
-        var gps_last_distance = 0;
+        // Devis GPS (zone >20km) — repris depuis un éventuel devis actif
+        var gps_quote_status = '{{ $activeGpsQuote->status ?? 'none' }}';
+        var gps_quote_id     = {{ $activeGpsQuote->id ?? 'null' }};
+        var gps_quote_amount = {{ $activeGpsQuote ? (float) $activeGpsQuote->total_amount : 0 }};
+        var gps_last_distance = {{ $activeGpsQuote ? (float) $activeGpsQuote->distance_km : 0 }};
+        var gps_manual       = ({{ $activeGpsQuote ? 'true' : 'false' }});
         var _deliveryMap = null;
         var _deliveryMarker = null;
         var _pickedLat = {{ session('checkout_delivery_lat') !== null ? (float) session('checkout_delivery_lat') : 'null' }};
@@ -887,12 +896,12 @@
 
                 if (data.manual_review === true) {
                     // Zone > 20 km : un devis est nécessaire, la commande reste bloquée.
+                    // Tout changement de position invalide le devis précédent → on repart à zéro.
                     gps_manual = true;
                     gps_chosen = false;
-                    if (gps_quote_status !== 'accepted') {
-                        gps_quote_status = 'none';
-                        checkExistingQuote();
-                    }
+                    gps_quote_status = 'none';
+                    gps_quote_id = null;
+                    checkExistingQuote();
                 } else {
                     // Zone <= 20 km : frais auto, commande autorisée.
                     gps_manual = false;
@@ -1028,10 +1037,14 @@
         }
 
         $(document).ready(function() {
-            if (gps_quote_status === 'accepted') {
-                gps_manual = true;
+            // Position restaurée (depuis un devis en cours) ou déjà choisie → repère + icône verte
+            if (_pickedLat !== null && _pickedLng !== null) {
                 $('#headingDeliveryLocation svg *').css('fill', '#15a405');
-                $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> {{ translate('Delivery location confirmed via quote.') }}');
+                $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
+                    '{{ translate('Location set') }} (' + Number(_pickedLat).toFixed(5) + ', ' + Number(_pickedLng).toFixed(5) + ')');
+            }
+            if (gps_quote_status !== 'none') {
+                gps_manual = true;   // un devis est en cours → zone lointaine
             }
             renderQuoteBox();
             stepCompletionDeliveryInfo();
