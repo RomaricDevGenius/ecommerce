@@ -142,13 +142,15 @@ class GpsQuoteController extends Controller
         }
 
         return response()->json([
-            'result'      => true,
-            'quote_id'    => $quote->id,
-            'status'      => $quote->status,
-            'amount'      => $quote->total_amount,
-            'base_amount' => $quote->base_amount,
-            'supplement'  => $quote->supplement_amount,
-            'distance_km' => $quote->distance_km,
+            'result'       => true,
+            'quote_id'     => $quote->id,
+            'status'       => $quote->status,
+            'amount'       => $quote->total_amount,
+            'base_amount'  => $quote->base_amount,
+            'supplement'   => $quote->supplement_amount,
+            'distance_km'  => $quote->distance_km,
+            'delivery_lat' => $quote->delivery_lat,  // permet de restaurer la position au retour
+            'delivery_lng' => $quote->delivery_lng,
         ]);
     }
 

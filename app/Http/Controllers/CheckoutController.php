@@ -40,9 +40,21 @@ class CheckoutController extends Controller
             return redirect()->route('verification.notice');
         }
 
-        // Livraison GPS : on repart d'une position non définie à chaque arrivée sur le checkout
+        // Livraison GPS : si un devis (>20km) est en cours, on restaure la position depuis ce
+        // devis pour reprendre où le client en était. Sinon, on repart d'une position non définie
         // (les frais restent à 0 tant que le client n'a pas choisi son lieu de livraison).
-        $request->session()->forget(['checkout_delivery_lat', 'checkout_delivery_lng']);
+        $activeQuote = null;
+        if (auth()->check() && get_setting('shipping_type') === 'gps_distance_shipping') {
+            $activeQuote = \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'confirmed', 'accepted'])
+                ->latest()->first();
+        }
+        if ($activeQuote) {
+            $request->session()->put('checkout_delivery_lat', (float) $activeQuote->delivery_lat);
+            $request->session()->put('checkout_delivery_lng', (float) $activeQuote->delivery_lng);
+        } else {
+            $request->session()->forget(['checkout_delivery_lat', 'checkout_delivery_lng']);
+        }
 
         $country_id = 0;
         $city_id = 0;
@@ -871,8 +883,9 @@ class CheckoutController extends Controller
         );
         $manualReview = (bool) $gpsResult['is_manual_review'];
 
-        // Point dans la zone auto (<=20km) : un éventuel devis en cours n'a plus lieu d'être.
-        if (!$manualReview && auth()->check()) {
+        // Un devis est attaché à un point précis : tout changement de position invalide le
+        // devis en cours. Le client devra en redemander un si le nouveau point est > 20 km.
+        if (auth()->check()) {
             \App\Models\GpsQuoteRequest::where('user_id', auth()->id())
                 ->whereIn('status', ['pending', 'confirmed', 'accepted'])
                 ->update(['status' => 'expired']);
