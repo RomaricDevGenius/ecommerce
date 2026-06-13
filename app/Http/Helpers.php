@@ -976,6 +976,10 @@ function get_french_translations_fallback()
         'delivery_location_confirmed_via_quote' => 'Lieu de livraison confirmé via devis.',
         'could_not_submit_the_quote_please_try_again' => 'Impossible de soumettre le devis. Réessayez.',
         'could_not_accept_the_quote_please_try_again' => 'Impossible d\'accepter le devis. Réessayez.',
+        // Connexion
+        'login_with_otp' => 'Connexion par OTP',
+        // Tableau de bord client — rappel panier
+        'you_had_placed_your_items_in_the_shopping_cart_try_to_order_before_the_product_quantity_runs_out' => 'Vous avez des articles dans votre panier. Commandez avant que le stock ne s\'épuise.',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
         'you_are_under_seller_based_commission_commission_rate' => 'Vous êtes sous commission par vendeur. Taux de commission',
         'you_are_under_category_wise_commission_rate' => 'Vous êtes sous commission par catégorie. Taux',
