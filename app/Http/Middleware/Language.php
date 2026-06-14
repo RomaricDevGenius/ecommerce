@@ -23,7 +23,10 @@ class Language
             $locale = Session::get('locale');
         }
         else{
-            $locale = env('DEFAULT_LANGUAGE','en');
+            // Langue d'affichage par défaut pour les nouveaux visiteurs (1ère visite).
+            // Découplée de DEFAULT_LANGUAGE, qui reste la langue de référence du CONTENU
+            // (produits, catégories...). Par défaut : français. Surchargeable via .env.
+            $locale = env('FRONTEND_DEFAULT_LANGUAGE', 'fr');
         }
 
         App::setLocale($locale);
