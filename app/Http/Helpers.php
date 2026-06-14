@@ -978,6 +978,10 @@ function get_french_translations_fallback()
         'could_not_accept_the_quote_please_try_again' => 'Impossible d\'accepter le devis. Réessayez.',
         // Connexion
         'login_with_otp' => 'Connexion par OTP',
+        'login_to_delivery_boy_panel' => 'Connexion à l\'espace livreur',
+        // Pied de page — bouton déplier la description
+        'read_more' => 'Lire plus',
+        'read_less' => 'Lire moins',
         // Tableau de bord client — rappel panier
         'you_had_placed_your_items_in_the_shopping_cart_try_to_order_before_the_product_quantity_runs_out' => 'Vous avez des articles dans votre panier. Commandez avant que le stock ne s\'épuise.',
         'you_are_under_fixed_commission_commission_rate' => 'Vous êtes sous commission fixe. Taux de commission',
