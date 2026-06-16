@@ -22,9 +22,9 @@
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="card shadow-sm border-0 rounded">
-                    <div class="card-header p-3 d-flex align-items-center gap-2">
+                    <div class="card-header p-3 d-flex justify-content-between align-items-center flex-wrap" style="gap:8px;">
                         <h3 class="fs-16 fw-600 mb-0">{{ translate('Pay by') }} Moov Money</h3>
-                        <span class="badge badge-light ml-2 fs-12">
+                        <span class="badge badge-inline badge-primary fs-13 fw-600" style="white-space:nowrap;">
                             {{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA')) }}
                         </span>
                     </div>
