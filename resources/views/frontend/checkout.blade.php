@@ -61,15 +61,6 @@
                             </div>
                             @endif
 
-                            {{-- Section "Informations d'expédition" affichée uniquement s'il existe un VRAI
-                                 choix de livraison (transporteur ou point de retrait). En livraison à domicile
-                                 seule (choix unique), ce bloc est inutile → masqué. home_delivery reste par
-                                 défaut côté serveur (frais + commande inchangés). Réversible : si tu actives un
-                                 transporteur ou un point de retrait, le bloc réapparaît automatiquement. --}}
-                            @php
-                                $hasDeliveryChoice = (get_setting('shipping_type') == 'carrier_wise_shipping') || (get_setting('pickup_point') == 1);
-                            @endphp
-                            @if ($hasDeliveryChoice)
                             <!-- Delivery Info -->
                             <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem; overflow: visible !important;">
                                 <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryInfo" type="button" data-toggle="collapse" data-target="#collapseDeliveryInfo" aria-expanded="true" aria-controls="collapseDeliveryInfo">
@@ -87,7 +78,6 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
 
 
                             <!-- Payment Info -->
