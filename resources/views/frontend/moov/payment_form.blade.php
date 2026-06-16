@@ -47,8 +47,9 @@
                                 </div>
                                 <small class="text-muted">{{ translate('8 digits, no spaces or dashes') }}</small>
                             </div>
-                            <button type="button" class="btn btn-primary fw-600" id="btn-request-otp" disabled>
-                                <i class="las la-sms mr-1"></i>{{ translate('Receive OTP code') }}
+                            <button type="button" class="btn btn-primary fw-600 d-inline-flex align-items-center justify-content-center" id="btn-request-otp" disabled>
+                                <span id="spinner-request-otp" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                <i class="las la-sms mr-1" id="icon-request-otp"></i>{{ translate('Receive OTP code') }}
                             </button>
                         </div>
 
@@ -63,15 +64,17 @@
                                 <input type="text" id="otp_code" class="form-control" placeholder="Ex : 464717" maxlength="8">
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-resend-otp">
-                                    <i class="las la-redo-alt mr-1"></i>{{ translate('Resend code') }}
+                                <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center" id="btn-resend-otp">
+                                    <span id="spinner-resend-otp" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                    <i class="las la-redo-alt mr-1" id="icon-resend-otp"></i>{{ translate('Resend code') }}
                                 </button>
                                 <button type="button" class="btn btn-sm btn-link text-muted" id="btn-change-phone">
                                     {{ translate('Change number') }}
                                 </button>
                             </div>
-                            <button type="button" class="btn btn-primary fw-600 btn-block" id="btn-confirm">
-                                <i class="las la-paper-plane mr-1"></i>{{ translate('Confirm payment') }}
+                            <button type="button" class="btn btn-primary fw-600 btn-block d-inline-flex align-items-center justify-content-center" id="btn-confirm">
+                                <span id="spinner-confirm" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                <i class="las la-paper-plane mr-1" id="icon-confirm"></i>{{ translate('Confirm payment') }}
                             </button>
                         </div>
                     </div>
@@ -105,7 +108,23 @@ $(function () {
     function clearAlerts()    { $('#error-msg, #success-msg').addClass('d-none'); }
 
     function openLoader()  { if (typeof HoldOn !== 'undefined') HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait...') }}</h4>" }); }
-    function closeLoader() { if (typeof HoldOn !== 'undefined') HoldOn.close(); }
+    function closeLoader() { btnStop(); if (typeof HoldOn !== 'undefined') HoldOn.close(); }
+
+    // Spinner intégré au bouton cliqué (comme Coris)
+    var _lastBtn = null;
+    function btnStart(btnId, spinnerId, iconId) {
+        _lastBtn = { b: btnId, s: spinnerId, i: iconId };
+        $('#' + btnId).prop('disabled', true);
+        $('#' + spinnerId).removeClass('d-none');
+        $('#' + iconId).addClass('d-none');
+    }
+    function btnStop() {
+        if (!_lastBtn) return;
+        $('#' + _lastBtn.b).prop('disabled', false);
+        $('#' + _lastBtn.s).addClass('d-none');
+        $('#' + _lastBtn.i).removeClass('d-none');
+        _lastBtn = null;
+    }
 
     // Validation téléphone
     $('#phone_number').on('input', function () {
@@ -118,6 +137,7 @@ $(function () {
     $('#btn-request-otp').on('click', function () {
         clearAlerts();
         openLoader();
+        btnStart('btn-request-otp', 'spinner-request-otp', 'icon-request-otp');
         $.post(GENERATE_URL, {
             _token:       CSRF,
             phone_number: $('#phone_number').val(),
@@ -145,6 +165,7 @@ $(function () {
     $('#btn-resend-otp').on('click', function () {
         clearAlerts();
         openLoader();
+        btnStart('btn-resend-otp', 'spinner-resend-otp', 'icon-resend-otp');
         $.post(GENERATE_URL, {
             _token:       CSRF,
             phone_number: $('#phone_number').val(),
@@ -182,6 +203,7 @@ $(function () {
         }
         clearAlerts();
         openLoader();
+        btnStart('btn-confirm', 'spinner-confirm', 'icon-confirm');
         $.post(CONFIRM_URL, {
             _token:       CSRF,
             phone_number: $('#phone_number').val(),
