@@ -1,14 +1,16 @@
 <div class="row gutters-16">
     @php
     $physical = false;
-    $col_val = 'col-12';
     foreach ($products as $key => $cartItem){
     $product = get_single_product($cartItem);
     if ($product->digital == 0) {
     $physical = true;
-    $col_val = 'col-md-6';
     }
     }
+    // Y a-t-il un vrai choix de livraison (transporteur ou point de retrait) ?
+    // Sinon (livraison à domicile seule), on n'affiche pas le sélecteur — juste les produits.
+    $hasDeliveryChoice = (get_setting('shipping_type') == 'carrier_wise_shipping') || (get_setting('pickup_point') == 1);
+    $col_val = ($physical && $hasDeliveryChoice) ? 'col-md-6' : 'col-12';
     @endphp
     <!-- Product List -->
     <div class="{{ $col_val }}">
@@ -37,7 +39,7 @@
         </ul>
     </div>
 
-    @if ($physical)
+    @if ($physical && $hasDeliveryChoice)
     <!-- Choose Delivery Type -->
     <div class="col-md-6 mb-2">
         <h6 class="fs-14 fw-700 mt-3">{{ translate('Choose Delivery Type') }}</h6>
