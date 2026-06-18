@@ -1058,6 +1058,8 @@ function get_french_translations_fallback()
         'change_number' => 'Changer de numéro',
         'please_enter_the_otp_code_received_by_sms' => 'Veuillez saisir le code OTP reçu par SMS',
         'an_unexpected_error_occurred_please_try_again_later' => 'Une erreur inattendue est survenue, réessayez plus tard',
+        'sending' => 'Envoi en cours…',
+        'billing_address' => 'Adresse de facturation',
         'send_otp' => 'Envoyer l\'OTP',
         'resend_otp' => 'Renvoyer l\'OTP',
         'initiate_transaction' => 'Initier la transaction',

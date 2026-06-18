@@ -6,8 +6,11 @@
             <div class="row justify-content-center">
                 <div class="col-lg-5 col-md-7">
                     <div class="card">
-                        <div class="card-header text-center">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:8px;">
                             <h3 class="h6 mb-0">{{ translate('Pay by') }} Coris Money</h3>
+                            <span class="badge badge-inline badge-primary fs-13 fw-600" style="white-space:nowrap;">
+                                {{ str_replace('{amount}', number_format($combined_order->grand_total, 0, '', ' '), translate('You owe {amount} FCFA')) }}
+                            </span>
                         </div>
                         <div class="card-body">
 
