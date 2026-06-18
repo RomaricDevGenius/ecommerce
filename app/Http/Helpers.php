@@ -1060,6 +1060,8 @@ function get_french_translations_fallback()
         'an_unexpected_error_occurred_please_try_again_later' => 'Une erreur inattendue est survenue, réessayez plus tard',
         'sending' => 'Envoi en cours…',
         'billing_address' => 'Adresse de facturation',
+        // App mobile — vendeur d'un produit de l'admin (page produit / API)
+        'in_house_product' => 'Produit maison',
         'send_otp' => 'Envoyer l\'OTP',
         'resend_otp' => 'Renvoyer l\'OTP',
         'initiate_transaction' => 'Initier la transaction',
