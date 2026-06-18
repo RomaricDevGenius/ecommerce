@@ -121,7 +121,9 @@
                                             <!-- Complete Ordert -->
                                             <div class="col-6 text-right">
                                                 <button type="button" onclick="submitOrder(this)" id="submitOrderBtn"
-                                                    class="btn btn-primary fs-14 fw-700 rounded-0 px-4">{{ translate('Complete Order') }}</button>
+                                                    class="btn btn-primary fs-14 fw-700 rounded-0 px-4 d-inline-flex align-items-center justify-content-center">
+                                                    <span id="spinner-complete-order" class="spinner-border spinner-border-sm mr-2 d-none" role="status" aria-hidden="true"></span>
+                                                    {{ translate('Complete Order') }}</button>
                                             </div>
                                         </div>
 
@@ -267,6 +269,7 @@
                         }
 
                         if (allIsOk) {
+                            $('#spinner-complete-order').removeClass('d-none');
                             $('#checkout-form').submit();
                         }
                     }
