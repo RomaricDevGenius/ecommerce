@@ -181,8 +181,9 @@
             <div class="card-body text-center">
                 <a href="{{ route('gps_shipping.pending') }}" class="btn btn-primary">
                     <i class="las la-clock"></i>
-                    {{ translate('Commandes en attente de supplément') }}
-                    @php $pendingCount = \App\Models\Order::where('gps_shipping_pending', true)->count(); @endphp
+                    {{ translate('Devis GPS en attente') }}
+                    {{-- Compteur aligné sur la page : nombre de devis GPS en attente de tarification (statut "pending"). --}}
+                    @php $pendingCount = \App\Models\GpsQuoteRequest::where('status', 'pending')->count(); @endphp
                     @if($pendingCount > 0)
                         <span class="badge badge-light ml-1">{{ $pendingCount }}</span>
                     @endif
