@@ -1062,6 +1062,8 @@ function get_french_translations_fallback()
         'billing_address' => 'Adresse de facturation',
         // App mobile — vendeur d'un produit de l'admin (page produit / API)
         'in_house_product' => 'Produit maison',
+        // reCAPTCHA (connexion / inscription)
+        'verification_failed_please_try_again' => 'Échec de la vérification. Veuillez réessayer.',
         'send_otp' => 'Envoyer l\'OTP',
         'resend_otp' => 'Renvoyer l\'OTP',
         'initiate_transaction' => 'Initier la transaction',
