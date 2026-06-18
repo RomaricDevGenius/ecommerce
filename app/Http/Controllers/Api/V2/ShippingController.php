@@ -195,7 +195,7 @@ class ShippingController extends Controller
 
                 $shop_data = Shop::where('user_id', $owner_id)->first();
 
-                $shop['name'] = $shop_data ? $shop_data->name : "Inhouse";
+                $shop['name'] = $shop_data ? $shop_data->name : translate('In House Product');
                 $shop['owner_id'] = (int) $owner_id;
                 $shop['cart_items'] = $shop_items_data;
                 $shop['carriers'] = seller_base_carrier_list($owner_id, $userId, $tempUserId, $shipping_info);
