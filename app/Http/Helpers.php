@@ -2012,11 +2012,89 @@ function get_french_translations_fallback()
         'pickup_location_for_delivery_boy' => 'Emplacement de collecte pour le livreur',
         'monthly_earnings' => 'Gains mensuel',
         'dimensions' => 'Dimensions',
+        'number_of_sale' => 'Nombre de ventes',
+        'view_stock' => 'Voir le stock',
         'in_cm' => 'En cm',
         'length' => 'Longueur',
         'width' => 'Largeur',
         'height' => 'Hauteur',
         'l_x_w_x_h_used_for_gps_volume_surcharge' => 'L × l × H — surcharge volume GPS',
+
+        // Produits — filtres et tableau
+        'sort' => 'Trier',
+        'all_published' => 'Tous publiés',
+        'all_discounted' => 'Tous avec remise',
+        'low_stock' => 'Stock faible',
+        'variant' => 'Variante',
+        'stock' => 'Stock',
+
+        // Vendeurs — profil
+        'mail_seller' => 'Contacter le vendeur',
+
+        // Téléchargements shiprocket
+        'download_label' => 'Télécharger l\'étiquette',
+        'download_manifest' => 'Télécharger le manifeste',
+
+        // Boutons modals confirmation
+        'confirm' => 'Confirmer',
+
+        // Formulaires livreurs & vendeurs
+        'name' => 'Nom',
+        'email' => 'E-mail',
+        'phone' => 'Téléphone',
+        'password' => 'Mot de passe',
+        'licence_number' => 'Numéro de licence',
+
+        // Statuts et alertes JS états/villes/pays
+        'if_you_disable_a_state_all_associated_cities_and_areas_under_that_state_will_also_be_automatically_disabled' => 'Si vous désactivez un État, toutes les villes et zones associées seront automatiquement désactivées.',
+
+        // Addons
+        'preview' => 'Aperçu',
+        'purchase' => 'Acheter',
+        'coming_soon' => 'Bientôt disponible',
+
+        // Système
+        'on' => 'Activé',
+
+        // Vendeur vérification — formulaire
+        'add_option' => 'Ajouter une option',
+
+        // Langues
+        'something_went_wrong_during_translation' => 'Une erreur est survenue lors de la traduction.',
+
+        // Paramètres site
+        'footer_title' => 'Titre du pied de page',
+        'widget_title' => 'Titre du widget',
+        'watermark_text' => 'Texte de filigrane',
+
+        // Header
+        'something_went_wrong' => 'Une erreur est survenue.',
+
+        // Tri produits — clé normalisée après preg_replace('/_+/', '_')
+        'rating_high_low' => 'Note (décroissant)',
+        'rating_low_high' => 'Note (croissant)',
+        'base_price_high_low' => 'Prix de base (décroissant)',
+        'base_price_low_high' => 'Prix de base (croissant)',
+
+        // Transporteurs — validation plage de prix (alertes JS)
+        'please_validate_the_last_range_before_creating_a_new_one' => 'Veuillez valider la dernière plage avant d\'en créer une nouvelle.',
+        'please_put_the_last_range_greater_than_first_range' => 'La borne supérieure doit être plus grande que la borne inférieure.',
+        'please_put_the_first_range_equal_to_the_previous_last_range' => 'La borne inférieure doit être égale à la borne supérieure de la plage précédente.',
+
+        // Compteur vente flash (frontend)
+        'ends_in' => 'Fin dans',
+        'days' => 'j',
+        'hrs' => 'h',
+        'min' => 'min',
+        'sec' => 's',
+
+        // Carte / géolocalisation
+        'enter_a_location' => 'Entrer une adresse',
+        'full_address' => 'Adresse complète',
+        'postal_code' => 'Code postal',
+
+        // Panier
+        'quantity' => 'Quantité',
     ];
 }
 

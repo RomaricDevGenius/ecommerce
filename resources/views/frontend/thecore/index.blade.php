@@ -54,11 +54,11 @@
                             <div class="mobile-countdown-simple d-md-none w-100 mb-2 mt-1"
                                 data-end-date="{{ date('Y/m/d H:i:s', $flash_deal->end_date) }}">
                                 <div class="countdown-text text-center">
-                                    Ends in:
-                                    <span id="simple-days">00</span> days
-                                    <span id="simple-hours">00</span> hrs
-                                    <span id="simple-mins">00</span> min
-                                    <span id="simple-secs">00</span> sec
+                                    {{ translate('Ends in') }} :
+                                    <span id="simple-days">00</span> {{ translate('days') }}
+                                    <span id="simple-hours">00</span> {{ translate('hrs') }}
+                                    <span id="simple-mins">00</span> {{ translate('min') }}
+                                    <span id="simple-secs">00</span> {{ translate('sec') }}
                                 </div>
                             </div>
 

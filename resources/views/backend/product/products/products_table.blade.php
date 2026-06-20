@@ -126,7 +126,7 @@
                     @endif
                 </td>
                 <td class="hide-xl" data-label="Info">
-                    <span class="fs-12 fw-400 text-secondary">{{('Number of Sale')}}</span>
+                    <span class="fs-12 fw-400 text-secondary">{{translate('Number of Sale')}}</span>
                     <p class="fs-16 fw-700 m-0 pb-10px">{{ $product->num_of_sale }}</p>
                     @if(!$product->draft && !$product->digital)
                     <a href="javascript:void(0)" onclick='openRightcanvas({{ $product->id }}, "{{ $product->getTranslation('name') }}" )'
@@ -218,7 +218,7 @@
                                                 transform="translate(-120 921)" fill="#414141" />
                                         </svg>
                                     </span>
-                                    <span class="fs-14 text-secondary fw-500 pl-10px">Edit</span>
+                                    <span class="fs-14 text-secondary fw-500 pl-10px">{{ translate('Edit') }}</span>
                                 </a>
                                 @endcan
                                 <!--View Product-->

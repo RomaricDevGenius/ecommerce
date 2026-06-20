@@ -26,25 +26,25 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-from-label" for="name">{{translate('Name')}}</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="name" value="{{$delivery_boy->name}}" placeholder="Name" required>
+                        <input type="text" class="form-control" name="name" value="{{$delivery_boy->name}}" placeholder="{{ translate('Name') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-from-label" for="email">{{translate('Email')}}</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="email" value="{{$delivery_boy->email}}" placeholder="Email" required>
+                        <input type="text" class="form-control" name="email" value="{{$delivery_boy->email}}" placeholder="{{ translate('Email') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-from-label" for="phone">{{translate('Phone')}}</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="phone" value="{{$delivery_boy->phone}}" placeholder="Phone" required>
+                        <input type="text" class="form-control" name="phone" value="{{$delivery_boy->phone}}" placeholder="{{ translate('Phone') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-from-label" for="password">{{translate('Password')}}</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" name="password" placeholder="Password">
+                        <input type="password" class="form-control" name="password" placeholder="{{ translate('Password') }}">
                     </div>
                 </div>
                 <div class="form-group row">

@@ -89,7 +89,7 @@
         @if (get_setting('google_map') == 1)
             <!-- Google Map -->
             <div class="row mt-3 mb-3">
-                <input id="edit_searchInput" class="controls" type="text" placeholder="Enter a location">
+                <input id="edit_searchInput" class="controls" type="text" placeholder="{{ translate('Enter a location') }}">
                 <div id="edit_map"></div>
                 <ul id="geoData">
                     <li style="display: none;">Full Address: <span id="location"></span></li>
