@@ -27,7 +27,7 @@
                         {{translate('Name')}} <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Name" required>
+                        <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Name') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -35,7 +35,7 @@
                         {{translate('Email')}} <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email" required>
+                        <input type="text" class="form-control" name="email" value="{{ old('email') }}" placeholder="{{ translate('Email') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -43,7 +43,7 @@
                         {{translate('Phone')}} <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name="phone" value="{{ old('phone') }}" placeholder="Phone" required>
+                        <input type="text" class="form-control" name="phone" value="{{ old('phone') }}" placeholder="{{ translate('Phone') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -51,7 +51,7 @@
                         {{translate('Password')}} <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control" name="password" placeholder="{{ translate('Password') }}" required>
                     </div>
                 </div>
                 <div class="form-group row">

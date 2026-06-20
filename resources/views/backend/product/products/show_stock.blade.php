@@ -42,9 +42,9 @@
                 @if($product->variant_product)
                 <thead>
                     <tr>
-                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary">Variant</th>
-                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary text-center">Stock</th>
-                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary">Price</th>
+                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary">{{ translate('Variant') }}</th>
+                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary text-center">{{ translate('Stock') }}</th>
+                        <th scope="col" class="fs-14 fw-700 text-dark border-soft-secondary">{{ translate('Price') }}</th>
                     </tr>
                 </thead>
                 <tbody>

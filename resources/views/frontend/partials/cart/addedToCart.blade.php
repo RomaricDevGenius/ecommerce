@@ -18,7 +18,7 @@
             <div class="row mt-1">
                 <div class="col-12">
                     <p class="m-0 py-1">
-                        <span class="fs-14 fw-400 text-gray">Quantity</span>
+                        <span class="fs-14 fw-400 text-gray">{{ translate('Quantity') }}</span>
                         <span class="fs-14 fw-600 text-dark">1</span>
                     </p>
                 </div>

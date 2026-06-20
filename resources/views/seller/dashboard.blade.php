@@ -745,7 +745,7 @@
                             <label for="certificate-number" class="fs-13 fw-bold">{{ translate('Licence Number') }}</label>
                             <input type="text" name="certificate_number"
                                 class="form-control text-gray fs-13 fw-300 rounded-2 bg-soft-light"
-                                id="certificate-number" placeholder="Licence number" required>
+                                id="certificate-number" placeholder="{{ translate('Licence Number') }}" required>
                         </div>
 
                         <div class="form-group">

@@ -256,7 +256,7 @@
 
         if ((second_lasttd == 0) || (second_lasttd == first_lasttd) ||
             ((second_lasttd - first_lasttd) < 0)) {
-            alert('Please validate the last range before creating a new one.')
+            alert('{{ translate('Please validate the last range before creating a new one') }}')
         } else {
             // clonning last tds
             fnclone(tablebody, second_lasttd);
@@ -281,7 +281,7 @@
             .insertAfter(this);
         }); 
 
-        $('#price-range-table tr:last td:last').html('<button type="button" id="disablebtn" class="btn btn-primary btn-sm delete-range">Delete</button>');
+        $('#price-range-table tr:last td:last').html('<button type="button" id="disablebtn" class="btn btn-primary btn-sm delete-range">{{ translate('Delete') }}</button>');
 
         var first_lasttd = $("#price-range-table").find("tr:nth-child(1)").find("td:last").find("input");
         first_lasttd.val(parseFloat(second_lasttd).toFixed(2));
@@ -296,12 +296,12 @@
                 for (let i = 0; i < delimiter1.length; i++) {
                     if (delimiter1[i].value && delimiter2[i].value) {
                         if (parseFloat(delimiter1[i].value) >= parseFloat(delimiter2[i].value)) {
-                            alert('Please put the last range greater than first range.');
+                            alert('{{ translate('Please put the last range greater than first range') }}');
                             delimiter2[i].focus();
                             return false
                         }
                         if (i>0 && (parseFloat(delimiter1[i].value) != parseFloat(delimiter2[(i-1)].value))) {
-                            alert('Please put the first range equal to the previous last range.');
+                            alert('{{ translate('Please put the first range equal to the previous last range') }}');
                             delimiter1[(i)].focus();
                             return false
                         }
