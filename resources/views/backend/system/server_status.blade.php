@@ -76,12 +76,12 @@
                             <td>file_uploads</td>
                             <td>
                                 @if(ini_get('file_uploads') == 1)
-                                On
+                                {{ translate('On') }}
                                 @else
-                                Off
+                                {{ translate('Off') }}
                                 @endif
                             </td>
-                            <td>On</td>
+                            <td>{{ translate('On') }}</td>
                             <td>
                                 @if (ini_get('file_uploads') == 1)
                                 <i class="las la-check text-success"></i>
@@ -136,12 +136,12 @@
                             <td>allow_url_fopen</td>
                             <td>
                                 @if(ini_get('allow_url_fopen') == 1)
-                                On
+                                {{ translate('On') }}
                                 @else
-                                Off
+                                {{ translate('Off') }}
                                 @endif
                             </td>
-                            <td>On</td>
+                            <td>{{ translate('On') }}</td>
                             <td>
                                 @if (ini_get('allow_url_fopen') == 1)
                                 <i class="las la-check text-success"></i>
@@ -154,7 +154,7 @@
                             <td>max_execution_time</td>
                             <td>
                                 @if(ini_get('max_execution_time') == '-1')
-                                Unlimited
+                                {{ translate('Unlimited') }}
                                 @else
                                 {{ ini_get('max_execution_time') }}
                                 @endif
@@ -172,7 +172,7 @@
                             <td>max_input_time</td>
                             <td>
                                 @if(ini_get('max_input_time') == '-1')
-                                Unlimited
+                                {{ translate('Unlimited') }}
                                 @else
                                 {{ ini_get('max_input_time') }}
                                 @endif
@@ -204,7 +204,7 @@
                             <td>memory_limit</td>
                             <td>
                                 @if(ini_get('memory_limit') == '-1')
-                                Unlimited
+                                {{ translate('Unlimited') }}
                                 @else
                                 {{ ini_get('memory_limit') }}
                                 @endif

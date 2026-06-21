@@ -28,9 +28,9 @@
                         <td>{{$product->added_by}}</td>
                         <td>
                             @if ($product->status == 1)
-                                <span class="badge badge-inline badge-success">{{ translate('PUBLISHED') }}</span>
+                                <span class="badge badge-inline badge-success">{{ translate('Published') }}</span>
                             @else
-                                <span class="badge badge-inline badge-danger">{{ translate('UNPUBLISHED') }}</span>
+                                <span class="badge badge-inline badge-danger">{{ translate('Unpublished') }}</span>
                             @endif
                         </td>
                         <td>

@@ -2,6 +2,16 @@
 
 @section('panel_content')
 
+@php
+    $hasPendingRequest = \App\Models\SellerWithdrawRequest::where('user_id', Auth::user()->id)
+        ->where('status', 0)
+        ->exists();
+@endphp
+
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
     <div class="aiz-titlebar mt-2 mb-4">
       <div class="row align-items-center">
         <div class="col-md-6">
@@ -23,12 +33,21 @@
             </div>
         </div>
         <div class="col-md-4 mb-3 mr-auto" >
-          <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition" onclick="show_request_modal()">
-              <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
-                  <i class="las la-plus la-3x text-white"></i>
-              </span>
-              <div class="fs-18 text-primary">{{ translate('Send Withdraw Request') }}</div>
-          </div>
+          @if($hasPendingRequest)
+              <div class="p-3 rounded mb-3 text-center bg-warning shadow-sm">
+                  <span class="size-60px rounded-circle mx-auto bg-white d-flex align-items-center justify-content-center mb-3">
+                      <i class="las la-clock la-3x text-warning"></i>
+                  </span>
+                  <div class="fs-18 text-white fw-700">{{ translate('You already have a pending withdraw request') }}</div>
+              </div>
+          @else
+              <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition" onclick="show_request_modal()">
+                  <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
+                      <i class="las la-plus la-3x text-white"></i>
+                  </span>
+                  <div class="fs-18 text-primary">{{ translate('Send Withdraw Request') }}</div>
+              </div>
+          @endif
         </div>
     </div>
 
@@ -162,11 +181,5 @@
             }
         }
 
-        function show_message_modal(id){
-            $.post('{{ route('withdraw_request.message_modal') }}',{_token:'{{ @csrf_token() }}', id:id}, function(data){
-                $('#message_modal .modal-content').html(data);
-                $('#message_modal').modal('show', {backdrop: 'static'});
-            });
-        }
     </script>
 @endsection

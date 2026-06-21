@@ -24,7 +24,7 @@
                         </svg>
 
                     </span>
-                    <h5 class="m-0 text-uppercase text-dark fs-24 fw-700 mt-4 pt-2">Confirmation</h5>
+                    <h5 class="m-0 text-uppercase text-dark fs-24 fw-700 mt-4 pt-2">{{ translate('Confirmation') }}</h5>
                 </div>
                 <div>
                     <p class="fs-14 fw-200 text-dark text-center">{{ translate('Are you sure to delete those?') }}</p>

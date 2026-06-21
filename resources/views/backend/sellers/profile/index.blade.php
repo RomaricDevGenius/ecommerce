@@ -42,7 +42,7 @@
                     <div class="ml-2">{{ $shop->user->phone }}</div>
                     @endif
                 </div>
-                
+
 
             </div>
         </div>
@@ -53,7 +53,7 @@
                 <!-- Tabs -->
                  <div class="supplier-tab-wrapper">
                 <ul class="nav nav-tabs supplier-tab" id="customTabs">
-                    
+
                     <li class="nav-item">
                         <button class="nav-link" onclick="changeSellerTab(this, 'overview')">{{translate('Overview')}}</button>
                     </li>
@@ -116,7 +116,7 @@
                         </button>
 
                         <!-- Mail Icon -->
-                        <div class="ml-2 icon-container" data-toggle="tooltip" title="Mail Seller">
+                        <div class="ml-2 icon-container" data-toggle="tooltip" title="{{ translate('Mail Seller') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                 viewBox="0 0 32 32">
                                 <g id="Rectangle_23615" data-name="Rectangle 23615" fill="#fff" stroke="#dce0e6"
@@ -193,11 +193,19 @@
                                 @can('mark_seller_suspected')
                                 @if($shop->user->is_suspicious == 1)
                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', true);" class="dropdown-item">
-                                    {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                    @if($shop->user->is_suspicious == 1)
+                                        {{ translate('Mark as unsuspect') }}
+                                    @else
+                                        {{ translate('Mark as suspicious') }}
+                                    @endif
                                 </a>
                                 @else
                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', false);" class="dropdown-item">
-                                    {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                    @if($shop->user->is_suspicious == 1)
+                                        {{ translate('Mark as unsuspect') }}
+                                    @else
+                                        {{ translate('Mark as suspicious') }}
+                                    @endif
                                 </a>
                                 @endif
                                 @endcan
@@ -299,11 +307,19 @@
                                 @can('mark_seller_suspected')
                                 @if($shop->user->is_suspicious == 1)
                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', true);" class="dropdown-item">
-                                    {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                    @if($shop->user->is_suspicious == 1)
+                                        {{ translate('Mark as unsuspect') }}
+                                    @else
+                                        {{ translate('Mark as suspicious') }}
+                                    @endif
                                 </a>
                                 @else
                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', false);" class="dropdown-item">
-                                    {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                    @if($shop->user->is_suspicious == 1)
+                                        {{ translate('Mark as unsuspect') }}
+                                    @else
+                                        {{ translate('Mark as suspicious') }}
+                                    @endif
                                 </a>
                                 @endif
                                 @endcan
@@ -316,7 +332,7 @@
                                 @endcan
                         </div>
                     </div>
-                              
+
                 </div>
             </div>
 
@@ -410,7 +426,7 @@
         data: { tab: tab },
         success: function(response) {
             $('#tab-content').html(response.html);
-            
+
             // Initialize FooTable after content loads
             setTimeout(function() {
                 if (typeof AIZ !== 'undefined' && AIZ.plugins.fooTable) {
@@ -589,7 +605,7 @@
         }
         // Suspicious / Unsuspicious
         function confirm_suspicious(url, isSuspicious) {
-            const action = isSuspicious ? 'unsuspect' : 'suspect';
+            const action = isSuspicious ? '{{ translate('Mark as unsuspect') }}' : '{{ translate('Mark as suspicious') }}';
             showConfirmationModal({
                 url: url,
                 message: '{{ translate("Do you really want to") }} ' + action + ' {{ translate("this seller?") }}'
@@ -668,7 +684,7 @@
             $('#filePreviewModal').modal('show');
         }
 
-        
+
 
 </script>
 
