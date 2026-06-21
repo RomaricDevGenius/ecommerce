@@ -14,28 +14,30 @@
                             <th>{{ translate('Date')}}</th>
                             <th>{{ translate('Amount')}}</th>
                             <th>{{ translate('Payment Method')}}</th>
+                            <th data-breakpoints="lg">{{ translate('TRX ID')}}</th>
+                            <th data-breakpoints="lg">{{ translate('Details')}}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($payments as $key => $payment)
                             <tr>
-                                <td>
-                                    {{ $key+1 }}
-                                </td>
+                                <td>{{ ($key+1) + ($payments->currentPage() - 1) * $payments->perPage() }}</td>
                                 <td>{{ date('d-m-Y', strtotime($payment->created_at)) }}</td>
-                                <td>
-                                    {{ single_price($payment->amount) }}
-                                </td>
-                                <td>
-                                    {{ translate(ucfirst(str_replace('_', ' ', $payment->payment_method))) }} @if ($payment->txn_code != null) ({{  translate('TRX ID') }} : {{ $payment->txn_code }}) @endif
-                                </td>
+                                <td class="fw-700">{{ single_price($payment->amount) }}</td>
+                                <td>{{ translate(ucfirst(str_replace('_', ' ', $payment->payment_method))) }}</td>
+                                <td>{{ $payment->txn_code ?? '—' }}</td>
+                                <td>{{ $payment->payment_details ?? '—' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
                 <div class="aiz-pagination">
-                	{{ $payments->links() }}
-              	</div>
+                    {{ $payments->links() }}
+                </div>
+            </div>
+        @else
+            <div class="card-body">
+                <p class="text-muted text-center py-4">{{ translate('No payment history found') }}</p>
             </div>
         @endif
     </div>

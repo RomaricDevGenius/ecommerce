@@ -53,7 +53,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0 h6">{{ translate('Withdraw Request history')}}</h5>
+            <h5 class="mb-0 h6">{{ translate('Withdraw Request History')}}</h5>
         </div>
           <div class="card-body">
               <table class="table aiz-table mb-0">
@@ -62,26 +62,35 @@
                           <th>#</th>
                           <th>{{ translate('Date') }}</th>
                           <th>{{ translate('Amount')}}</th>
+                          <th data-breakpoints="lg">{{ translate('Payment Method')}}</th>
                           <th data-breakpoints="lg">{{ translate('Status')}}</th>
-                          <th data-breakpoints="lg" width="60%">{{ translate('Message')}}</th>
+                          <th data-breakpoints="lg">{{ translate('Message')}}</th>
                       </tr>
                   </thead>
                   <tbody>
                       @foreach ($seller_withdraw_requests as $key => $seller_withdraw_request)
                           <tr>
-                              <td>{{ $key+1 }}</td>
+                              <td>{{ ($key+1) + ($seller_withdraw_requests->currentPage() - 1) * $seller_withdraw_requests->perPage() }}</td>
                               <td>{{ date('d-m-Y', strtotime($seller_withdraw_request->created_at)) }}</td>
                               <td>{{ single_price($seller_withdraw_request->amount) }}</td>
                               <td>
-                                  @if ($seller_withdraw_request->status == 1)
-                                      <span class=" badge badge-inline badge-success" >{{ translate('Paid')}}</span>
+                                  @if($seller_withdraw_request->payment_method)
+                                      {{ translate(ucfirst(str_replace('_', ' ', $seller_withdraw_request->payment_method))) }}
+                                      @if($seller_withdraw_request->account_number)
+                                          <br><small class="text-muted">{{ $seller_withdraw_request->account_number }}</small>
+                                      @endif
                                   @else
-                                      <span class=" badge badge-inline badge-info" >{{ translate('Pending')}}</span>
+                                      —
                                   @endif
                               </td>
                               <td>
-                                  {{ $seller_withdraw_request->message }}
+                                  @if ($seller_withdraw_request->status == 1)
+                                      <span class="badge badge-inline badge-success">{{ translate('Paid')}}</span>
+                                  @else
+                                      <span class="badge badge-inline badge-info">{{ translate('Pending')}}</span>
+                                  @endif
                               </td>
+                              <td>{{ $seller_withdraw_request->message ?? '—' }}</td>
                           </tr>
                       @endforeach
                   </tbody>
