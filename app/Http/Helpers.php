@@ -2269,6 +2269,7 @@ function get_french_translations_fallback()
         'broker' => 'Courtier',
         'create_account' => 'Créer le compte',
         'unpaid_order_payment_notification' => 'Notification de paiement commande impayée',
+        'are_you_sure_you_want_to_change_the_payment_status' => 'Êtes-vous sûr de vouloir modifier le statut du paiement ?',
     ];
 }
 
