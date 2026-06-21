@@ -2214,6 +2214,60 @@ function get_french_translations_fallback()
         'filter_by_delivery_status' => 'Filtrer par statut de livraison',
         'unsuspect' => 'lever la suspicion',
         'suspect' => 'suspecter',
+
+        // Système retrait vendeur
+        'pending_balance' => 'Solde en attente',
+        'send_withdraw_request' => 'Envoyer une demande de retrait',
+        'money_withdraw' => 'Retrait d\'argent',
+        'send_a_withdraw_request' => 'Envoyer une demande de retrait',
+        'pay_to_seller' => 'Payer le vendeur',
+        'due_to_seller' => 'Dû au vendeur',
+        'requested_method' => 'Méthode demandée',
+        'bank_account_name' => 'Nom du compte bancaire',
+        'bank_account_number' => 'Numéro de compte bancaire',
+        'bank_routing_number' => 'Code de routage bancaire',
+        'txn_code' => 'Code de transaction',
+        'pay_now' => 'Payer maintenant',
+        'seller_withdraw_request' => 'Demandes de retrait vendeur',
+        'total_amount_to_pay' => 'Montant total à payer',
+        'requested_amount_is' => 'Montant demandé',
+        'bank_payment' => 'Virement bancaire',
+        'select_payment_method' => 'Sélectionner la méthode de paiement',
+        'you_already_have_a_pending_withdraw_request' => 'Vous avez déjà une demande de retrait en cours',
+        'withdraw_request_details' => 'Détails de la demande de retrait',
+        'current_balance' => 'Solde actuel',
+        'seller_payment' => 'Paiement vendeur',
+
+        // Tables produits (data-labels)
+        'qty_products' => 'Nb produits',
+        'parent_category' => 'Catégorie parente',
+        'order_level' => 'Niveau d\'ordre',
+        'featured' => 'En vedette',
+        'hot_category' => 'Populaire',
+        'thumb' => 'Miniature',
+        'owner_category' => 'Catégorie',
+        'price_details' => 'Détails prix',
+
+        // Support
+        'between' => 'Entre',
+
+        // Setup / système
+        'off' => 'Désactivé',
+        'unlimited' => 'Illimité',
+        'stripe_key' => 'Clé Stripe',
+        'purchase_code' => 'Code d\'achat',
+        'system_key' => 'Clé système',
+        'where_to_get_purchase_code' => 'Comment obtenir le code d\'achat ?',
+        'click_here' => 'Cliquez ici',
+
+        // Dashboard vendeur - options select
+        'installer' => 'Installateur',
+        'developer' => 'Développeur',
+        'supplier_reseller' => 'Fournisseur / Revendeur',
+        'distributor' => 'Distributeur',
+        'manufacturer' => 'Fabricant',
+        'broker' => 'Courtier',
+        'create_account' => 'Créer le compte',
     ];
 }
 

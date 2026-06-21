@@ -727,14 +727,14 @@
                             <select
                                 class="form-control aiz-selectpicker bg-soft-light rounded-2"
                                 data-live-search="true" name="shop_type" required>
-                                <option value="installer">Installer</option>
-                                <option value="developer">Developer</option>
-                                <option value="om">O&M</option>
-                                <option value="supplier">Supplier / Reseller</option>
-                                <option value="distributor">Distributor</option>
-                                <option value="manufacturer">Manufacturer</option>
-                                <option value="broker">Broker</option>
-                                <option value="other">Other</option>
+                                <option value="installer">{{ translate('Installer') }}</option>
+                                <option value="developer">{{ translate('Developer') }}</option>
+                                <option value="om">{{ translate('O&M') }}</option>
+                                <option value="supplier">{{ translate('Supplier / Reseller') }}</option>
+                                <option value="distributor">{{ translate('Distributor') }}</option>
+                                <option value="manufacturer">{{ translate('Manufacturer') }}</option>
+                                <option value="broker">{{ translate('Broker') }}</option>
+                                <option value="other">{{ translate('Other') }}</option>
 
                             </select>
                             <small id="type-error" class="text-danger d-none"> {{ translate('Please select a company type') }}</small>

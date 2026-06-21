@@ -64,7 +64,7 @@
                         </td>
                     
 
-                    <td class="" data-label="Icon">
+                    <td class="" data-label="{{ translate('Icon') }}">
                         @if ($category->icon != null)
                             <span class="avatar avatar-square avatar-xs">
                                 <img src="{{ uploaded_asset($category->icon) }}"
@@ -75,7 +75,7 @@
                         @endif
                     </td>
 
-                    <td class="hide-xs" data-label="Name">
+                    <td class="hide-xs" data-label="{{ translate('Name') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -86,7 +86,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="hide-md" data-label="Parent Category">
+                    <td class="hide-md" data-label="{{ translate('Parent Category') }}">
                         <div class="row gutters-5 w-100px w-md-100px mw-100">
                             <div class="col">
                                 @php
@@ -104,14 +104,14 @@
                         </div>
 
                     </td>
-                    <td class="hide-lg" data-label="Order Level">
+                    <td class="hide-lg" data-label="{{ translate('Order Level') }}">
                         <div class="row gutters-5 w-80px w-md-80px mw-80">
                             <div class="col">
                                 {{ $category->order_level }}
                             </div>
                         </div>
                     </td>
-                    <td class="hide-lg" data-label="Level">
+                    <td class="hide-lg" data-label="{{ translate('Level') }}">
                         <div class="row gutters-5 w-80px w-md-80px mw-80">
                             <div class="col">
                                 {{ $category->level }}
@@ -119,7 +119,7 @@
                         </div>
                     </td>
 
-                    <td class="hide-md" data-label="Featured">
+                    <td class="hide-md" data-label="{{ translate('Featured') }}">
                         <div class="row gutters-5 w-80px w-md-80px mw-80">
                             <div class="col">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="hide-md" data-label="Hot Category">
+                    <td class="hide-md" data-label="{{ translate('Hot Category') }}">
                         <div class="row gutters-5 w-80px w-md-80px mw-80">
                             <div class="col">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -146,9 +146,9 @@
                         </div>
                     </td>
                     @if (get_setting('seller_commission_type') == 'category_based')
-                        <td class="hide-md" data-label="Commission">{{ $category->commision_rate }} %</td>
+                        <td class="hide-md" data-label="{{ translate('Commission') }}">{{ $category->commision_rate }} %</td>
                     @endif
-                    <td class="text-right" data-label="Options">
+                    <td class="text-right" data-label="{{ translate('Options') }}">
                         <div class="d-flex align-items-center justify-content-end">
                             <button type="button" onclick="openRightcanvas({{ $category->id }})"
                             class="text-nowrap d-block mr-2 text-decoration-none fs-14 fw-300 text-blue py-5px px-5px border border-gray-300 rounded-1 bg-gray-100 hov-bg-blue hov-text-white">{{ translate('View More') }}</button>

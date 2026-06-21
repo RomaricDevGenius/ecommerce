@@ -41,16 +41,16 @@
 						<div class="row gutters-5 mt-3">
 							<div class="col-md">
 		                        <div class="form-group">
-		                            <label for="purchase_code" class="fs-12 fw-700" style="color: #666;">Purchase Code. <a class="fs-12 fw-500" href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code" target="_blank" class="text-blue hov-text-primary"><i>Where to get purchase code?</i></a></label>
+		                            <label for="purchase_code" class="fs-12 fw-700" style="color: #666;">{{ translate('Purchase Code') }}. <a class="fs-12 fw-500" href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code" target="_blank" class="text-blue hov-text-primary"><i>{{ translate('Where to get purchase code') }}</i></a></label>
 		                            <input type="text" class="form-control rounded-2 border" style="height: 36px !important;" id="purchase_code" name="purchase_code" placeholder="**** **** **** ****" required="">
 		                        </div>
-								
+
 	                        </div>
 	                    </div>
 						<div class="row gutters-5">
 							<div class="col-md">
 		                        <div class="form-group">
-		                            <label for="system_key" class="fs-12 fw-700" style="color: #666;">System Key. <span class="fs-12 fw-500">If you have don't have System key, <a href="https://activeitzone.com/activation" target="_blank" class="text-blue hov-text-primary"><i>Click Here</i></a></span> </label>
+		                            <label for="system_key" class="fs-12 fw-700" style="color: #666;">{{ translate('System Key') }}. <span class="fs-12 fw-500">{{ translate("If you don't have System key") }}, <a href="https://activeitzone.com/activation" target="_blank" class="text-blue hov-text-primary"><i>{{ translate('Click Here') }}</i></a></span> </label>
 		                            <input type="text" class="form-control rounded-2 border" style="height: 36px !important;" id="system_key" name="system_key" placeholder="***************************" required>
 		                        </div>
 	                        </div>

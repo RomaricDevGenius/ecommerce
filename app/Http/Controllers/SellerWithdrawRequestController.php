@@ -22,7 +22,17 @@ class SellerWithdrawRequestController extends Controller
 
     public function index()
     {
-        $seller_withdraw_requests = SellerWithdrawRequest::latest()->paginate(15);
+        $seller_withdraw_requests = SellerWithdrawRequest::latest()
+            ->when(request('filter_status') !== null && request('filter_status') !== '', function($q) {
+                return $q->where('status', request('filter_status'));
+            })
+            ->when(request('search'), function($q, $search) {
+                return $q->whereHas('user', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
         return view('backend.sellers.seller_withdraw_requests.index', compact('seller_withdraw_requests'));
     }
 

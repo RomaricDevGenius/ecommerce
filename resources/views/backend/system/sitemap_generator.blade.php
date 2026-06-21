@@ -48,7 +48,7 @@
                                         <form action="{{ route('delete_sitemap') }}" method="post">
                                             @csrf
                                             <input type="hidden" name="file_name" value="{{ $info['file_name'] }}">
-                                            <button class="btn btn-default btn-xs" type="submit" onclick="return confirm('Are you sure?')" title="{{ translate('Delete File') }}"><i class="las la-2x la-trash-alt"></i></button>
+                                            <button class="btn btn-default btn-xs" type="submit" onclick="return confirm('{{ addslashes(translate('Are you sure')) }}')" title="{{ translate('Delete File') }}"><i class="las la-2x la-trash-alt"></i></button>
                                         </form>
                                     </td>
                                     <td class="align-middle">

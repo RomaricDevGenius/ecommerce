@@ -394,11 +394,19 @@
                     </a>
                 </li>
 
+                @php
+                    $seller_withdraw_pending = \App\Models\SellerWithdrawRequest::where('user_id', Auth::user()->id)
+                        ->where('status', 0)
+                        ->count();
+                @endphp
                 <li class="aiz-side-nav-item">
                     <a href="{{ route('seller.money_withdraw_requests.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.money_withdraw_requests.index']) }}">
                         <i class="las la-money-bill-wave-alt aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ translate('Money Withdraw') }}</span>
+                        @if($seller_withdraw_pending > 0)
+                            <span class="badge badge-danger badge-pill ml-auto">{{ $seller_withdraw_pending }}</span>
+                        @endif
                     </a>
                 </li>
 

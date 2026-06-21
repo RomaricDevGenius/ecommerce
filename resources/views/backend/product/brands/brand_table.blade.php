@@ -52,14 +52,14 @@
                         @endif
                     </td>
 
-                    <td class="px-0 align-middle" data-label="Logo">
+                    <td class="px-0 align-middle" data-label="{{ translate('Logo') }}">
                         <div class="w-40px h-60px h-md-48px w-md-70px rounded-2 overflow-hidden d-flex align-items-center justify-content-center">
                             <img src="{{ uploaded_asset($brand->logo) }}"
                                 alt="Image" class="img-fit">
                         </div>
                     </td>
 
-                    <td class="align-middle" data-label="Name">
+                    <td class="align-middle" data-label="{{ translate('Name') }}">
                         <div class="row gutters-5 w-100px w-md-100px mw-100">
                             <div class="col">
                                 <span
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="align-middle hide-sm text-center" data-label="Qty Products">
+                    <td class="align-middle hide-sm text-center" data-label="{{ translate('Qty Products') }}">
                         <div class="row gutters-5 w-100px w-md-100px mw-100">
                             <div class="col">
                                 <span class="text-dark fs-14 fw-700">
@@ -77,7 +77,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="align-middle hide-sm" data-label="Created">
+                    <td class="align-middle hide-sm" data-label="{{ translate('Created') }}">
                         <div class="row gutters-5 w-100px w-md-100px mw-100">
                             <div class="col">
                                 <span class="text-dark fs-14 fw-300">
@@ -95,7 +95,7 @@
                         $displayText = $categoryNames->implode(', ');
                         $charLimit = 60;
                     @endphp
-                    <td class="align-middle hide-lg" data-label="Categories">
+                    <td class="align-middle hide-lg" data-label="{{ translate('Categories') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 @if (strlen($displayText) > $charLimit)
@@ -111,7 +111,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-right align-middle" data-label="Options">
+                    <td class="text-right align-middle" data-label="{{ translate('Options') }}">
                         <div class="dropdown float-right">
                             <button
                                 class="btn btn-light w-35px h-35px  action-toggle d-flex align-items-center justify-content-center p-0"

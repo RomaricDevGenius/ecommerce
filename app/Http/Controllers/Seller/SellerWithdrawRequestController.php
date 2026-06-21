@@ -19,7 +19,7 @@ class SellerWithdrawRequestController extends Controller
      */
     public function index()
     {
-        $seller_withdraw_requests = SellerWithdrawRequest::where('user_id', Auth::user()->id)->latest()->paginate(9);
+        $seller_withdraw_requests = SellerWithdrawRequest::where('user_id', Auth::user()->id)->latest()->paginate(10);
         $withdraw_methods = self::activeWithdrawMethods();
         return view('seller.money_withdraw_requests.index', compact('seller_withdraw_requests', 'withdraw_methods'));
     }
@@ -67,12 +67,25 @@ class SellerWithdrawRequestController extends Controller
      */
     public function store(Request $request)
     {
+        $pending = SellerWithdrawRequest::where('user_id', Auth::user()->id)
+            ->where('status', 0)
+            ->exists();
+        if ($pending) {
+            session()->flash('error', translate('You already have a pending withdraw request'));
+            return redirect()->back();
+        }
+
         $request->validate([
             'amount'         => 'required|numeric|min:1',
             'payment_method' => 'required|string|in:orange_money,moov_money,coris_money,cash',
             'account_number' => 'required_unless:payment_method,cash|nullable|string|max:50',
             'message'        => 'nullable|string|max:500',
         ]);
+
+        if ($request->amount > Auth::user()->shop->admin_to_pay) {
+            session()->flash('error', translate('Insufficient balance'));
+            return redirect()->back();
+        }
 
         $seller = auth()->user();
         $seller_withdraw_request = new SellerWithdrawRequest;
@@ -86,22 +99,24 @@ class SellerWithdrawRequestController extends Controller
         if ($seller_withdraw_request->save()) {
 
             // Seller payout request web notification to admin
-            $users = User::findMany(User::where('user_type', 'admin')->first()->id);
-            $data = array();
-            $data['user'] = $seller;
-            $data['amount'] = $request->amount;
-            $data['status'] = 'pending';
-            $data['notification_type_id'] = get_notification_type('seller_payout_request', 'type')->id;
-            Notification::send($users, new PayoutNotification($data));
+            $admin = User::where('user_type', 'admin')->first();
+            if ($admin) {
+                $users = User::findMany([$admin->id]);
+                $data = array();
+                $data['user'] = $seller;
+                $data['amount'] = $request->amount;
+                $data['status'] = 'pending';
+                $data['notification_type_id'] = get_notification_type('seller_payout_request', 'type')->id;
+                Notification::send($users, new PayoutNotification($data));
+            }
 
             // Seller payout request email to admin & seller
             $emailIdentifiers = ['seller_payout_request_email_to_admin','seller_payout_request_email_to_seller'];
-            EmailUtility::seller_payout($emailIdentifiers, $seller, $request->amount,  null);
+            EmailUtility::seller_payout($emailIdentifiers, $seller, $request->amount, null);
 
             flash(translate('Request has been sent successfully'))->success();
             return redirect()->route('seller.money_withdraw_requests.index');
-        }
-        else{
+        } else {
             flash(translate('Something went wrong'))->error();
             return back();
         }

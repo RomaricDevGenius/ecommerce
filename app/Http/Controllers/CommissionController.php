@@ -81,7 +81,7 @@ class CommissionController extends Controller
         }
 
         // Seller Payout Notification to seller
-        $users = User::findMany($shop->user->id);
+        $users = User::findMany([$shop->user->id]);
         $data = array();
         $data['user'] = $shop->user;
         $data['amount'] = $payment_data['amount'];

@@ -125,14 +125,14 @@
                                 </div>
                                 <div class="col @if($shop->user->is_suspicious == 1) text-info @endif">
                                     <span class="text-truncate-2">
-                                        @if($shop->user->is_suspicious == 1) 
-                                            <i class="las la-exclamation-circle" aria-hidden="true"></i> 
+                                        @if($shop->user->is_suspicious == 1)
+                                            <i class="las la-exclamation-circle" aria-hidden="true"></i>
                                         @endif
                                     <a class="text-primary" href="{{route('sellers.profile', encrypt($shop->id))}}" target="_blank">{{ $shop->name }}</a></span>
                                 </div>
                             </div>
                         </td>
-                        <td>{{$shop->user->phone}} 
+                        <td>{{$shop->user->phone}}
                             <span class="d-block text-truncate-2">{{ $shop->user->email }}</span>
                         </td>
                         @if($route == 'all_seller_route')
@@ -153,8 +153,8 @@
                                     {{ single_price(abs($shop->admin_to_pay)) }} ({{ translate('Due to Admin') }})
                                 @endif
                             </td>
-                           
-                         
+
+
                             @if(get_setting('seller_commission_type') == 'seller_based')
                                 <td>{{ $shop->commission_percentage }}%</td>
                             @endif
@@ -196,7 +196,7 @@
                                     <span class="slider round"></span>
                                 </label>
                             </td>
-                            
+
                             <td>
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-sm btn-circle btn-soft-primary btn-icon dropdown-toggle no-arrow" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
@@ -244,11 +244,19 @@
                                         @can('mark_seller_suspected')
                                             @if($shop->user->is_suspicious == 1)
                                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', true);" class="dropdown-item">
-                                                        {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                                    @if($shop->user->is_suspicious == 1)
+                                                        {{ translate('Mark as unsuspect') }}
+                                                    @else
+                                                        {{ translate('Mark as suspicious') }}
+                                                    @endif
                                                 </a>
                                             @else
                                                 <a href="javascript:void();" onclick="confirm_suspicious('{{route('seller.suspicious', encrypt($shop->user->id))}}', false);" class="dropdown-item">
-                                                        {{ translate(" Mark as " . ($shop->user->is_suspicious == 1 ? 'unsuspect' : 'suspicious') . " ") }}
+                                                    @if($shop->user->is_suspicious == 1)
+                                                        {{ translate('Mark as unsuspect') }}
+                                                    @else
+                                                        {{ translate('Mark as suspicious') }}
+                                                    @endif
                                                 </a>
                                             @endif
                                         @endcan
@@ -284,7 +292,7 @@
                                 @endif
                             </td>
                         @endif
-                        
+
                     </tr>
                 @endforeach
                 </tbody>
@@ -322,7 +330,7 @@
 	    </div>
 	</div>
 
-	
+
 <!-- Reusable Confirmation Modal -->
 <div class="modal fade" id="universal-confirm-modal">
     <div class="modal-dialog modal-dialog-centered">
@@ -341,7 +349,7 @@
         </div>
     </div>
 </div>
-   
+
 
     {{-- Edit Seller Custom Followers --}}
     <div class="modal fade" id="edit_seller_custom_followers">
@@ -496,7 +504,7 @@
             }
         }
 
-        
+
         // Edit seller custom followers
         function editCustomFollowers(shop_id, custom_followers){
             $('#shop_id').val(shop_id);

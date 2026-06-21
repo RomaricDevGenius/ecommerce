@@ -988,9 +988,13 @@
                         </li>
                         @endcan
                         @can('view_seller_payout_requests')
+                        @php $seller_pending_count = \App\Models\SellerWithdrawRequest::where('status', 0)->count(); @endphp
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('withdraw_requests_all') }}" class="aiz-side-nav-link">
                                 <span class="aiz-side-nav-text">{{ translate('Payout Requests') }}</span>
+                                @if($seller_pending_count > 0)
+                                    <span class="badge badge-danger badge-pill ml-auto">{{ $seller_pending_count }}</span>
+                                @endif
                             </a>
                         </li>
                         @endcan
