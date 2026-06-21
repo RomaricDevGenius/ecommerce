@@ -79,7 +79,7 @@
                                     </th>
                                     <th>{{ translate('Image') }}</th>
                                     <th width="25%">{{ translate('Type') }}</th>
-                                    <th width="40%">{{ translate('DEfault Text') }}</th>
+                                    <th width="40%">{{ translate('Default Text') }}</th>
                                     <th>{{ translate('Status') }}</th>
                                     <th class="text-right">{{ translate('Actions') }}</th>
                                 </tr>

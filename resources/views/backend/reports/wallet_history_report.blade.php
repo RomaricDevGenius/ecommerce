@@ -73,7 +73,7 @@
                                             <span class="badge badge-inline badge-info">{{translate('Pending')}}</span>
                                         @endif
                                     @else
-                                        N/A
+                                        {{ translate('N/A') }}
                                     @endif
                                 </td>
                             </tr>

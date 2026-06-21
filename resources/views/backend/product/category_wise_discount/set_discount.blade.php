@@ -188,8 +188,8 @@
             const isChecked = $(el).is(':checked');
                 
             const message = isChecked
-                ? `Turning on this switch will apply the same discount to all seller products in this category. Do you want to proceed?`
-                : `Turning off this switch will not affect already discounted seller products of this category. Are you sure?`;
+                ? `{{ translate('Turning on this switch will apply the same discount to all seller products in this category. Do you want to proceed?') }}`
+                : `{{ translate('Turning off this switch will not affect already discounted seller products of this category. Are you sure?') }}`;
             $('#confirm-modal-switch .modal-body p').text(message);
             $('#confirm-modal-switch').modal('show');
         }

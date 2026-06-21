@@ -52,7 +52,7 @@
 
                     <div class="form-group mb-3">
                         <label class="col-form-label">{{translate('Parent Category')}}</label>
-                        <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->parent_id }}">
+                        <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}"data-live-search="true" data-selected="{{ $category->parent_id }}">
                             @include('backend.product.categories.categories_option_edit', ['categories' => $categories])
                         </select>
                     </div>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class="col-form-label">{{translate('Filtering Attributes')}}</label>
-                        <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
+                        <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}"data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
                             @foreach (\App\Models\Attribute::all() as $attribute)
                                 <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                             @endforeach

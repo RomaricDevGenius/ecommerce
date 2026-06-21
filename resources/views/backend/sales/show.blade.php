@@ -40,8 +40,6 @@
                         @endif
                     @endif
 
-                    @if ($order->seller_id == $admin_user_id || get_setting('product_manage_by_admin') == 1)
-
                         <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2">
                             <label for="update_payment_status">{{ translate('Payment Status') }}</label>
                             @if (auth()->user()->can('update_order_payment_status') && $payment_status == 'unpaid')
@@ -249,7 +247,6 @@
                                 </div>
                             @endif
                         @endif
-                    @endif
                 </div>
 
             </div>
@@ -1059,7 +1056,7 @@
             // Confirm Button
             $('#steadfastConfirmBtn').on('click', function () {
 
-                $('#steadfastConfirmBtn').prop('disabled', true).text('Processing...');
+                $('#steadfastConfirmBtn').prop('disabled', true).text('{{ translate('Processing...') }}');
 
                 $.ajax({
                     url: "{{ route('steadfast.create.order') }}",
@@ -1077,12 +1074,12 @@
                         }
                     },
                     error: function () {
-                        AIZ.plugins.notify('danger', 'Something went wrong');
+                        AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                     },
                     complete: function () {
                         $('#steadfastConfirmBtn')
                             .prop('disabled', false)
-                            .text('Confirm');
+                            .text('{{ translate('Confirm') }}');
                         $('#steadfastConfirmModal').modal('hide');
                     }
                 });
@@ -1136,7 +1133,7 @@
                         $('#store-list').html(html);
                     },
                     error: function () {
-                        $('#store-list').html('<p class="text-danger">API Error</p>');
+                        $('#store-list').html('<p class="text-danger">{{ translate('API Error') }}</p>');
                     }
                 });
             }

@@ -208,7 +208,7 @@
             const fileUrl = baseUrl + docs[key];
             const ext = docs[key].split('.').pop().toLowerCase();
 
-            let previewHtml = `<p class="text-danger">Unsupported file format.</p>`;
+            let previewHtml = `<p class="text-danger">{{ translate('Unsupported file format.') }}</p>`;
 
             if (imageExts.includes(ext)) {
                 previewHtml = `<img src="${fileUrl}" style="max-width:100%; max-height:600px;">`;

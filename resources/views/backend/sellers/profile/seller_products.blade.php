@@ -46,9 +46,9 @@
                                </td>
                                <td>
                                    @if ($product->stocks->count() > 1)
-                                   Variant Product
+                                   {{ translate('Variant Product') }}
                                    @else
-                                   {{ $product->stocks->first()->sku ?? 'N/A' }}
+                                   {{ $product->stocks->first()->sku ?? translate('N/A') }}
                                    @endif
                                </td>
                                <td>
@@ -72,7 +72,7 @@
                                        if ($last_purchase) {
                                        echo $last_purchase->created_at->format('d M Y');
                                        } else {
-                                       echo 'N/A';
+                                       echo translate('N/A');
                                        }
                                        @endphp
                                    </b>

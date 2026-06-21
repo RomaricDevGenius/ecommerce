@@ -33,7 +33,7 @@
             </div>
 
             <div class="alert alert-info my-2 text-center">
-               Please wait until the Google translation process is complete. It may take some time, so do not close the tab during this process.
+               {{ translate('Please wait until the Google translation process is complete. It may take some time, so do not close the tab during this process.') }}
             </div>
 
         </div>
@@ -132,7 +132,7 @@
             })
             .catch(error => {
                 console.error('Translation failed', error);
-                alert('Something went wrong during translation.');
+                alert('{{ translate('Something went wrong during translation.') }}');
             })
             .finally(() => {
                 // Hide loader, show icon again

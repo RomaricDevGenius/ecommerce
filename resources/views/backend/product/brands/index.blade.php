@@ -169,13 +169,13 @@
             processData: false,
             success: function (response) {
                 if(response == 1) {
-                    AIZ.plugins.notify('success', 'Selected Brands Deleted successfully');
-                    hideBulkActionModal(); 
+                    AIZ.plugins.notify('success', '{{ translate('Selected Brands Deleted successfully') }}');
+                    hideBulkActionModal();
                     getBrands(currentTab);
                 }
             },
             error: function () {
-                AIZ.plugins.notify('danger', 'Something went wrong');
+                AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
             }
         });
     }

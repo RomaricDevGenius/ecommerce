@@ -180,13 +180,13 @@
                 processData: false,
                 success: function (response) {
                     if(response == 1) {
-                        AIZ.plugins.notify('success', 'Selected items Deleted successfully');
+                        AIZ.plugins.notify('success', '{{ translate('Selected items Deleted successfully') }}');
                         hideBulkActionModal();
                         getPickupAddresses(currentTab);
                     }
                 },
                 error: function () {
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }

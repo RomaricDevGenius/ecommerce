@@ -6,7 +6,7 @@
             <div class="text-muted mb-2">{{translate('Total Products')}}</div>
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">{{ App\Models\Product::where('user_id', $shop->user->id)->get()->count() }}</h4>
-                <a href="{{ route('shop.visit', $shop->slug) }}" target="_blank" class="text-primary underline fw-600">Browse Products on Client Side</a>
+                <a href="{{ route('shop.visit', $shop->slug) }}" target="_blank" class="text-primary underline fw-600">{{ translate('Browse Products on Client Side') }}</a>
             </div>
         </div>
 
@@ -181,7 +181,7 @@
                         <!-- Row 5 -->
                         <div class="d-flex py-2 border-bottom-dashed2">
                             <div class="w-210px fw-medium product-category-color">{{translate('Last Login Date')}}</div>
-                            <div class="w-50">{{ $shop->last_login ? $shop->last_login->format('d F, Y') : 'N/A' }}</div>
+                            <div class="w-50">{{ $shop->last_login ? $shop->last_login->format('d F, Y') : translate('N/A') }}</div>
                         </div>
                         <!-- Row 6 -->
                         <div class="d-flex py-2 align-items-start">

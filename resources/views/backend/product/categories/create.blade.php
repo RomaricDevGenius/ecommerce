@@ -37,7 +37,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class=" col-form-label">{{translate('Parent Category')}}</label>
-                        <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                        <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true">
                             @include('backend.product.categories.categories_option', ['categories' => $categories])
                             {{-- <option value="0">{{ translate('No Parent') }}</option>
                             @foreach ($categories as $category)
@@ -108,7 +108,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class="col-form-label">{{translate('Filtering Attributes')}}</label>
-                        <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
+                        <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}"data-live-search="true" multiple>
                             @foreach (\App\Models\Attribute::all() as $attribute)
                                 <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                             @endforeach

@@ -113,7 +113,7 @@
                         @if (get_setting('has_state') == 1)
                         <div class="form-group">
                             <label for="country">{{translate('State')}}</label>
-                            <select class="select2 form-control aiz-selectpicker" name="state_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true" required>
+                            <select class="select2 form-control aiz-selectpicker" name="state_id" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true" required>
                                 @foreach ($states as $state)
                                     <option value="{{ $state->id }}">{{ $state->name }}</option>
                                 @endforeach
@@ -122,7 +122,7 @@
                         @else
                         <div class="form-group">
                             <label for="country">{{translate('Country')}}</label>
-                            <select class="select2 form-control aiz-selectpicker" name="country_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true" required>
+                            <select class="select2 form-control aiz-selectpicker" name="country_id" data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true" required>
                                 @foreach ($countries as $country)
                                     <option value="{{ $country->id }}">{{ $country->name }}</option>
                                 @endforeach
@@ -184,7 +184,7 @@
         } else {
             pendingElement = el;
 
-            $('#confirm-modal .modal-body p').text(`If you disable a City, all associated Areas under that city will also be automatically disabled.`);
+            $('#confirm-modal .modal-body p').text(`{{ translate('If you disable a City, all associated Areas under that city will also be automatically disabled.') }}`);
             $('#confirm-modal').modal('show');
         }
         }

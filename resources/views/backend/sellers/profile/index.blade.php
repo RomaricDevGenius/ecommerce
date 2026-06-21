@@ -15,7 +15,7 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-center mb-1">
                     <span class="font-weight-bold fs-18">{{ $shop->name }}</span>
                     @if($shop->verification_status)
-                    <div class="icon-container ml-2" data-tooltip="Verified">
+                    <div class="icon-container ml-2" data-tooltip="{{ translate('Verified') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                             <g id="_6819ed6f635ef55dbc567842d82cbaf7" data-name="6819ed6f635ef55dbc567842d82cbaf7" transform="translate(-1 -1)">
                                 <path id="Path_42581" data-name="Path 42581" d="M9,1a8,8,0,1,0,8,8A8,8,0,0,0,9,1Z" fill="#00c96c" />
@@ -424,7 +424,7 @@
             }, 100);
         },
         error: function() {
-            $('#tab-content').html('<div class="text-danger p-4">Failed to load data.</div>');
+            $('#tab-content').html('<div class="text-danger p-4">{{ translate('Failed to load data.') }}</div>');
         }
     });
 }
@@ -520,14 +520,14 @@
                     });
 
                     $('.check-all').prop('checked', false);
-                    AIZ.plugins.notify('success', 'Selected items deleted successfully');
+                    AIZ.plugins.notify('success', '{{ translate('Selected items deleted successfully') }}');
                     $('#bulk-delete-modal').modal('hide');
                 } else {
-                    AIZ.plugins.notify('danger', 'Delete failed. Try again.');
+                    AIZ.plugins.notify('danger', '{{ translate('Delete failed. Try again.') }}');
                 }
             },
             error: function() {
-                AIZ.plugins.notify('danger', 'Something went wrong.');
+                AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
             }
         });
     }
@@ -564,7 +564,7 @@
                 };
             },
             error: function() {
-                alert('Failed to load invoice for printing.');
+                alert('{{ translate('Failed to load invoice for printing.') }}');
             }
         });
     }
@@ -662,7 +662,7 @@
                 iframe.frameBorder = 0;
                 container.appendChild(iframe);
             } else {
-                container.innerHTML = '<p class="text-danger">Unsupported file format.</p>';
+                container.innerHTML = '<p class="text-danger">{{ translate('Unsupported file format.') }}</p>';
             }
 
             $('#filePreviewModal').modal('show');

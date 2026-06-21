@@ -58,7 +58,7 @@
                             @endif
                         </td>
 
-                    <td class="" data-label="Courier Type">
+                    <td class="" data-label="{{ translate('Courier Type') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -67,7 +67,7 @@
                         </div>
                     </td>
 
-                    <td class="hide-lg" data-label="Length">
+                    <td class="hide-lg" data-label="{{ translate('Length') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -76,7 +76,7 @@
                         </div>
                     </td>
 
-                    <td class="hide-xs" data-label="Breadth">
+                    <td class="hide-xs" data-label="{{ translate('Breadth') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -85,7 +85,7 @@
                         </div>
                     </td>
 
-                    <td class="hide-lg" data-label="Height">
+                    <td class="hide-lg" data-label="{{ translate('Height') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -94,7 +94,7 @@
                         </div>
                     </td>
                     @canany(['shipping_box_size_edit','shipping_box_size_delete'])
-                        <td class="text-right" data-label="Options">
+                        <td class="text-right" data-label="{{ translate('Options') }}">
                             <div class="d-flex align-items-center justify-content-end">
                                 <div class="dropdown float-right">
                                     <button

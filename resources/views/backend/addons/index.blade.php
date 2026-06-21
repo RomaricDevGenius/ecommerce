@@ -82,6 +82,9 @@
 
 @section('script')
    <script type="text/javascript">
+    var addonPreviewLabel = '{{ translate('Preview') }}';
+    var addonPurchaseLabel = '{{ translate('Purchase') }}';
+    var addonComingSoonLabel = '{{ translate('Coming Soon') }}';
     var gstConfirmed = false;
     var lastEl, lastId;
 
@@ -161,7 +164,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="text-danger fs-22 fw-600">$${item.price}</div>
-                                            <div class=""><a href="${item.link}" target="_blank" class="btn btn-sm btn-secondary">Preview</a> <a href="${item.purchase}" target="_blank" class="btn btn-sm btn-primary">Purchase</a></div>
+                                            <div class=""><a href="${item.link}" target="_blank" class="btn btn-sm btn-secondary">${addonPreviewLabel}</a> <a href="${item.purchase}" target="_blank" class="btn btn-sm btn-primary">${addonPurchaseLabel}</a></div>
                                         </div>
                                     </div>
                                 </div>`;
@@ -177,7 +180,7 @@
                                                 <p class="mar-no text-truncate-3">${item.short_description}</p>
                                             </div>
                                             <div class="card-footer">
-                                                <div class="text-center"><div class="btn btn-outline btn-primary">Coming Soon</div></div>
+                                                <div class="text-center"><div class="btn btn-outline btn-primary">${addonComingSoonLabel}</div></div>
                                             </div>
                                         </div>
                                     </div>

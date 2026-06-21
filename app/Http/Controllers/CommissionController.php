@@ -132,15 +132,9 @@ class CommissionController extends Controller
                 if($commission_percentage > 0){
                     $admin_commission = ($orderDetail->price * $commission_percentage) / 100;
 
-                    if (get_setting('product_manage_by_admin') == 1) {
-                        $seller_earning = ($orderDetail->tax + $orderDetail->price) - $admin_commission;
-                        $seller->admin_to_pay += $seller_earning;
-                    } else {
-                        $seller_earning = ($orderDetail->tax + $orderDetail->shipping_cost + $orderDetail->price) - $admin_commission;
-                        $seller->admin_to_pay = ($order->payment_type == 'cash_on_delivery') ?
-                                                ($seller->admin_to_pay - $admin_commission) :
-                                                ($seller->admin_to_pay += $seller_earning);
-                    }
+                    // Platform manages delivery: seller earns price + tax - commission only (shipping goes to platform)
+                    $seller_earning = ($orderDetail->tax + $orderDetail->price) - $admin_commission;
+                    $seller->admin_to_pay += $seller_earning;
 
                     $seller->save();
 
@@ -155,7 +149,7 @@ class CommissionController extends Controller
             }
         }
 
-        if($seller != null && $order->payment_type != 'cash_on_delivery'){
+        if($seller != null){
             $seller = $seller->fresh();
             $seller->admin_to_pay -= $order->coupon_discount;
             $seller->save();

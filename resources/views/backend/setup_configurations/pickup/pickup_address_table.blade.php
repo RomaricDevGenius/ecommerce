@@ -55,7 +55,7 @@
                             @endif
                         </td>
 
-                    <td class="" data-label="Courier Type">
+                    <td class="" data-label="{{ translate('Courier Type') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -64,7 +64,7 @@
                         </div>
                     </td>
 
-                    <td class="hide-xs" data-label="Address Nickname">
+                    <td class="hide-xs" data-label="{{ translate('Address Nickname') }}">
                         <div class="row gutters-5 w-200px w-md-200px mw-200">
                             <div class="col">
                                 <span
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="hide-xs" data-label="Status">
+                    <td class="hide-xs" data-label="{{ translate('Status') }}">
                         <div class="row gutters-5 w-80px w-md-80px mw-80">
                             <div class="col">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -86,7 +86,7 @@
                         </div>
                     </td>
                     @canany(['pickup_address_edit','pickup_address_delete'])
-                        <td class="text-right" data-label="Options">
+                        <td class="text-right" data-label="{{ translate('Options') }}">
                             <div class="d-flex align-items-center justify-content-end">
                                 <div class="dropdown float-right">
                                     <button

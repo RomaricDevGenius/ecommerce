@@ -101,6 +101,7 @@
         AIZ.local = {
             nothing_selected: '{!! translate('Nothing selected', null, true) !!}',
             nothing_found: '{!! translate('Nothing found', null, true) !!}',
+            no_results_matched: '{!! translate('No results matched', null, true) !!}',
             choose_file: '{{ translate('Choose file') }}',
             file_selected: '{{ translate('File selected') }}',
             files_selected: '{{ translate('Files selected') }}',

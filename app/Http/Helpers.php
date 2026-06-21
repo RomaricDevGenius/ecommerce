@@ -2095,6 +2095,125 @@ function get_french_translations_fallback()
 
         // Panier
         'quantity' => 'Quantité',
+
+        // Notification personnalisée
+        'deselect_all' => 'Tout désélectionner',
+        'select_type' => 'Sélectionner le type',
+        'select_the_type_of_the_notification' => 'Sélectionner le type de notification',
+        'write_what_your_notification_will_display' => 'Écrivez ce que votre notification affichera...',
+        'paste_your_link_here' => 'Collez votre lien ici',
+        'send_notifications' => 'Envoyer les notifications',
+        'send_custom_notification' => 'Envoyer une notification personnalisée',
+        'best_within_80_character' => 'Idéalement 80 caractères',
+
+        // Commandes
+        'additional_info' => 'Informations supplémentaires',
+        'tracking_code_optional' => 'Code de suivi (optionnel)',
+        'guest' => 'Invité',
+        'processing' => 'En cours...',
+        'api_error' => 'Erreur API',
+        'order' => 'Ordre',
+
+        // Messages JS génériques
+        'selected_items_deleted_successfully' => 'Éléments sélectionnés supprimés avec succès',
+        'selected_brands_deleted_successfully' => 'Marques sélectionnées supprimées avec succès',
+        'delete_failed_try_again' => 'Suppression échouée. Réessayez.',
+        'failed_to_load_data' => 'Échec du chargement des données.',
+        'failed_to_load_invoice_for_printing' => 'Échec du chargement de la facture pour l\'impression.',
+        'unsupported_file_format' => 'Format de fichier non supporté.',
+
+        // Produits
+        'search_products' => 'Rechercher des produits...',
+        'activate_color_filter_for_product_listing_page' => 'Activer le filtre de couleur pour la liste de produits',
+        'commission_of_sellers' => 'Commission des vendeurs',
+        'enter_attribute_value' => 'Entrer la valeur de l\'attribut',
+        'youtube_video_or_short_link' => 'Vidéo YouTube ou lien court',
+        'type_enter' => 'Taper & Entrée',
+        'current_qty' => 'Qté actuelle',
+        'update_stock' => 'Mettre à jour le stock',
+        'warranty_information' => 'Informations de garantie',
+
+        // Remises catégorie
+        'turning_on_this_switch_will_apply_the_same_discount_to_all_seller_products_in_this_category_do_you_want_to_proceed' => 'Activer ce commutateur appliquera la même remise à tous les produits vendeurs de cette catégorie. Voulez-vous continuer ?',
+        'turning_off_this_switch_will_not_affect_already_discounted_seller_products_of_this_category_are_you_sure' => 'Désactiver ce commutateur n\'affectera pas les produits déjà remisés dans cette catégorie. Êtes-vous sûr ?',
+
+        // Localisation
+        'latitude' => 'Latitude',
+        'longitude' => 'Longitude',
+        'affiliate_application_form' => 'Formulaire de candidature d\'affiliation',
+
+        // Expédition / Zones
+        'courier_type' => 'Type de transporteur',
+        'address_nickname' => 'Surnom de l\'adresse',
+        'breadth' => 'Largeur',
+        'if_you_disable_a_city_all_associated_areas_under_that_city_will_also_be_automatically_disabled' => 'Si vous désactivez une Ville, toutes les zones associées seront automatiquement désactivées.',
+        'if_you_disable_a_country_all_associated_states_cities_and_areas_under_that_country_will_also_be_automatically_disabled' => 'Si vous désactivez un Pays, tous les États, Villes et Zones associés seront automatiquement désactivés.',
+        'area_wise_shipping_cost_is_calculated_based_on_the_rates_set_in_this_configuration_the_systems_shipping_area_coverage_and_the_fields_shown_in_the_customer_address_will_depend_on_this_configuration' => 'Le coût d\'expédition par zone est calculé selon les tarifs définis dans cette configuration. La couverture et les champs d\'adresse dépendent de cette configuration.',
+        'you_have_selected' => 'Vous avez sélectionné',
+
+        // Vendeurs
+        'browse_products_on_client_side' => 'Voir les produits côté client',
+        'variant_product' => 'Produit avec variantes',
+        'click_here_to_verify' => 'Cliquer ici pour vérifier',
+        'do_you_really_want_to' => 'Voulez-vous vraiment',
+        'this_seller' => 'ce vendeur ?',
+        'if_you_set_commission_on_the_main_category_all_the_sister_category_will_get_that_commission_unless_you_change_individually' => 'Si vous définissez une commission sur la catégorie principale, toutes les sous-catégories recevront cette commission sauf modification individuelle.',
+        'camera_access_denied_or_not_supported' => 'Accès à la caméra refusé ou non pris en charge !',
+        'phone_account_number' => 'Téléphone / Numéro de compte',
+        'reg_certificate_trade_license_sale_tax_permit' => 'Certificat / Licence commerciale / Permis de taxe',
+
+        // Vendeur — produits
+        'link_copied_to_clipboard' => 'Lien copié dans le presse-papiers',
+        'oops_unable_to_copy' => 'Oops, impossible de copier',
+        'please_upgrade_your_package' => 'Veuillez mettre à niveau votre forfait.',
+        'gst_verification_is_pending_for_your_account' => 'La vérification GST est en attente pour votre compte.',
+        'please_assign_gst_details' => 'Veuillez attribuer les détails GST',
+        'multiple_select' => 'Sélection multiple',
+
+        // Addons
+        'coming_soon' => 'Bientôt disponible',
+        'purchase' => 'Acheter',
+        'preview' => 'Aperçu',
+
+        // Rapports
+        'n_a' => 'N/D',
+
+        // Traduction Google
+        'please_wait_until_the_google_translation_process_is_complete_it_may_take_some_time_so_do_not_close_the_tab_during_this_process' => 'Veuillez patienter pendant la traduction. Cela peut prendre un moment, ne fermez pas l\'onglet.',
+
+        // Select
+        'no_results_matched' => 'Aucun résultat pour',
+        'choose' => 'Choisir...',
+
+        // Validation produit vendeur (bulkupload)
+        '1_download_the_skeleton_file_and_fill_it_with_data' => '1. Téléchargez le fichier modèle et remplissez-le avec vos données.',
+        '2_you_can_download_the_example_file_to_understand_the_data_format' => '2. Vous pouvez télécharger le fichier exemple pour comprendre le format.',
+        '3_once_you_have_downloaded_and_filled_the_skeleton_file_upload_it_in_the_form_given_below_and_submit' => '3. Une fois le fichier rempli, importez-le via le formulaire ci-dessous.',
+        '4_after_uploading_products_you_need_to_edit_them_to_fill_up_all_the_information' => '4. Après l\'importation, modifiez les produits pour compléter les informations.',
+
+        // Textes d'aide produit vendeur
+        'this_is_used_for_search_input_those_words_by_which_cutomer_can_find_this_product' => 'Utilisé pour la recherche. Entrez les mots-clés par lesquels les clients peuvent trouver ce produit.',
+        'these_images_are_visible_in_product_details_page_gallery_use_600x600_sizes_images' => 'Ces images sont visibles dans la galerie de la page détail produit. Utilisez des images 600x600.',
+        'this_image_is_visible_in_all_product_box_use_300x300_sizes_image_keep_some_blank_space_around_main_object_of_your_image_as_we_had_to_crop_some_edge_in_different_devices_to_make_it_responsive' => 'Cette image est visible dans toutes les fiches produit. Utilisez une image 300x300. Laissez un espace autour du sujet principal.',
+        'these_images_are_visible_in_product_details_page_gallery_minimum_dimensions_required_900px_width_x_900px_height' => 'Ces images sont visibles dans la galerie de la page détail. Dimensions minimales requises : 900px x 900px.',
+        'this_image_is_visible_in_all_product_box_minimum_dimensions_required_195px_width_x_195px_height_keep_some_blank_space_around_main_object_of_your_image_as_we_had_to_crop_some_edge_in_different_devices_to_make_it_responsive' => 'Cette image est visible dans toutes les fiches. Dimensions minimales : 195px x 195px. Laissez un espace autour du sujet.',
+        'try_to_upload_videos_under_30_seconds_for_better_performance' => 'Essayez d\'importer des vidéos de moins de 30 secondes pour de meilleures performances.',
+        'add_thumbnails_in_the_same_order_as_your_videos_if_you_upload_only_one_image_it_will_be_used_for_all_videos' => 'Ajoutez des vignettes dans le même ordre que vos vidéos. Une seule image sera utilisée pour toutes les vidéos.',
+        'use_proper_link_without_extra_parameter_dont_use_short_share_linkembeded_iframe_code' => 'Utilisez le lien direct sans paramètres supplémentaires. N\'utilisez pas de lien court ni de code iframe intégré.',
+        'choose_the_attributes_of_this_product_and_then_input_values_of_each_attribute' => 'Choisissez les attributs de ce produit puis saisissez les valeurs pour chaque attribut.',
+        'we_had_to_limit_height_to_maintian_consistancy_in_some_device_both_side_of_the_banner_might_be_cropped_for_height_limitation' => 'La hauteur est limitée pour maintenir la cohérence. Sur certains appareils, les côtés de la bannière peuvent être rognés.',
+
+        // Textes navigation vendeur
+        'addon' => 'Module',
+        'digital' => 'Numérique',
+        'text' => 'Texte',
+        'select' => 'Sélectionner',
+        'radio' => 'Radio',
+        'file' => 'Fichier',
+        'verified' => 'Vérifié',
+        'filter_by_delivery_status' => 'Filtrer par statut de livraison',
+        'unsuspect' => 'lever la suspicion',
+        'suspect' => 'suspecter',
     ];
 }
 

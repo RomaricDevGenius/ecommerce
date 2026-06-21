@@ -16,51 +16,14 @@
                     $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->payment_status;
 				    $first_order = $order->orderDetails->first();
                 @endphp
-                @if (get_setting('product_manage_by_admin') == 0)
-                    <div class="col-md-3 ml-auto">
-                        <label for="update_payment_status">{{ translate('Payment Status') }}</label>
-                        @if (($order->payment_type == 'cash_on_delivery' || (addon_is_activated('offline_payment') == 1 && $order->manual_payment == 1)) && $payment_status == 'unpaid')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_payment_status">
-                                <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>
-                                    {{ translate('Unpaid') }}</option>
-                                <option value="paid" @if ($payment_status == 'paid') selected @endif>
-                                    {{ translate('Paid') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
-                        @endif
+                <div class="col-md-3 ml-auto">
+                        <label>{{ translate('Payment Status') }}</label>
+                        <input type="text" class="form-control" value="{{ translate(ucfirst($payment_status)) }}" disabled>
                     </div>
                     <div class="col-md-3 ml-auto">
-                        <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
-                        @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_delivery_status">
-                                <option value="pending" @if ($delivery_status == 'pending') selected @endif>
-                                    {{ translate('Pending') }}</option>
-                                <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>
-                                    {{ translate('Confirmed') }}</option>
-                                <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>
-                                    {{ translate('Picked Up') }}</option>
-                                <option value="on_the_way" @if ($delivery_status == 'on_the_way') selected @endif>
-                                    {{ translate('On The Way') }}</option>
-                                <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>
-                                    {{ translate('Delivered') }}</option>
-                                <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>
-                                    {{ translate('Cancel') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
-                        @endif
+                        <label>{{ translate('Delivery Status') }}</label>
+                        <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
                     </div>
-                    <div class="col-md-3 ml-auto">
-                        <label for="update_tracking_code">
-                            {{ translate('Tracking Code (optional)') }}
-                        </label>
-                        <input type="text" class="form-control" id="update_tracking_code"
-                            value="{{ $order->tracking_code }}">
-                    </div>
-                @endif
             </div>
             <div class="row gutters-5 mt-2">
                 <div class="col text-md-left text-center">
@@ -399,34 +362,4 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
-        $('#update_delivery_status').on('change', function() {
-            var order_id = {{ $order->id }};
-            var status = $('#update_delivery_status').val();
-            $.post('{{ route('seller.orders.update_delivery_status') }}', {
-                _token: '{{ @csrf_token() }}',
-                order_id: order_id,
-                status: status
-            }, function(data) {
-                $('#order_details').modal('hide');
-                AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
-                location.reload().setTimeOut(500);
-            });
-        });
-
-        $('#update_payment_status').on('change', function() {
-            var order_id = {{ $order->id }};
-            var status = $('#update_payment_status').val();
-            $.post('{{ route('seller.orders.update_payment_status') }}', {
-                _token: '{{ @csrf_token() }}',
-                order_id: order_id,
-                status: status
-            }, function(data) {
-                $('#order_details').modal('hide');
-                //console.log(data);
-                AIZ.plugins.notify('success', '{{ translate('Payment status has been updated') }}');
-                location.reload().setTimeOut(500);
-            });
-        });
-    </script>
 @endsection
