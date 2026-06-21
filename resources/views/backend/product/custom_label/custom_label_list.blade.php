@@ -278,7 +278,7 @@
                     },
                     error: function() {
                         $('#custom-label-table-wrapper').html(
-                            '<div class="text-center text-danger py-5">Something went wrong</div>'
+                            '<div class="text-center text-danger py-5">{{ addslashes(translate("Something went wrong")) }}</div>'
                         );
                         AIZ.plugins.notify('danger', '{{ translate("Something went wrong") }}');
                     }
