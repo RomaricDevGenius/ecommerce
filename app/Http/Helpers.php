@@ -2268,6 +2268,7 @@ function get_french_translations_fallback()
         'manufacturer' => 'Fabricant',
         'broker' => 'Courtier',
         'create_account' => 'Créer le compte',
+        'unpaid_order_payment_notification' => 'Notification de paiement commande impayée',
     ];
 }
 
