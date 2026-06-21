@@ -19,7 +19,7 @@
             </div>
             <div class="alert alert-info my-2 text-center">
                 <div class=" pt-2 d-flex align-items-center justify-content-center flex-row">
-                    <p class="mb-2 fs-13 fw-600 mr-2">Activate Color Filter for Product Listing Page</p>
+                    <p class="mb-2 fs-13 fw-600 mr-2">{{ translate('Activate Color Filter for Product Listing Page') }}</p>
                     <label class="aiz-switch aiz-switch-success mb-0 ">
                        <input type="checkbox" onchange="updateSettings(this, 'color_filter_activation')" @php if(get_setting('color_filter_activation') == 1) echo "checked";@endphp>
                     <span class="slider round"></span>
@@ -107,7 +107,7 @@
                     AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
                 }
                 else{
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }

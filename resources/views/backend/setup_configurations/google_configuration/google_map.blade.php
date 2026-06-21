@@ -87,7 +87,7 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Longitude</label>
+                                    <label for="exampleInputuname">{{ translate('Longitude') }}</label>
                                 </div>
                                 <div class="col-md-10" id="">
                                     <input type="hidden" name="types[]" value="google_map_longtitude">
@@ -96,7 +96,7 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-2" id="">
-                                    <label for="exampleInputuname">Latitude</label>
+                                    <label for="exampleInputuname">{{ translate('Latitude') }}</label>
                                 </div>
                                 <div class="col-md-10" id="">
                                     <input type="hidden" name="types[]" value="google_map_latitude">

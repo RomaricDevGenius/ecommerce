@@ -85,7 +85,7 @@
     } else {
         pendingElement = el;
 
-        $('#confirm-modal .modal-body p').text(`If you disable a Country, all associated States, Cities, and Areas under that country will also be automatically disabled`);
+        $('#confirm-modal .modal-body p').text(`{{ translate('If you disable a Country, all associated States, Cities, and Areas under that country will also be automatically disabled') }}`);
         $('#confirm-modal').modal('show');
     }
     }

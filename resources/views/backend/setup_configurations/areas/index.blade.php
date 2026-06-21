@@ -121,7 +121,7 @@
                         <div class="form-group mb-3">
                             <label for="state_id">{{ translate('State') }}</label>
                             <select id="form_state" class="select2 form-control aiz-selectpicker" name="state_id"
-                                    data-toggle="select2" data-placeholder="Choose..." data-live-search="true" required>
+                                    data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true" required>
                                 <option value="">{{ translate('Select State') }}</option>
                                 @foreach ($states as $state)
                                     <option value="{{ $state->id }}">{{ $state->name }}</option>
@@ -133,7 +133,7 @@
                         <div class="form-group mb-3">
                             <label for="country_id">{{ translate('Country') }}</label>
                             <select id="form_country" class="select2 form-control aiz-selectpicker" name="country_id"
-                                    data-toggle="select2" data-placeholder="Choose..." data-live-search="true" required>
+                                    data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true" required>
                                 <option value="">{{ translate('Select Country') }}</option>
                                 @foreach ($countries as $country)
                                     <option value="{{ $country->id }}">{{ $country->name }}</option>
@@ -146,7 +146,7 @@
                         <div class="form-group mb-3">
                             <label for="city_id">{{ translate('City') }}</label>
                             <select id="form_city" class="select2 form-control aiz-selectpicker" name="city_id"
-                                    data-toggle="select2" data-placeholder="Choose..." data-live-search="true" required>
+                                    data-toggle="select2" data-placeholder="{{ translate('Choose...') }}" data-live-search="true" required>
                                 <option value="">{{ translate('Select City') }}</option>
                                 <!-- Will be populated dynamically -->
                             </select>

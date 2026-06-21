@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
             newRow.innerHTML = `
                 <div class="col">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Enter Attribute Value" name="attribute_values[]" maxlength="60" required>
+                        <input type="text" class="form-control" placeholder="{{ translate('Enter Attribute Value') }}" name="attribute_values[]" maxlength="60" required>
                     </div>
                 </div>
                 <div class="col-auto">

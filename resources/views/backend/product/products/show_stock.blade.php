@@ -20,8 +20,7 @@
                 @endif
             </h6>
             <button type="button" onclick="enableInputField()"
-                class="fs-12 fw-700 text-blue py-1 px-10px pb-0 rounded-pill border border-gray-300 bg-gray-100 ml-2 hov-bg-blue hov-text-white text-nowrap">{{ translate('Update
-                Stcok')}}</button>
+                class="fs-12 fw-700 text-blue py-1 px-10px pb-0 rounded-pill border border-gray-300 bg-gray-100 ml-2 hov-bg-blue hov-text-white text-nowrap">{{ translate('Update Stock') }}</button>
         </div>
         <button onclick="closeOffcanvas()" class="border-0 bg-transparent">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">

@@ -56,7 +56,7 @@
                 </div>
                 <div class="d-flex mt-3">
                     <div class="form-group mb-0">
-                        <input type="text" class="form-control form-control-sm h-100" name="search" @isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="Type & Enter">
+                        <input type="text" class="form-control form-control-sm h-100" name="search" @isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type & Enter') }}">
                     </div>
                 </div>
             </div>

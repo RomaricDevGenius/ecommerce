@@ -35,16 +35,20 @@ class DashboardController extends Controller
                                     ->whereMonth('created_at', Carbon::now()->month)
                                     ->count();
                                     
-        $data['this_month_sold_amount'] = Order::where('seller_id', Auth::user()->id)
-                                    ->wherePaymentStatus('paid')
+        $data['this_month_sold_amount'] = OrderDetail::where('seller_id', Auth::user()->id)
                                     ->whereYear('created_at', Carbon::now()->year)
                                     ->whereMonth('created_at', Carbon::now()->month)
-                                    ->sum('grand_total');
-        $data['previous_month_sold_amount'] = Order::where('seller_id', Auth::user()->id)
-                                    ->wherePaymentStatus('paid')
+                                    ->whereHas('order', function($q) {
+                                        $q->where('payment_status', 'paid');
+                                    })
+                                    ->sum('price');
+        $data['previous_month_sold_amount'] = OrderDetail::where('seller_id', Auth::user()->id)
                                     ->whereYear('created_at', Carbon::now()->year)
                                     ->whereMonth('created_at', (Carbon::now()->month-1))
-                                    ->sum('grand_total');
+                                    ->whereHas('order', function($q) {
+                                        $q->where('payment_status', 'paid');
+                                    })
+                                    ->sum('price');
         
         $data['products'] = filter_products(Product::where('user_id', Auth::user()->id)->orderBy('num_of_sale', 'desc'))->limit(12)->get();
         $data['last_7_days_sales'] = Order::where('created_at', '>=', Carbon::now()->subDays(7))

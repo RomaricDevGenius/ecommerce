@@ -153,7 +153,7 @@
                     toggleCommissionInputs(value);
                 }
                 else{
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }

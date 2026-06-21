@@ -685,7 +685,7 @@
                 <a href="javascript:void(0)"
                     class="btn btn-primary"
                     id="openSellerVerification">
-                        Click here to verify
+                        {{ translate('Click here to verify') }}
                 </a>
                 @else
                 <h4 class="mb-3">{{ translate('Verification is under review') }}</h4>
@@ -1038,7 +1038,7 @@
             $('#openCameraBtn').addClass('d-none');
             $('#captureSelfieBtn').removeClass('d-none');
         } catch (e) {
-            alert('Camera access denied or not supported!');
+            alert('{{ translate('Camera access denied or not supported!') }}');
         }
     }
 

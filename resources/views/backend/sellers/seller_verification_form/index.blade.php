@@ -46,7 +46,7 @@
 													@endforeach
 												@endif
 											</div>
-									        <button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> Add option</button>
+									        <button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> {{ translate('Add option') }}</button>
 									    </div>
 									    <div class="col-lg-2"><span class="btn btn-icon btn-circle icon-lg" onclick="delete_choice_clearfix(this)"><i class="las la-times"></i></span></div>
 									</div>
@@ -101,7 +101,7 @@
 				var str = '<div class="form-group row" style="background:rgba(0,0,0,0.1);padding:10px 0;">'
 								+'<input type="hidden" name="type[]" value="text">'
 								+'<div class="col-lg-3">'
-									+'<label class="col-from-label">Text</label>'
+									+'<label class="col-from-label">{{ translate('Text') }}</label>'
 								+'</div>'
 								+'<div class="col-lg-7">'
 									+'<input class="form-control" type="text" name="label[]" placeholder="{{ translate('Label') }}">'
@@ -117,14 +117,14 @@
 				var str = '<div class="form-group row" style="background:rgba(0,0,0,0.1);padding:10px 0;">'
 								+'<input type="hidden" name="type[]" value="select"><input type="hidden" name="option[]" class="option" value="'+i+'">'
 								+'<div class="col-lg-3">'
-									+'<label class="col-from-label">Select</label>'
+									+'<label class="col-from-label">{{ translate('Select') }}</label>'
 								+'</div>'
 								+'<div class="col-lg-7">'
 									+'<input class="form-control" type="text" name="label[]" placeholder="{{ translate('Select Label') }}" style="margin-bottom:10px">'
 									+'<div class="customer_choice_options_types_wrap_child">'
 
 									+'</div>'
-									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> Add option</button>'
+									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> {{ translate('Add option') }}</button>'
 								+'</div>'
 								+'<div class="col-lg-2">'
 									+'<span class="btn btn-icon btn-circle icon-lg" onclick="delete_choice_clearfix(this)"><i class="las la-times"></i></span>'
@@ -137,14 +137,14 @@
 				var str = '<div class="form-group row" style="background:rgba(0,0,0,0.1);padding:10px 0;">'
 								+'<input type="hidden" name="type[]" value="multi_select"><input type="hidden" name="option[]" class="option" value="'+i+'">'
 								+'<div class="col-lg-3">'
-									+'<label class="col-from-label">Multiple select</label>'
+									+'<label class="col-from-label">{{ translate('Multiple select') }}</label>'
 								+'</div>'
 								+'<div class="col-lg-7">'
 									+'<input class="form-control" type="text" name="label[]" placeholder="{{ translate('Multiple Select Label') }}" style="margin-bottom:10px">'
 									+'<div class="customer_choice_options_types_wrap_child">'
 
 									+'</div>'
-									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> Add option</button>'
+									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> {{ translate('Add option') }}</button>'
 								+'</div>'
 								+'<div class="col-lg-2">'
 									+'<span class="btn btn-icon btn-circle icon-lg" onclick="delete_choice_clearfix(this)"><i class="las la-times"></i></span>'
@@ -157,14 +157,14 @@
 				var str = '<div class="form-group row" style="background:rgba(0,0,0,0.1);padding:10px 0;">'
 								+'<input type="hidden" name="type[]" value="radio"><input type="hidden" name="option[]" class="option" value="'+i+'">'
 								+'<div class="col-lg-3">'
-									+'<label class="col-from-label">Radio</label>'
+									+'<label class="col-from-label">{{ translate('Radio') }}</label>'
 								+'</div>'
 								+'<div class="col-lg-7">'
 									+'<div class="customer_choice_options_types_wrap_child">'
 									+'<input class="form-control" type="text" name="label[]" placeholder="{{ translate('Radio Label') }}" style="margin-bottom:10px">'
 
 									+'</div>'
-									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> Add option</button>'
+									+'<button class="btn btn-success pull-right" type="button" onclick="add_customer_choice_options(this)"><i class="glyphicon glyphicon-plus"></i> {{ translate('Add option') }}</button>'
 								+'</div>'
 								+'<div class="col-lg-2">'
 									+'<span class="btn btn-icon btn-circle icon-lg" onclick="delete_choice_clearfix(this)"><i class="las la-times"></i></span>'
@@ -176,7 +176,7 @@
 				var str = '<div class="form-group row" style="background:rgba(0,0,0,0.1);padding:10px 0;">'
 								+'<input type="hidden" name="type[]" value="file">'
 								+'<div class="col-lg-3">'
-									+'<label class="col-from-label">File</label>'
+									+'<label class="col-from-label">{{ translate('File') }}</label>'
 								+'</div>'
 								+'<div class="col-lg-7">'
 									+'<input class="form-control" type="text" name="label[]" placeholder="{{ translate('Label') }}">'

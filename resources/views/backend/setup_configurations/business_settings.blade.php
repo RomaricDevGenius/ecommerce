@@ -203,7 +203,7 @@
             iframe.frameBorder = 0;
             container.appendChild(iframe);
         } else {
-            container.innerHTML = '<p class="text-danger">Unsupported file format.</p>';
+            container.innerHTML = '<p class="text-danger">{{ translate('Unsupported file format.') }}</p>';
         }
 
         $('#filePreviewModal').modal('show');

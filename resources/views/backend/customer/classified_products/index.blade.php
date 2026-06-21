@@ -69,7 +69,7 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">s
+    <script type="text/javascript">
 
         function update_published(el){
 

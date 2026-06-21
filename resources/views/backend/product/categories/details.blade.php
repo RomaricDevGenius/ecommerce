@@ -76,7 +76,7 @@
     </div>
     @if (get_setting('seller_commission_type') == 'category_based')
     <div class="border-bottom-dashed  pt-15px pb-15px">
-        <p class="m-0 fs-14 fw-700 text-dark pb-5px">Commission of Seller's</p>
+        <p class="m-0 fs-14 fw-700 text-dark pb-5px">{{ translate("Commission of Seller's") }}</p>
         <span class="fs-14 fw-400 text-dark">{{ $category->commision_rate }}%</span>
     </div>
     @endif

@@ -506,7 +506,7 @@
 
         // Suspicious / Unsuspicious
         function confirm_suspicious(url, isSuspicious) {
-            const action = isSuspicious ? 'unsuspect' : 'suspect';
+            const action = isSuspicious ? '{{ translate('unsuspect') }}' : '{{ translate('suspect') }}';
             showConfirmationModal({
                 url: url,
                 message: '{{ translate("Do you really want to") }} ' + action + ' {{ translate("this seller?") }}'

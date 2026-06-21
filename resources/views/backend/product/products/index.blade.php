@@ -76,7 +76,7 @@
                                 </span>
                             </div>
                             <input type="text" class="form-control form-control-sm border-0 px-2 bg-transparent"
-                                id="search_input" name="search" placeholder="Search products…">
+                                id="search_input" name="search" placeholder="{{ translate('Search products') }}...">
                         </div>
                     </div>
 
@@ -394,7 +394,7 @@
                     }
                 },
                 error: function () {
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }
@@ -419,7 +419,7 @@
                     }
                 },
                 error: function () {
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }

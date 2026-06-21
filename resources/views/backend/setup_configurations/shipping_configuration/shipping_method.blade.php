@@ -134,7 +134,7 @@
 
             <div class="row mx-1 mb-4">
                 <div class="col-xl-8 ">
-                    <button class="btn bg-blue-color2 text-primary w-100 "><small class="font-weight-bold">You have selected <span id="dynamic-text"> ... </span></small></button>
+                    <button class="btn bg-blue-color2 text-primary w-100 "><small class="font-weight-bold">{{ translate('You have selected') }} <span id="dynamic-text"> ... </span></small></button>
                 </div>
                 <div class="col-xl-4 mt-2 mt-xl-0">
                     <button class="btn btn-primary w-100" type="submit">{{ translate('SET SHIPPING METHOD') }}</button>

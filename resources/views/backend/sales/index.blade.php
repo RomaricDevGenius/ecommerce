@@ -164,7 +164,7 @@
                                     @if ($order->user != null)
                                         {{ $order->user->name }}
                                     @else
-                                        Guest ({{ $order->guest_id }})
+                                        {{ translate('Guest') }} ({{ $order->guest_id }})
                                     @endif
                                 </td>
                                 <td>
@@ -330,7 +330,7 @@
                 processData: false,
                 success: function(response) {
                     if (response == 1) {
-                        AIZ.plugins.notify('success', 'Selected items deleted successfully');
+                        AIZ.plugins.notify('success', '{{ translate('Selected items deleted successfully') }}');
                         location.reload();
                     }
                 }

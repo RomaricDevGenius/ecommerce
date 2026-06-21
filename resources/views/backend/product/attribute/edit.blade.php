@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="col">
                     <div class="form-group">
                         <input type="hidden" name="attribute_value_ids[]" value="">
-                        <input type="text" class="form-control" placeholder="Enter Attribute Value" maxlength="60" name="attribute_values[]" required>
+                        <input type="text" class="form-control" placeholder="{{ translate('Enter Attribute Value') }}" maxlength="60" name="attribute_values[]" required>
                     </div>
                 </div>
                 <div class="col-auto">

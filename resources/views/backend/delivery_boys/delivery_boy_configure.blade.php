@@ -209,7 +209,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label">Latitude</label>
+                            <label class="col-md-2 col-form-label">{{ translate('Latitude') }}</label>
                             <div class="col-md-10">
                                 <input type="hidden" name="types[]" value="delivery_pickup_latitude">
                                 <input type="text" class="form-control" id="pickup-lat"
@@ -218,7 +218,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-2 col-form-label">Longitude</label>
+                            <label class="col-md-2 col-form-label">{{ translate('Longitude') }}</label>
                             <div class="col-md-10">
                                 <input type="hidden" name="types[]" value="delivery_pickup_longitude">
                                 <input type="text" class="form-control" id="pickup-lng"

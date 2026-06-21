@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-xxl-3 col-from-label fs-13">{{translate('Test')}} <span
+                                    <label class="col-xxl-3 col-from-label fs-13">{{translate('Text')}} <span
                                             class="text-danger">*</span></label>
                                     <div class="col-xxl-9">
                                         <input type="text" @if($is_admin_added) readonly @endif class="form-control" name="text" value="{{ $custom_label->getTranslation('text') }}"

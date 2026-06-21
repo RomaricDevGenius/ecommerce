@@ -554,7 +554,7 @@
                 if (data == 1) {
                     AIZ.plugins.notify('success', '{{ translate('Settings updated successfully') }}');
                 } else {
-                    AIZ.plugins.notify('danger', 'Something went wrong');
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
         }
