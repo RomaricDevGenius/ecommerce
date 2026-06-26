@@ -3356,6 +3356,7 @@ function get_french_translations_fallback()
         'contact_query' => 'Demande de contact',
         'not_replied_yet' => 'Pas encore répondu',
         'reply_for_the_query' => 'Réponse à la demande',
+        'others' => 'Autres',
     ];
 }
 

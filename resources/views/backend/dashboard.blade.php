@@ -734,11 +734,11 @@
             data: {
                 labels: [
                     @foreach ($payment_type_wise_inhouse_sale as $row)
-                        "{{ ucwords(str_replace('_', ' ', $row->payment_type)) }}",
+                        "{{ translate(ucwords(str_replace('_', ' ', $row->payment_type))) }}",
                     @endforeach
                 ],
                 datasets: [{
-                    label: 'Total Sales',
+                    label: '{{ translate('Total Sales') }}',
                     data: [
                         @foreach ($payment_type_wise_inhouse_sale as $row)
                             {{ $row->total_amount }},
