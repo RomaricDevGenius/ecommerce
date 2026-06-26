@@ -110,7 +110,7 @@
 
     <!-- Order Details -->
     <div class="row gutters-16">
-        <div class="col-md-9">
+        <div class="col-md-8 col-lg-9">
             <div class="card rounded-0 shadow-none border mt-2 mb-4">
                 <div class="card-header border-bottom-0">
                     <h5 class="fs-16 fw-700 text-dark mb-0">{{ translate('Order Details') }}</h5>
@@ -228,69 +228,51 @@
         </div>
 
         <!-- Order Ammount -->
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg-3">
             <div class="card rounded-0 shadow-none border mt-2">
                 <div class="card-header border-bottom-0">
                     <b class="fs-16 fw-700 text-dark">{{ translate('Order Ammount') }}</b>
                 </div>
-                <div class="card-body pb-0">
-                    <table class="table-borderless table">
+                <div class="card-body p-0">
+                    <table class="table table-borderless mb-0">
                         <tbody>
                             <tr>
-                                <td class="w-50 fw-600">{{ translate('Subtotal') }}</td>
-                                <td class="text-right">
-                                    <span class="strong-600">{{ single_price($order->orderDetails->sum('price')) }}</span>
-                                </td>
+                                <td class="fw-600 py-2 pl-3 pr-1">{{ translate('Subtotal') }}</td>
+                                <td class="text-right py-2 pr-3 text-nowrap fw-600">{{ single_price($order->orderDetails->sum('price')) }}</td>
                             </tr>
                             <tr>
-                                <td class="w-50 fw-600">{{ translate('Shipping') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('shipping_cost')) }}</span>
-                                </td>
+                                <td class="fw-600 py-2 pl-3 pr-1">{{ translate('Shipping') }}</td>
+                                <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->orderDetails->sum('shipping_cost')) }}</td>
                             </tr>
                             @if(is_numeric($first_order->gst_amount))
-                            
-                            @if(same_state_shipping($order))
-                             <tr>
-                                <td class="w-50 fw-600">{{ translate('CGST') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('gst_amount')/2) }}</span>
-                                </td>
-                            </tr>
-                             <tr>
-                                <td class="w-50 fw-600">{{ translate('SGST') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('gst_amount')/2) }}</span>
-                                </td>
-                            </tr>
+                                @if(same_state_shipping($order))
+                                    <tr>
+                                        <td class="fw-600 py-2 pl-3 pr-1">{{ translate('CGST') }}</td>
+                                        <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->orderDetails->sum('gst_amount')/2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-600 py-2 pl-3 pr-1">{{ translate('SGST') }}</td>
+                                        <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->orderDetails->sum('gst_amount')/2) }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td class="fw-600 py-2 pl-3 pr-1">{{ translate('IGST') }}</td>
+                                        <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->orderDetails->sum('gst_amount')) }}</td>
+                                    </tr>
+                                @endif
                             @else
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('IGST') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('gst_amount')) }}</span>
-                                </td>
-                            </tr>
-                            @endif
-
-                            @else
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Tax') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('tax')) }}</span>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td class="fw-600 py-2 pl-3 pr-1">{{ translate('Tax') }}</td>
+                                    <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->orderDetails->sum('tax')) }}</td>
+                                </tr>
                             @endif
                             <tr>
-                                <td class="w-50 fw-600">{{ translate('Coupon') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->coupon_discount) }}</span>
-                                </td>
+                                <td class="fw-600 py-2 pl-3 pr-1">{{ translate('Coupon') }}</td>
+                                <td class="text-right py-2 pr-3 text-nowrap">{{ single_price($order->coupon_discount) }}</td>
                             </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Total') }}</td>
-                                <td class="text-right">
-                                    <strong>{{ single_price($order->grand_total) }}</strong>
-                                </td>
+                            <tr class="border-top">
+                                <td class="fw-700 py-3 pl-3 pr-1 fs-15">{{ translate('Total') }}</td>
+                                <td class="text-right py-3 pr-3 text-nowrap fw-700 fs-15">{{ single_price($order->grand_total) }}</td>
                             </tr>
                         </tbody>
                     </table>

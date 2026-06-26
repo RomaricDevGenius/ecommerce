@@ -3357,6 +3357,8 @@ function get_french_translations_fallback()
         'not_replied_yet' => 'Pas encore répondu',
         'reply_for_the_query' => 'Réponse à la demande',
         'others' => 'Autres',
+        'not_delivered_yet' => 'Pas encore livré',
+        'order_ammount' => 'Montant de la commande',
     ];
 }
 
