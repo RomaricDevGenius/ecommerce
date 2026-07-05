@@ -1143,6 +1143,9 @@ function get_french_translations_fallback()
         'affiliate_system' => 'Programme partenaire',
         'payment_history' => 'Historique des paiements',
         'withdraw_request_history' => 'Historique des demandes de retrait',
+        // Dynamic Popups titles (stored in DB, displayed via translate())
+        'subscribe_to_our_newsletter' => 'Inscrivez-vous à notre newsletter',
+        'product_review' => 'Avis produit',
         // Avis et évaluations produit
         'reviews_ratings' => 'Avis et évaluations',
         'total_review' => 'Total des avis',
