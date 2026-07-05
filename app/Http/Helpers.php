@@ -2015,6 +2015,7 @@ function get_french_translations_fallback()
         'the_service_is_temporarily_unavailable_please_try_later' => 'Le service est temporairement indisponible. Réessayez plus tard.',
 
         // Module retrait livreur (clés normalisées = strtolower + espaces→_ + suppression des non-alphanum)
+        'view_delivery_boy_withdraw_requests' => 'Voir les demandes de retrait des livreurs',
         'delivery_boy_withdrawal_requests' => 'Demandes de retrait des livreurs',
         'withdrawal_requests' => 'Demandes de retrait',
         'withdrawal_request' => 'Demande de retrait',
@@ -2421,6 +2422,12 @@ function get_french_translations_fallback()
         'edit_email_template' => 'Modifier le modèle d\'e-mail',
         'email_template_status_updated_successfully' => 'Statut du modèle d\'e-mail mis à jour avec succès',
         'nb_do_not_change_the_variables_like' => 'N.B. : Ne pas modifier les variables de type',
+        'nb_template_id_is_required_only_for_fast2sms_dlt_manual' => 'N.B. : L\'ID du modèle est requis uniquement pour Fast2SMS DLT Manuel',
+        // Modèles SMS - identifiants d'onglets
+        'account_opening' => 'Ouverture de compte',
+        'delivery_boy_withdraw_approved' => 'Retrait livreur approuvé',
+        'delivery_boy_withdraw_paid' => 'Retrait livreur payé',
+        'delivery_boy_withdraw_rejected' => 'Retrait livreur refusé',
         'content_is_not_editable_for_this_email' => 'Le contenu n\'est pas modifiable pour cet e-mail.',
 
         // Devises

@@ -45,7 +45,7 @@
                                                 <label class="col-md-2 col-form-label">{{translate('SMS Body')}}</label>
                                                 <div class="col-md-10">
                                                     <textarea name="body" class="form-control" placeholder="Type.." rows="6" required>{{ $sms_template->sms_body }}</textarea>
-                                                    <small class="form-text text-danger">{{ ('**N.B : Do Not Change The Variables Like [[ ____ ]].**') }}</small>
+                                                    <small class="form-text text-danger">{{ translate('N.B : Do Not Change The Variables Like') }} [[ ____ ]]</small>
                                                     @error('body')
                                                         <small class="form-text text-danger">{{ $message }}</small>
                                                     @enderror
@@ -55,7 +55,7 @@
                                                 <label class="col-md-2 col-form-label">{{translate('Template ID')}}</label>
                                                 <div class="col-md-10">
                                                     <input type="text" name="template_id" value="{{ $sms_template->template_id }}" class="form-control" placeholder="{{translate('Template Id')}}">
-                                                    <small class="form-text text-danger">{{ ('**N.B : Template ID is Required Only for Fast2SMS DLT Manual**') }}</small>
+                                                    <small class="form-text text-danger">{{ translate('N.B : Template ID is Required Only for Fast2SMS DLT Manual') }}</small>
                                                 </div>
                                             </div>
                                             <div class="form-group mb-3 text-right">
