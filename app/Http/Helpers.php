@@ -3359,6 +3359,16 @@ function get_french_translations_fallback()
         'others' => 'Autres',
         'not_delivered_yet' => 'Pas encore livré',
         'order_ammount' => 'Montant de la commande',
+
+        // --- Custom Alerts ---
+        'custom_alert_has_been_inserted_successfully' => 'Alerte personnalisée ajoutée avec succès',
+        'custom_alert_has_been_updated_successfully' => 'Alerte personnalisée mise à jour avec succès',
+        'custom_alert_has_been_deleted_successfully' => 'Alerte personnalisée supprimée avec succès',
+        'this_custom_alert_cannot_be_deleted' => 'Cette alerte personnalisée ne peut pas être supprimée',
+
+        // --- Cookie popup ---
+        'we_use_cookie_for_better_user_experience_check_our_policy' => 'Nous utilisons des cookies pour améliorer votre expérience. Consultez notre politique',
+        'here' => 'ici',
     ];
 }
 

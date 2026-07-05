@@ -268,7 +268,8 @@
                 <div class="aiz-cookie-alert mb-3" style="box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.24);">
                     <div class="p-3 px-lg-2rem rounded-0" style="background: {{ $custom_alert->background_color }};">
                         <div class="text-{{ $custom_alert->text_color }} mb-3">
-                            {!! $custom_alert->description !!}
+                            {{ translate('We use cookie for better user experience, check our policy') }}
+                            <a href="{{ route('privacypolicy') }}" class="text-danger fw-700">{{ translate('here') }}</a>
                         </div>
                         <button class="btn btn-block btn-primary rounded-0 aiz-cookie-accept">
                             {{ translate('Ok. I Understood') }}
