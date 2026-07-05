@@ -346,7 +346,7 @@
                             </div>
                         </div>
                         <div class="pb-5 pt-4 px-3 px-md-2rem">
-                            <h1 class="fs-30 fw-700 text-dark">{{ $dynamic_popup->title }}</h1>
+                            <h1 class="fs-30 fw-700 text-dark">{{ translate($dynamic_popup->title) }}</h1>
                             <p class="fs-14 fw-400 mt-3 mb-4">{{ $dynamic_popup->summary }}</p>
                             @if ($dynamic_popup->show_subscribe_form == 'on')
                                 <form class="" method="POST" action="{{ route('subscribers.store') }}">
@@ -378,7 +378,7 @@
                             </div>
                         </div>
                         <div class="pb-5 pt-4 px-3 px-md-2rem">
-                            <h1 class="fs-30 fw-700 text-dark">{{ $dynamic_popup->title }}</h1>
+                            <h1 class="fs-30 fw-700 text-dark">{{ translate($dynamic_popup->title) }}</h1>
                             <p class="fs-14 fw-400 mt-3 mb-4">{{ $dynamic_popup->summary }}</p>
                             <a href="{{ $dynamic_popup->btn_link }}" class="btn btn-block mt-3 rounded-0 text-{{ $dynamic_popup->btn_text_color }} set-session" style="background: {{ $dynamic_popup->btn_background_color }};"data-key="website-popup-{{ $dynamic_popup->id }}" data-value="removed" data-parent=".website-popup">
                                 {{ $dynamic_popup->btn_text }}

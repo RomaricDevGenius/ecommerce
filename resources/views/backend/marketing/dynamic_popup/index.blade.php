@@ -108,7 +108,7 @@
                                 <img class="h-100 img-fit" src="{{ uploaded_asset($dynamic_popup->banner) }}" alt="">
                             </div>
                         </td>
-                        <td class="fs-13 fw-700">{{ $dynamic_popup->title }}</td>
+                        <td class="fs-13 fw-700">{{ translate($dynamic_popup->title) }}</td>
                         <td>{{ $dynamic_popup->btn_link }}</td>
                         <td>
                             <label class="aiz-switch aiz-switch-primary mb-0">
