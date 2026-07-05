@@ -217,7 +217,13 @@
                                 <img class="h-100 img-fit" src="{{ uploaded_asset($custom_alert->banner) }}" alt="">
                             </div>
                         </td>
-                        <td class="fs-13 fw-700">{!! $custom_alert->description !!}</td>
+                        <td class="fs-13 fw-700">
+                            @if($custom_alert->id == 1)
+                                {{ translate('We use cookie for better user experience, check our policy') }} <a href="#">{{ translate('here') }}</a>
+                            @else
+                                {!! $custom_alert->description !!}
+                            @endif
+                        </td>
                         <td>{{ $custom_alert->link }}</td>
                         <td>
                             @if($custom_alert->id != 1 && $custom_alert->id != 200)
