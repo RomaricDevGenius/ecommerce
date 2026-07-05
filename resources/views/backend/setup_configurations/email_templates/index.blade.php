@@ -42,7 +42,7 @@
                                 <td>{{ ($key+1) + ($emailTemplates->currentPage() - 1)*$emailTemplates->perPage() }}</td>
                                 <td>{{ translate($emailTemplate->email_type) }}</td>
                                 <td>
-                                    {{ $emailTemplate->subject }}</td>
+                                    {{ translate($emailTemplate->subject) }}</td>
                                 <td>
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input onchange="update_status(this)" 
