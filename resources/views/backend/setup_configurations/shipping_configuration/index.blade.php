@@ -36,7 +36,7 @@
                             2. {{ translate('Choose the countries you deliver to. If only one country is enabled, the country field will be hidden at checkout. Enabling multiple countries displays the field, while disabling a country also disables its states, cities, and areas. Configure your ') }} <a href="{{ route('countries.index') }}">{{ translate('Shipping Countries') }}</a>.
                         </li>
                         <li class="list-group-item">
-                            3. {{ translate('States are optional and can be enabled or disabled in Shipping Configuration. If enabled, the state field appears in address forms; if disabled, it’s skipped and cities load directly from the country. Disabling a state also disables its cities and areas. Configure your ') }} <a href="{{ route('states.index') }}">{{ translate('Shipping States') }}</a>.
+                            3. {{ translate("States are optional and can be enabled or disabled in Shipping Configuration. If enabled, the state field appears in address forms; if disabled, it’s skipped and cities load directly from the country. Disabling a state also disables its cities and areas. Configure your ") }} <a href="{{ route(‘states.index’) }}">{{ translate(‘Shipping States’) }}</a>.
                         <hr class="border-dashed">
                             <div class=" py-2 d-flex align-items-center justify-content-between flex-row">
                                 <p class="mb-0 fs-13 fw-600">{{ translate('Do You want to enable states?')}}</p>
@@ -47,11 +47,11 @@
                             </div>
                         </li>
                         <li class="list-group-item">
-                            4. {{ translate('Add and enable cities to use them for shipping. If states are on, cities go under states; if off, they go under countries. Turning off a city also turns off its areas. If a city is missing, users will see ‘We no longer deliver to this address. Configure Your ') }} <a href="{{ route('cities.index') }}">{{ translate('Shipping Cities') }}</a>.
+                            4. {{ translate("Add and enable cities to use them for shipping. If states are on, cities go under states; if off, they go under countries. Turning off a city also turns off its areas. If a city is missing, users will see ‘We no longer deliver to this address’. Configure Your ") }} <a href="{{ route(‘cities.index’) }}">{{ translate(‘Shipping Cities’) }}</a>.
                         </li>
 
                         <li class="list-group-item">
-                            5. {{ translate('Add and enable areas under cities with shipping costs. If none are available, city costs apply. Customers with unmatched areas will see ‘We no longer deliver in this area’ and can update their address. Configure Your ') }} <a href="{{ route('areas.index') }}">{{ translate('Shipping Areas') }}</a>.
+                            5. {{ translate("Add and enable areas under cities with shipping costs. If none are available, city costs apply. Customers with unmatched areas will see ‘We no longer deliver in this area’ and can update their address. Configure Your ") }} <a href="{{ route(‘areas.index’) }}">{{ translate(‘Shipping Areas’) }}</a>.
                         </li>
                     
                     </ul>
