@@ -3092,6 +3092,7 @@ function get_french_translations_fallback()
         'category_suggestions' => 'Suggestions de catégories',
         'shops' => 'Boutiques',
         'flash_sale' => 'Vente flash',
+        'sale_ended' => 'Vente terminée',
         'view_all_flash_sale' => 'Voir toutes les ventes flash',
         'view_all_products_from_this_flash_sale' => 'Voir tous les produits de cette vente flash',
         'this_offer_has_been_expired' => 'Cette offre a expiré',

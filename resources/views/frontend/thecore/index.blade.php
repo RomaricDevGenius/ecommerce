@@ -263,7 +263,7 @@
                     <!-- Links -->
                     <a type="button" class="arrow-next text-white bg-dark view-more-slide-btn d-flex align-items-center" href="{{ route('todays-deal') }}">
                         <span><i class="las la-angle-right fs-20 fw-600"></i></span>
-                        <span class="fs-12 mr-2 text">View All</span>
+                        <span class="fs-12 mr-2 text">{{ translate('View All') }}</span>
                     </a>
                 </div>  
         
@@ -374,7 +374,7 @@
                                 </div>
                                 <a type="button" class="arrow-next text-white bg-dark view-more-slide-btn d-flex align-items-center" href="{{ route('customer.products') }}">
                                     <span><i class="las la-angle-right fs-20 fw-600"></i></span>
-                                    <span class="fs-12 mr-2 text">View All</span>
+                                    <span class="fs-12 mr-2 text">{{ translate('View All') }}</span>
                                 </a>
                             </div>
                             <div class="aiz-carousel arrow-x-0 arrow-inactive-none" data-items="7"
@@ -518,7 +518,7 @@ $homeBanner2SmallImages = get_setting('home_banner2_sm_images', null, $lang);
                 document.getElementById("simple-mins").textContent = mins.toString().padStart(2, '0');
                 document.getElementById("simple-secs").textContent = secs.toString().padStart(2, '0');
             } else {
-                document.querySelector(".mobile-countdown-simple").textContent = "Sale ended";
+                document.querySelector(".mobile-countdown-simple").textContent = "{{ translate('Sale ended') }}";
                 clearInterval(timer);
             }
         }
