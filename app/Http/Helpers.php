@@ -4688,6 +4688,8 @@ if (!function_exists('checkout_done')) {
             
             try {
                 NotificationUtility::sendOrderPlacedNotification($order);
+                $order->notified = 1;
+                $order->save();
                 calculateCommissionAffilationClubPoint($order);
             } catch (\Exception $e) {
             }
