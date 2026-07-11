@@ -108,6 +108,7 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script type="text/javascript">
         $(function () {
 
@@ -180,15 +181,15 @@
                     success: function (response) {
                         setLoading('btn_confirm_payment', 'spinner_confirm', 'text_confirm', false, '{{ translate('Confirm Payment') }}');
                         if (response.success && response.url) {
-                            var html =
-                                '<p><strong>Moyen de paiement :</strong> Coris Money</p>' +
-                                '<p><strong>Téléphone :</strong> ' + phone + '</p>' +
-                                '<p><strong>ID Transaction :</strong> ' + (response.transaction_id || 'N/A') + '</p>';
-                            $('#corisSuccessBody').html(html);
-                            $('#corisSuccessBtn').off('click').on('click', function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Paiement effectué avec succès',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                            }).then(function () {
                                 window.location.href = response.url;
                             });
-                            $('#corisSuccessModal').modal('show');
                         } else {
                             showMsg('msg_step2', 'danger', response.message || 'Paiement échoué. Veuillez réessayer.');
                         }

@@ -84,6 +84,7 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
 $(function() {
     function showLoading() {
@@ -124,16 +125,15 @@ $(function() {
             .done(function(data) {
                 hideLoading();
                 if (data.success) {
-                    var p = data.payment || {};
-                    var html =
-                        '<p><strong>{{ translate('Payment method') }} :</strong> ' + (p.method || 'Orange Money') + '</p>' +
-                        '<p><strong>{{ translate('Phone') }} :</strong> ' + (p.phone || '') + '</p>' +
-                        '<p><strong>{{ translate('Transaction ID') }} :</strong> ' + (p.transaction_id || '') + '</p>';
-                    $('#orangeSuccessBody').html(html);
-                    $('#orangeSuccessBtn').off('click').on('click', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Paiement effectué avec succès',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    }).then(function () {
                         window.location.href = data.url;
                     });
-                    $('#orangeSuccessModal').modal('show');
                 } else {
                     AIZ.plugins.notify('danger', data.message || "{{ translate('An unexpected error occurred') }}");
                 }
