@@ -107,8 +107,8 @@ $(function () {
     function showSuccess(msg) { $('#success-msg').text(msg).removeClass('d-none'); $('#error-msg').addClass('d-none'); }
     function clearAlerts()    { $('#error-msg, #success-msg').addClass('d-none'); }
 
-    function openLoader()  { if (typeof HoldOn !== 'undefined') HoldOn.open({ theme: "sk-circle", message: "<h4>{{ translate('Please wait...') }}</h4>" }); }
-    function closeLoader() { btnStop(); if (typeof HoldOn !== 'undefined') HoldOn.close(); }
+    function openLoader()  { /* .aiz-refresh gère l'overlay via ajaxStart */ }
+    function closeLoader() { btnStop(); }
 
     // Spinner intégré au bouton cliqué (comme Coris)
     var _lastBtn = null;
