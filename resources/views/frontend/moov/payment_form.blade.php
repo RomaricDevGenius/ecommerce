@@ -94,6 +94,7 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
 $(function () {
     var transId   = '';
@@ -214,10 +215,16 @@ $(function () {
         .done(function (data) {
             closeLoader();
             if (data.success) {
-                showSuccess(data.message);
-                setTimeout(function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Paiement effectué avec succès',
+                    text: data.message,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                }).then(function () {
                     if (data.url) window.location.href = data.url;
-                }, 1500);
+                });
             } else {
                 showError(data.message || "{{ translate('An unexpected error occurred, please try again later') }}");
             }
