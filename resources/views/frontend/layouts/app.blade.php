@@ -436,6 +436,26 @@
     <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
 
+    <script>
+        // Loader global — AJAX (panier, recherche, variantes…)
+        $(document).ajaxStart(function () {
+            $('.aiz-refresh').addClass('active');
+        });
+        $(document).ajaxStop(function () {
+            $('.aiz-refresh').removeClass('active');
+        });
+        // Loader global — navigation full-page (login, checkout, liens…)
+        window.addEventListener('beforeunload', function () {
+            $('.aiz-refresh').addClass('active');
+        });
+        // Sécurité : retour navigateur depuis le cache
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                $('.aiz-refresh').removeClass('active');
+            }
+        });
+    </script>
+
     {{-- WhatsaApp Chat --}}
     @if (get_setting('whatsapp_chat') == 1)
         <script type="text/javascript">
