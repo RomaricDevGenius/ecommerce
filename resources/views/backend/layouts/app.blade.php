@@ -131,6 +131,10 @@
 
 <body class="">
 
+    <div class="aiz-refresh">
+        <div class="aiz-refresh-content"><div></div><div></div><div></div></div>
+    </div>
+
     <div class="aiz-main-wrapper">
         @include('backend.inc.admin_sidenav')
         <div class="aiz-content-wrapper bg-white">
@@ -155,6 +159,17 @@
     <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000,9999) }}"></script>
     <script src="{{ static_asset('assets/js/aiz-form-submission.js?v=') }}{{ rand(1000,9999) }}"></script>
+
+    <script>
+        window.addEventListener('beforeunload', function () {
+            $('.aiz-refresh').addClass('active');
+        });
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                $('.aiz-refresh').removeClass('active');
+            }
+        });
+    </script>
 
     @yield('script')
 
