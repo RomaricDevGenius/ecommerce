@@ -359,7 +359,7 @@
 
                     <!-- Delivery Boy -->
                     @if (addon_is_activated('delivery_boy'))
-                        <h4 class="fs-14 text-secondary text-uppercase fw-700 mt-4 mb-3">{{ translate('Delivery Boy') }}</h4>
+                        {{-- <h4 class="fs-14 text-secondary text-uppercase fw-700 mt-4 mb-3">{{ translate('Delivery Boy') }}</h4> --}}
                         <ul class="list-unstyled">
                             @guest
                                 <li class="mb-2">
