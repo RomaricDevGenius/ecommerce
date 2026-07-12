@@ -101,19 +101,7 @@ class SearchSuggestionController extends Controller
             }
         }
 
-        //search push
-        if (!empty($searches)) {
-            foreach ($searches as  $search) {
-                $item = [];
-                $item['id'] = $search->id;
-                $item['query'] = $search->query;
-                $item['count'] = intval($search->count);
-                $item['type'] = "search";
-                $item['type_string'] = "Search";
-
-                $items[] = $item;
-            }
-        }
+        // L'historique de recherche global n'est pas exposé — uniquement les vrais résultats
 
         return $items; // should return a valid json of search list;
     }
