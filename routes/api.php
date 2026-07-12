@@ -260,7 +260,7 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
         Route::get('online-pay/failed', 'paymentFailed');
     });
 
-    Route::get('get-search-suggestions', [SearchSuggestionController::class, 'getList']);
+    Route::middleware('throttle:30,1')->get('get-search-suggestions', [SearchSuggestionController::class, 'getList']);
     Route::get('languages', [LanguageController::class, 'getList']);
 
     Route::controller(CustomerProductController::class)->group(function () {
