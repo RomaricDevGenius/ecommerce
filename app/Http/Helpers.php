@@ -3445,6 +3445,160 @@ function get_french_translations_fallback()
         // --- Cookie popup ---
         'we_use_cookie_for_better_user_experience_check_our_policy' => 'Nous utilisons des cookies pour améliorer votre expérience. Consultez notre politique',
         'here' => 'ici',
+
+        // --- Wishlist ---
+        'remove_from_wishlist'                   => 'Supprimer des favoris',
+        'item_has_been_renoved_from_wishlist'     => 'Article supprimé des favoris',
+        'there_isnt_anything_added_yet'           => 'Aucun article ajouté pour l\'instant',
+
+        // --- Panier / Paiement ---
+        'cart'                    => 'Panier',
+        'cart_items'              => 'Articles du panier',
+        'checkout'                => 'Passer commande',
+        'summary'                 => 'Résumé',
+        'free'                    => 'Gratuit',
+        'or'                      => 'ou',
+        'select_one'              => 'Sélectionner',
+        'offline_payment'         => 'Paiement hors ligne',
+        'online_payment'          => 'Paiement en ligne',
+        'wallet'                  => 'Portefeuille',
+        'wallet_payment'          => 'Paiement par portefeuille',
+        'make_payment'            => 'Effectuer le paiement',
+        'select_payment_type'     => 'Mode de paiement',
+        'offline_order_payment'   => 'Paiement hors ligne de la commande',
+        'continue_to_delivery_info' => 'Continuer vers la livraison',
+        'continue_to_payment'       => 'Continuer vers le paiement',
+        'increase'                => 'Augmenter',
+        'decrease'                => 'Diminuer',
+
+        // --- Produit / Listing ---
+        'top_selling'             => 'Meilleures ventes',
+        'top_selling_products'    => 'Produits les plus vendus',
+        'new_arrival_products'    => 'Nouvelles arrivées',
+        'color'                   => 'Couleur',
+        'condition'               => 'État',
+        'select_a_brand'          => 'Choisir une marque',
+        'select_a_condition'      => 'Choisir un état',
+        'nonrefundable'           => 'Non remboursable',
+        'estimate_shipping_time'  => 'Délai de livraison estimé',
+
+        // --- Détails produit ---
+        'click_to_enlarge'        => 'Cliquer pour agrandir',
+        'any_question_about_this_product' => 'Une question sur ce produit ?',
+        'other_questions'         => 'Autres questions',
+        'no_queries_have_been_asked_to_the_seller_yet' => 'Aucune question n\'a encore été posée au vendeur',
+        'seller_policy'           => 'Politique du vendeur',
+        'videos'                  => 'Vidéos',
+        'video_from'              => 'Vidéo de',
+        'reviews__ratings'        => 'Avis & Notes',
+        'sorry_only_customers_can_give_review' => 'Désolé, seuls les clients peuvent laisser un avis.',
+        'sorry_you_need_to_buy_this_product_to_give_review' => 'Désolé, vous devez acheter ce produit pour laisser un avis.',
+
+        // --- Enchères ---
+        'highest_bid'             => 'Offre la plus haute',
+        'starting_bid'            => 'Offre de départ',
+        'auction_will_end'        => 'L\'enchère se terminera le',
+        'ended'                   => 'Terminée',
+        'bided'                   => 'Encherissé',
+
+        // --- Vendeur ---
+        'follow_seller'           => 'Suivre ce vendeur',
+        'unfollow_seller'         => 'Ne plus suivre',
+        'unfollow_this_seller'    => 'Ne plus suivre ce vendeur',
+        'followed'                => 'Suivi',
+        'store_home'              => 'Boutique',
+        'member_since'            => 'Membre depuis',
+        'from_this_seller'        => 'de ce vendeur',
+        'other_ads_of'            => 'Autres annonces de',
+        'other_classified'        => 'Autres annonces',
+        'seller_zone'             => 'Espace vendeur',
+
+        // --- Commandes ---
+        'invoice'                 => 'Facture',
+        'tracking_code'           => 'Code de suivi',
+        'shipped_by'              => 'Expédié par',
+        'delivery_status'         => 'Statut de livraison',
+        'reorder'                 => 'Recommander',
+        'cancel_confirmation'     => 'Confirmation d\'annulation',
+        'are_you_sure_to_cancel_this_order' => 'Êtes-vous sûr de vouloir annuler cette commande ?',
+        'view_order_history'      => 'Voir l\'historique des commandes',
+        'check_your_order_status' => 'Vérifier le statut de votre commande',
+        'go_to_home'              => 'Retour à l\'accueil',
+        'total_ordered'           => 'Total commandé',
+        'total_products_ordered'  => 'Total produits commandés',
+        'total_expenditure'       => 'Dépenses totales',
+        'status_has_been_updated_successfully' => 'Le statut a été mis à jour avec succès',
+
+        // --- Support / Messagerie ---
+        'create_a_ticket'         => 'Créer un ticket',
+        'send_ticket'             => 'Envoyer le ticket',
+        'tickets'                 => 'Tickets',
+        'send_reply'              => 'Envoyer la réponse',
+        'select_a_conversation_to_view_all_messages' => 'Sélectionnez une conversation pour afficher les messages',
+        'conversations_with'      => 'Conversations avec',
+
+        // --- Compte utilisateur ---
+        'update_profile'          => 'Mettre à jour le profil',
+        'verification_code'       => 'Code de vérification',
+        'verify'                  => 'Vérifier',
+        'new_password'            => 'Nouveau mot de passe',
+        'your_new_email'          => 'Votre nouvel e-mail',
+        'update_email'            => 'Mettre à jour l\'e-mail',
+        'delete_your_account'     => 'Supprimer votre compte',
+        'change_your_email'       => 'Changer votre adresse e-mail',
+        'register'                => 'S\'inscrire',
+        'capture'                 => 'Capturer',
+        'retake'                  => 'Reprendre',
+        'take_selfie'             => 'Prendre un selfie',
+        'live_selfie_photo'       => 'Photo selfie en direct',
+        'valid_id_card'           => 'Carte d\'identité valide',
+        'customer_verification'   => 'Vérification client',
+        'complete_your_verification' => 'Compléter votre vérification',
+        'verification_is_under_review' => 'Vérification en cours d\'examen',
+
+        // --- Portefeuille / Points ---
+        'wallet_recharge_successful'    => 'Rechargement réussi',
+        'your_wallet_recharge_request_is_successful' => 'Votre demande de rechargement a été effectuée avec succès',
+        'offline_recharge_wallet'       => 'Rechargement hors ligne',
+        'last_recharge'                 => 'Dernier rechargement',
+        'convert_club_points'           => 'Convertir les points fidélité',
+        'total_club_points'             => 'Total points fidélité',
+
+        // --- Adresses ---
+        'city'                          => 'Ville',
+        'state'                         => 'Région',
+        'country'                       => 'Pays',
+        'new_address'                   => 'Nouvelle adresse',
+        'new_billing_address'           => 'Nouvelle adresse de facturation',
+        'edit_address'                  => 'Modifier l\'adresse',
+        'default_shipping'              => 'Livraison par défaut',
+        'default_billing'               => 'Facturation par défaut',
+        'default_billing_address'       => 'Adresse de facturation par défaut',
+        'make_this_default_shipping'    => 'Définir comme adresse de livraison par défaut',
+        'make_this_default_billing'     => 'Définir comme adresse de facturation par défaut',
+        'choose_another'                => 'Choisir une autre',
+        'no_cities_are_available_under_this_country' => 'Aucune ville disponible pour ce pays',
+        'no_cities_are_available_under_this_state'   => 'Aucune ville disponible pour cette région',
+
+        // --- Forfaits clients ---
+        'premium_packages_for_customers' => 'Forfaits premium pour les clients',
+        'current_package'               => 'Forfait actuel',
+        'no_package_found'              => 'Aucun forfait trouvé',
+        'purchase_package'              => 'Acheter le forfait',
+        'upgrade_package'               => 'Mettre à niveau le forfait',
+        'free_package'                  => 'Forfait gratuit',
+        'purchased_package'             => 'Forfait acheté',
+        'product_upload_remains'        => 'Uploads de produits restants',
+        'remaining_uploads'             => 'Uploads restants',
+
+        // --- Téléchargements numériques ---
+        'download_your_products'        => 'Télécharger vos produits',
+        'files'                         => 'Fichiers',
+        'pdf'                           => 'PDF',
+        'pdf_specification'             => 'Spécification PDF',
+
+        // --- Navigation générale ---
+        'contact_us'                    => 'Nous contacter',
     ];
 }
 
