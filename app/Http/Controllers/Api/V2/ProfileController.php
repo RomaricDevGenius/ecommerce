@@ -46,11 +46,15 @@ class ProfileController extends Controller
             $user->phone = $request->phone;
         }
 
-        if(isset($request->password)){
-        if ($request->password != "") {
+        if(isset($request->password) && $request->password != "") {
+            if (!isset($request->current_password) || !Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'result' => false,
+                    'message' => translate("Mot de passe actuel incorrect")
+                ]);
+            }
             $user->password = Hash::make($request->password);
         }
-    }
         $user->save();
 
         return response()->json([
