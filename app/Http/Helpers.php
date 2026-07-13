@@ -4740,7 +4740,9 @@ if (!function_exists('moovRequest')) {
     {
         $username = env('MOOV_MONEY_MERCHANT_ID');
         $password = env('MOOV_MONEY_MERCHANT_PASSWORD');
-        $url      = rtrim(env('MOOV_OTP_URL', 'https://uat.moov-money.bf:38443/apiaccess/otpRequest'), '/');
+        $url      = get_setting('moov_sandbox') == 1
+            ? 'https://uat.moov-money.bf:38443/apiaccess/otpRequest'
+            : 'https://hwmm.moov-money.bf:38443/apiaccess/otpRequest';
         $bodyJson = json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         \Log::info('[MOOV] REQUEST', [

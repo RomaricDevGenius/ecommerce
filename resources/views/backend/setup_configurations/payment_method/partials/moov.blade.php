@@ -24,19 +24,6 @@
         </div>
     </div>
     <div class="form-group row">
-        <input type="hidden" name="types[]" value="MOOV_OTP_URL">
-        <div class="col-md-4">
-            <label class="col-from-label">{{ translate('Moov OTP API URL') }}</label>
-        </div>
-        <div class="col-md-8">
-            <input type="text" class="form-control" name="MOOV_OTP_URL"
-                value="{{ env('MOOV_OTP_URL') ?? '' }}"
-                placeholder="https://uat.moov-money.bf:38443/apiaccess/otpRequest"
-                autocomplete="off" required>
-            <small class="text-muted">{{ translate('UAT') }} : https://uat.moov-money.bf:38443/apiaccess/otpRequest</small>
-        </div>
-    </div>
-    <div class="form-group row">
         <div class="col-md-4">
             <label class="col-from-label">{{ translate('Moov Money Sandbox Mode') }}</label>
         </div>
