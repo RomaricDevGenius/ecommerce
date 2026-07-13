@@ -1821,6 +1821,8 @@ function get_french_translations_fallback()
         'your_account_deletion_successfully_done' => 'Votre compte a été supprimé avec succès',
         'your_password_is_resetplease_login' => 'Votre mot de passe a été réinitialisé. Veuillez vous connecter.',
         'profile_information_has_been_updated_successfully' => 'Profil mis à jour avec succès',
+        'profile_information_updated' => 'Profil mis à jour avec succès',
+        'mot_de_passe_actuel_incorrect' => 'Mot de passe actuel incorrect',
         'customer_updated_successfully' => 'Client mis à jour avec succès',
         'your_seller_account_is_under_review_we_will_notify_you_once_approved' => 'Votre compte vendeur est en cours de vérification. Nous vous informerons une fois approuvé.',
         'your_shop_verification_request_has_been_submitted_successfully' => 'Votre demande de vérification de boutique a été soumise avec succès !',
