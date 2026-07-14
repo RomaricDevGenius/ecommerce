@@ -120,10 +120,10 @@
                     </thead>
                     <tbody>
                         @forelse($tiers as $tier)
-                        <tr @if($tier->is_manual_review) style="background:#fffbf0;" @endif>
+                        <tr>
                             <td>
                                 @if($tier->is_manual_review)
-                                    <i class="las la-exclamation-circle text-warning mr-1"></i>
+                                    <i class="las la-exclamation-circle text-dark mr-1"></i>
                                     <span class="font-weight-500">&gt; {{ $tier->min_km }} km</span>
                                 @else
                                     <i class="las la-map-marker-alt text-primary mr-1"></i>
@@ -132,7 +132,7 @@
                             </td>
                             <td>
                                 @if($tier->is_manual_review)
-                                    <span class="text-warning font-weight-500">
+                                    <span class="text-dark font-weight-500">
                                         <i class="las la-user-cog mr-1"></i>{{ translate('Révision manuelle') }}
                                     </span>
                                 @else
