@@ -10,10 +10,8 @@ return new class extends Migration
     {
         Schema::create('broadcast_offers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('broadcast_id');
-            $table->foreign('broadcast_id')->references('id')->on('order_broadcasts')->onDelete('cascade');
-            $table->unsignedInteger('delivery_boy_id');
-            $table->foreign('delivery_boy_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('broadcast_id')->index();
+            $table->integer('delivery_boy_id')->index();
             $table->decimal('priority_score', 5, 2)->default(0);
             $table->decimal('distance_km', 8, 2)->nullable();
             $table->timestamp('sent_at')->useCurrent();
