@@ -17,11 +17,7 @@ class DeliveryAvailabilityController extends Controller
      */
     public function setAvailability(Request $request)
     {
-        $user = auth()->user();
-        if ($user->user_type !== 'delivery_boy') {
-            return response()->json(['result' => false, 'message' => 'Non autorisé.'], 403);
-        }
-
+        $user   = auth()->user();
         $status = $request->input('status');
         if (!in_array($status, self::ALLOWED_STATUSES)) {
             return response()->json(['result' => false, 'message' => 'Statut invalide.'], 422);
@@ -50,9 +46,6 @@ class DeliveryAvailabilityController extends Controller
     public function updateLocation(Request $request)
     {
         $user = auth()->user();
-        if ($user->user_type !== 'delivery_boy') {
-            return response()->json(['result' => false], 403);
-        }
 
         if (!$request->filled('lat') || !$request->filled('lng')) {
             return response()->json(['result' => false, 'message' => 'lat et lng requis.'], 422);

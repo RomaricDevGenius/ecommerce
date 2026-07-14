@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('broadcast_id');
             $table->foreign('broadcast_id')->references('id')->on('order_broadcasts')->onDelete('cascade');
-            $table->unsignedBigInteger('delivery_boy_id');
+            $table->unsignedInteger('delivery_boy_id');
             $table->foreign('delivery_boy_id')->references('id')->on('users')->onDelete('cascade');
             $table->decimal('priority_score', 5, 2)->default(0);
             $table->decimal('distance_km', 8, 2)->nullable();
