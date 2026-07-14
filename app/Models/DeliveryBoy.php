@@ -9,7 +9,22 @@ class DeliveryBoy extends Model
 {
     use PreventDemoModeChanges;
 
-    public function user(){
-    	return $this->belongsTo(User::class);
+    protected $fillable = [
+        'user_id',
+        'availability_status',
+        'lat',
+        'lng',
+        'last_seen_at',
+    ];
+
+    protected $casts = [
+        'last_seen_at' => 'datetime',
+        'lat'          => 'float',
+        'lng'          => 'float',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -174,6 +174,69 @@
             </div>
         </div>
 
+        <div class="col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 h6">{{ translate('Dynamic Assignment') }}</h5>
+                </div>
+                <div class="card-body">
+                    <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST">
+                        @csrf
+
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_assignment_mode">
+                            <label class="col-md-5 col-from-label">{{ translate('Assignment Mode') }}</label>
+                            <div class="col-md-7">
+                                <select name="delivery_assignment_mode" class="form-control">
+                                    <option value="manual"  @if((get_setting('delivery_assignment_mode') ?? 'manual') === 'manual')  selected @endif>{{ translate('Manual') }}</option>
+                                    <option value="dynamic" @if((get_setting('delivery_assignment_mode') ?? 'manual') === 'dynamic') selected @endif>{{ translate('Dynamic (auto-broadcast)') }}</option>
+                                </select>
+                                <small class="text-muted">{{ translate('Dynamic: orders are automatically broadcast to nearby delivery boys.') }}</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_broadcast_radius_km">
+                            <label class="col-md-5 col-from-label">{{ translate('Broadcast Radius (km)') }}</label>
+                            <div class="col-md-7">
+                                <div class="input-group">
+                                    <input type="number" min="1" max="50" step="0.5"
+                                           name="delivery_broadcast_radius_km"
+                                           class="form-control"
+                                           value="{{ get_setting('delivery_broadcast_radius_km') ?? '5' }}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">km</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ translate('Search radius to find available delivery boys.') }}</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_broadcast_timeout_seconds">
+                            <label class="col-md-5 col-from-label">{{ translate('Offer Timeout (seconds)') }}</label>
+                            <div class="col-md-7">
+                                <div class="input-group">
+                                    <input type="number" min="30" max="300" step="5"
+                                           name="delivery_broadcast_timeout_seconds"
+                                           class="form-control"
+                                           value="{{ get_setting('delivery_broadcast_timeout_seconds') ?? '90' }}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">s</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ translate('Time a delivery boy has to accept before the offer expires.') }}</small>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="col-lg-8 mx-auto">
             <div class="card">
                 <div class="card-header">
