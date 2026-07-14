@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('order_broadcasts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('order_id');
+            $table->integer('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->decimal('radius_km', 5, 1)->default(5.0);
             $table->timestamp('started_at')->useCurrent();
