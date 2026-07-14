@@ -63,6 +63,28 @@ class OrderController extends Controller
                 $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
             }
         }
+        // Supprimer toute commande impayée existante et restaurer le stock
+        $oldUnpaid = CombinedOrder::where('user_id', $user->id)
+            ->whereHas('orders', fn($q) => $q->where('payment_status', 'unpaid'))
+            ->latest()
+            ->first();
+        if ($oldUnpaid) {
+            foreach ($oldUnpaid->orders as $oldOrder) {
+                foreach (OrderDetail::where('order_id', $oldOrder->id)->get() as $detail) {
+                    $prod = Product::find($detail->product_id);
+                    if ($prod && !$prod->digital) {
+                        $stock = $prod->stocks->where('variant', $detail->variation)->first();
+                        if ($stock) { $stock->qty += $detail->quantity; $stock->save(); }
+                        $prod->num_of_sale = max(0, $prod->num_of_sale - $detail->quantity);
+                        $prod->save();
+                    }
+                }
+                OrderDetail::where('order_id', $oldOrder->id)->delete();
+                $oldOrder->delete();
+            }
+            $oldUnpaid->delete();
+        }
+
         $combined_order = new CombinedOrder;
         $combined_order->user_id = $user->id;
         $combined_order->shipping_address = json_encode($shippingAddress);
@@ -232,8 +254,6 @@ class OrderController extends Controller
             $order->save();
         }
         $combined_order->save();
-
-        Cart::where('user_id', auth()->user()->id)->active()->delete();
 
         if (
             $request->payment_type == 'cash_on_delivery'

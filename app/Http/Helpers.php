@@ -4845,8 +4845,8 @@ if (!function_exists('checkout_done')) {
             $order->save();
 
             // Order paid notification to Customer, Seller, & Admin
-            EmailUtility::order_email($order, 'paid'); 
-            
+            EmailUtility::order_email($order, 'paid');
+
             try {
                 NotificationUtility::sendOrderPlacedNotification($order);
                 $order->notified = 1;
@@ -4855,6 +4855,9 @@ if (!function_exists('checkout_done')) {
             } catch (\Exception $e) {
             }
         }
+
+        // Vider le panier uniquement après confirmation du paiement
+        Cart::where('user_id', $combined_order->user_id)->active()->delete();
     }
 }
 

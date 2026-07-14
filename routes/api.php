@@ -246,7 +246,7 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
             Route::get('all-notification', 'allNotification')->middleware('auth:sanctum');
             Route::get('unread-notifications', 'unreadNotifications')->middleware('auth:sanctum');
             Route::post('notifications/bulk-delete', 'bulkDelete')->middleware('auth:sanctum');
-            Route::get('notifications/mark-as-read', 'notificationMarkAsRead')->middleware('auth:sanctum');
+            Route::get('notifications/{id}/mark-as-read', 'notificationMarkAsRead')->middleware('auth:sanctum');
         });
 
         Route::get('products/last-viewed', [ProductController::class, 'lastViewedProducts'])->middleware('auth:sanctum');
