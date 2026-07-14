@@ -26,6 +26,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderNotification;
 use App\Utility\EmailUtility;
+use App\Models\OrderBroadcast;
+use App\Services\DeliveryBroadcastService;
 
 class OrderController extends Controller
 {
@@ -726,5 +728,33 @@ class OrderController extends Controller
             flash(translate('Something went wrong!.'))->warning();
         }
         return back();
+    }
+
+    public function rebroadcast(int $id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->assign_delivery_boy) {
+            return response()->json(['result' => false, 'message' => 'Un livreur est déjà assigné à cette commande.']);
+        }
+
+        // Expire tout broadcast pending existant pour cette commande
+        OrderBroadcast::where('order_id', $id)
+            ->where('status', 'pending')
+            ->update(['status' => 'expired']);
+
+        $broadcast = DeliveryBroadcastService::broadcast($order);
+
+        if (!$broadcast) {
+            $radius = get_setting('delivery_broadcast_radius_km') ?? 5;
+            return response()->json(['result' => false, 'message' => "Aucun livreur disponible dans le rayon de {$radius} km."]);
+        }
+
+        $count = $broadcast->offers()->count();
+        $suffix = $count > 1 ? 's' : '';
+        return response()->json([
+            'result'  => true,
+            'message' => "Diffusion relancée — {$count} livreur{$suffix} contacté{$suffix}.",
+        ]);
     }
 }
