@@ -36,8 +36,11 @@
     </style>
 
     <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
+
+        {{-- ── Colonne gauche : Paiement + Notifications ── --}}
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0 h6">{{ translate('Payment Configuration') }}</h5>
                 </div>
@@ -47,10 +50,7 @@
                         @csrf
                         <div class="form-group row">
                             <input type="hidden" name="types[]" value="delivery_boy_payment_type">
-
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Monthly Earnings') }}
-                            </label>
+                            <label class="col-md-4 col-from-label">{{ translate('Monthly Earnings') }}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input type="radio" name="delivery_boy_payment_type" value="salary"
@@ -67,18 +67,15 @@
                                     <input type="number" name="delivery_boy_salary" class="form-control"
                                         value="{{ get_setting('delivery_boy_salary') ? get_setting('delivery_boy_salary') : '0' }}">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupPrepend">
+                                        <span class="input-group-text">
                                             {{ \App\Models\Currency::find(get_setting('system_default_currency'))->code }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group row">
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Per Order Commission') }}
-                            </label>
+                            <label class="col-md-4 col-from-label">{{ translate('Per Order Commission') }}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input type="radio" name="delivery_boy_payment_type" value="commission"
@@ -95,14 +92,13 @@
                                     <input type="number" name="delivery_boy_commission" class="form-control"
                                         value="{{ get_setting('delivery_boy_commission') ? get_setting('delivery_boy_commission') : '0' }}">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupPrepend">
+                                        <span class="input-group-text">
                                             {{ \App\Models\Currency::find(get_setting('system_default_currency'))->code }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <input type="hidden" name="types[]" value="minimum_delivery_boy_withdraw_amount">
                             <label class="col-sm-4 col-from-label">{{ translate('Minimum Withdrawal Amount') }}</label>
@@ -120,24 +116,62 @@
                                 <small class="text-muted">{{ translate('Minimum amount a delivery boy can request to withdraw.') }}</small>
                             </div>
                         </div>
-
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 h6">{{ translate('Notification Configuration') }}</h5>
+                </div>
+                <div class="card-body">
+                    <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_boy_mail_notification">
+                            <label class="col-md-4 col-from-label">{{ translate('Send Mail') }}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="delivery_boy_mail_notification" value="1"
+                                        @if (get_setting('delivery_boy_mail_notification') == '1') checked @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_boy_otp_notification">
+                            <label class="col-md-4 col-from-label">{{ translate('Send OTP') }}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="delivery_boy_otp_notification" value="1"
+                                        @if (get_setting('delivery_boy_otp_notification') == '1') checked @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
+        {{-- ── Colonne droite : Assignation dynamique + Emplacement de collecte ── --}}
+        <div class="col-lg-6">
+
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0 h6">{{ translate('Dynamic Assignment') }}</h5>
                 </div>
                 <div class="card-body">
                     <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST">
                         @csrf
-
                         <div class="form-group row">
                             <input type="hidden" name="types[]" value="delivery_assignment_mode">
                             <label class="col-md-5 col-from-label">{{ translate('Assignment Mode') }}</label>
@@ -149,7 +183,6 @@
                                 <small class="text-muted">{{ translate('Dynamic: orders are automatically broadcast to nearby delivery boys.') }}</small>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <input type="hidden" name="types[]" value="delivery_broadcast_radius_km">
                             <label class="col-md-5 col-from-label">{{ translate('Broadcast Radius (km)') }}</label>
@@ -166,7 +199,6 @@
                                 <small class="text-muted">{{ translate('Search radius to find available delivery boys.') }}</small>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <input type="hidden" name="types[]" value="delivery_broadcast_timeout_seconds">
                             <label class="col-md-5 col-from-label">{{ translate('Offer Timeout (seconds)') }}</label>
@@ -183,61 +215,13 @@
                                 <small class="text-muted">{{ translate('Time a delivery boy has to accept before the offer expires.') }}</small>
                             </div>
                         </div>
-
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
 
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0 h6">{{ translate('Notification Configuration') }}</h5>
-                </div>
-                <div class="card-body">
-                    <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group row">
-                            <input type="hidden" name="types[]" value="delivery_boy_mail_notification">
-
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Send Mail') }}
-                            </label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="delivery_boy_mail_notification" value="1"
-                                        @if (get_setting('delivery_boy_mail_notification') == '1') checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <input type="hidden" name="types[]" value="delivery_boy_otp_notification">
-
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Send OTP') }}
-                            </label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="delivery_boy_otp_notification" value="1"
-                                        @if (get_setting('delivery_boy_otp_notification') == '1') checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-8 mx-auto">
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0 h6">{{ translate('Pickup Location For Delivery Boy') }}</h5>
@@ -246,7 +230,6 @@
                     <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
-                        {{-- ── Sélecteur de point de ramassage OpenStreetMap ── --}}
                         <div class="form-group row">
                             <div class="col-12" id="pickup-search-wrapper">
                                 <div class="input-group">
@@ -261,7 +244,6 @@
                                 <div id="pickup-search-results" class="list-group bg-white"></div>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <div class="col-12">
                                 <div id="pickup-map"></div>
@@ -270,7 +252,6 @@
                                 </small>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <label class="col-md-2 col-form-label">{{ translate('Latitude') }}</label>
                             <div class="col-md-10">
@@ -295,7 +276,9 @@
                     </form>
                 </div>
             </div>
+
         </div>
+
     </div>
 @endsection
 
