@@ -543,6 +543,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         //Delivery Boy Assign
         Route::post('/orders/delivery-boy-assign', 'assign_delivery_boy')->name('orders.delivery-boy-assign');
 
+        // Relancer la diffusion dynamique
+        Route::post('/orders/{id}/rebroadcast', 'rebroadcast')->name('orders.rebroadcast');
+
         // Order bulk export
         Route::get('/order-bulk-export', 'orderBulkExport')->name('order-bulk-export');
 

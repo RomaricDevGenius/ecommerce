@@ -37,6 +37,14 @@
                                         disabled>
                                 @endif
                             </div>
+                            @if (get_setting('delivery_assignment_mode') == 'dynamic' && !$order->assign_delivery_boy && !in_array($delivery_status, ['delivered', 'cancelled']))
+                                <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-warning btn-block" id="btn-rebroadcast"
+                                        onclick="rebroadcastOrder({{ $order->id }})">
+                                        <i class="las la-broadcast-tower mr-1"></i>{{ translate('Relancer la diffusion') }}
+                                    </button>
+                                </div>
+                            @endif
                         @endif
                     @endif
 
@@ -768,6 +776,22 @@
 
 @section('script')
     <script type="text/javascript">
+        function rebroadcastOrder(orderId) {
+            var btn = $('#btn-rebroadcast');
+            btn.prop('disabled', true).html('<i class="las la-spinner la-spin mr-1"></i>Diffusion en cours...');
+            $.post('{{ route('orders.rebroadcast', ':id') }}'.replace(':id', orderId), {
+                _token: '{{ @csrf_token() }}'
+            }, function(data) {
+                if (data.result) {
+                    AIZ.plugins.notify('success', data.message);
+                } else {
+                    AIZ.plugins.notify('danger', data.message);
+                }
+            }).always(function() {
+                btn.prop('disabled', false).html('<i class="las la-broadcast-tower mr-1"></i>{{ translate('Relancer la diffusion') }}');
+            });
+        }
+
         $('#assign_deliver_boy').on('change', function() {
             var order_id = {{ $order->id }};
             var delivery_boy = $('#assign_deliver_boy').val();
