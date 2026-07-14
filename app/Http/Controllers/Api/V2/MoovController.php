@@ -94,7 +94,8 @@ class MoovController extends Controller
 
         return response()->json([
             'success' => false,
-            'message' => $response->message ?? translate('The service is temporarily unavailable, please try later'),
+            'burned'  => true,
+            'message' => translate('Impossible de renvoyer le code. Veuillez recommencer.'),
         ], 400);
     }
 
@@ -149,12 +150,13 @@ class MoovController extends Controller
             ]);
         }
 
+        $burned  = (string) ($response->status ?? '') === '12';
         $errorMsg = match ((string) ($response->status ?? '')) {
-            '12'    => translate('Payment failed. Please try again.'),
+            '12'    => translate('Votre code OTP est expiré. Veuillez demander un nouveau code.'),
             '15'    => translate('Unknown error. Please try again.'),
             default => $response->message ?? translate('The service is temporarily unavailable, please try later'),
         };
 
-        return response()->json(['success' => false, 'message' => $errorMsg], 400);
+        return response()->json(['success' => false, 'burned' => $burned, 'message' => $errorMsg], 400);
     }
 }
