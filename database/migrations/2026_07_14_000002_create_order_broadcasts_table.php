@@ -10,14 +10,12 @@ return new class extends Migration
     {
         Schema::create('order_broadcasts', function (Blueprint $table) {
             $table->id();
-            $table->integer('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->integer('order_id')->index();
             $table->decimal('radius_km', 5, 1)->default(5.0);
             $table->timestamp('started_at')->useCurrent();
             $table->timestamp('expires_at')->nullable();
             $table->enum('status', ['pending', 'assigned', 'failed', 'expired'])->default('pending');
-            $table->unsignedInteger('assigned_to')->nullable();
-            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
+            $table->integer('assigned_to')->nullable()->index();
             $table->timestamp('assigned_at')->nullable();
             $table->timestamps();
         });
