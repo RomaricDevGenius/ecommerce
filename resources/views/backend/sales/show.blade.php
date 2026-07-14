@@ -61,13 +61,13 @@
                                     </option>
                                 </select>
                             @else
-                                <input type="text" class="form-control" value="{{ ucfirst($payment_status) }}" disabled>
+                                <input type="text" class="form-control" value="{{ translate(ucfirst($payment_status)) }}" disabled>
                             @endif
                         </div>
                         <div class="col-12 col-md-4 col-xl-4 col-xxl-2 mb-2">
                             <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
                             @if ($order->shipping_method == 'shiprocket' || $order->shipping_method == 'steadfast' || $order->shipping_method == 'pathao')
-                                <input type="text" class="form-control" value="{{ ucfirst(str_replace('_', ' ', $delivery_status)) }}" disabled>
+                                <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
                             @elseif (auth()->user()->can('update_order_delivery_status') && $delivery_status != 'delivered' && $delivery_status != 'cancelled')
                                 <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
                                     id="update_delivery_status">
@@ -91,7 +91,7 @@
                                     </option>
                                 </select>
                             @else
-                                <input type="text" class="form-control" value="{{ $delivery_status }}" disabled>
+                                <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
                             @endif
                         </div>
                         @if (addon_is_activated('shiprocket') || addon_is_activated('steadfast') || addon_is_activated('pathao'))
