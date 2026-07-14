@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Middleware\EnsureSystemKey;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V2\DeliveryAvailabilityController;
 
 
 
@@ -73,6 +74,16 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
             Route::get('withdraw-requests', 'index');
             Route::get('withdraw-summary', 'summary');
             Route::post('withdraw-requests', 'store');
+        });
+
+        // Dynamic availability & broadcast offers
+        Route::controller(DeliveryAvailabilityController::class)->middleware('auth:sanctum')->group(function () {
+            Route::post('availability',       'setAvailability');
+            Route::post('location',           'updateLocation');
+            Route::get('availability-status', 'getAvailabilityStatus');
+            Route::get('pending-offers',      'pendingOffers');
+            Route::post('offers/{id}/accept', 'acceptOffer');
+            Route::post('offers/{id}/decline','declineOffer');
         });
     });
 

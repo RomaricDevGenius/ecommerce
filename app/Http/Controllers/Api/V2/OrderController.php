@@ -16,6 +16,7 @@ use DB;
 use \App\Utility\NotificationUtility;
 use App\Models\CombinedOrder;
 use App\Http\Controllers\AffiliateController;
+use App\Jobs\BroadcastOrderJob;
 
 class OrderController extends Controller
 {
@@ -261,6 +262,11 @@ class OrderController extends Controller
             || strpos($request->payment_type, "manual_payment_") !== false // if payment type like  manual_payment_1 or  manual_payment_25 etc
         ) {
             NotificationUtility::sendOrderPlacedNotification($order, $request);
+        }
+
+        // Assignation dynamique : déclencher le broadcast si le mode est activé
+        if ((get_setting('delivery_assignment_mode') ?? 'manual') === 'dynamic') {
+            BroadcastOrderJob::dispatch($order->id);
         }
 
         return response()->json([
