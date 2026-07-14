@@ -132,51 +132,6 @@
         <div class="col-lg-6 mx-auto">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0 h6">{{ translate('Notification Configuration') }}</h5>
-                </div>
-                <div class="card-body">
-                    <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group row">
-                            <input type="hidden" name="types[]" value="delivery_boy_mail_notification">
-
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Send Mail') }}
-                            </label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="delivery_boy_mail_notification" value="1"
-                                        @if (get_setting('delivery_boy_mail_notification') == '1') checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <input type="hidden" name="types[]" value="delivery_boy_otp_notification">
-
-                            <label class="col-md-4 col-from-label">
-                                {{ translate('Send OTP') }}
-                            </label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="delivery_boy_otp_notification" value="1"
-                                        @if (get_setting('delivery_boy_otp_notification') == '1') checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
-                <div class="card-header">
                     <h5 class="mb-0 h6">{{ translate('Dynamic Assignment') }}</h5>
                 </div>
                 <div class="card-body">
@@ -229,6 +184,51 @@
                             </div>
                         </div>
 
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 h6">{{ translate('Notification Configuration') }}</h5>
+                </div>
+                <div class="card-body">
+                    <form class="form-horizontal" action="{{ route('business_settings.update') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_boy_mail_notification">
+
+                            <label class="col-md-4 col-from-label">
+                                {{ translate('Send Mail') }}
+                            </label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="delivery_boy_mail_notification" value="1"
+                                        @if (get_setting('delivery_boy_mail_notification') == '1') checked @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <input type="hidden" name="types[]" value="delivery_boy_otp_notification">
+
+                            <label class="col-md-4 col-from-label">
+                                {{ translate('Send OTP') }}
+                            </label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="delivery_boy_otp_notification" value="1"
+                                        @if (get_setting('delivery_boy_otp_notification') == '1') checked @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
                         </div>
