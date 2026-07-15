@@ -119,6 +119,11 @@ class DeliveryBroadcastService
                 return ['success' => false, 'message' => 'L\'offre a expiré.'];
             }
 
+            $deliveryBoy = DeliveryBoy::where('user_id', $deliveryBoyUserId)->lockForUpdate()->first();
+            if (!$deliveryBoy || $deliveryBoy->availability_status !== 'available') {
+                return ['success' => false, 'message' => 'Vous avez déjà une livraison en cours.'];
+            }
+
             $order = $broadcast->order;
             if (!$order) {
                 return ['success' => false, 'message' => 'Commande introuvable.'];

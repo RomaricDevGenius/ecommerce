@@ -344,6 +344,7 @@ class DeliveryBoyController extends Controller
 
             }
 
+            $delivery_boy->availability_status = 'available';
             $delivery_boy->save();
         }
         $order->delivery_history_date = date("Y-m-d H:i:s");
