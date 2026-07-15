@@ -361,7 +361,7 @@ class DeliveryBoyController extends Controller
 
         return response()->json([
             'result' => true,
-            'message' => translate('Delivery status changed to ') . translate($request->status)
+            'message' => 'Statut de livraison changé en ' . translate($request->status)
         ]);
     }
 
