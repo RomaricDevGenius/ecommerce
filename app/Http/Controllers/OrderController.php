@@ -28,6 +28,7 @@ use App\Notifications\OrderNotification;
 use App\Utility\EmailUtility;
 use App\Models\OrderBroadcast;
 use App\Services\DeliveryBroadcastService;
+use App\Jobs\BroadcastOrderJob;
 
 class OrderController extends Controller
 {
@@ -367,6 +368,10 @@ class OrderController extends Controller
         }
 
         $combined_order->save();
+
+        if ((get_setting('delivery_assignment_mode') ?? 'manual') === 'dynamic') {
+            BroadcastOrderJob::dispatch($order->id);
+        }
 
         $request->session()->put('combined_order_id', $combined_order->id);
     }
