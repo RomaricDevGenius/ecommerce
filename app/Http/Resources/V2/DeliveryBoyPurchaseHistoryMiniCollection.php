@@ -37,6 +37,11 @@ class DeliveryBoyPurchaseHistoryMiniCollection extends ResourceCollection
                     $lat = floatval($exploded_lat_lang[0]);
                     $lang = floatval($exploded_lat_lang[1]);
                 }
+                $addr_parts = array_filter([
+                    $shipping_address['address'] ?? '',
+                    $shipping_address['city'] ?? '',
+                ]);
+                $delivery_address_text = implode(', ', $addr_parts);
                 return [
                     'id' => $data->id,
                     'code' => $data->code,
@@ -51,6 +56,7 @@ class DeliveryBoyPurchaseHistoryMiniCollection extends ResourceCollection
                     'cancel_request' => $data->cancel_request == 1,
                     'delivery_history_date' => $data->delivery_history_date,
                     'location_available' => $location_available,
+                    'delivery_address' => $delivery_address_text,
                     'lat' => $lat,
                     'lang' => $lang,
                     'store_location_available' => $store_location_available,
