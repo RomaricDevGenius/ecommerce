@@ -23,6 +23,18 @@ class DeliveryAvailabilityController extends Controller
             return response()->json(['result' => false, 'message' => 'Statut invalide.'], 422);
         }
 
+        if (in_array($status, ['available', 'pause'])) {
+            $hasActive = \App\Models\Order::where('assign_delivery_boy', $user->id)
+                ->whereNotIn('delivery_status', ['delivered', 'cancelled'])
+                ->exists();
+            if ($hasActive) {
+                return response()->json([
+                    'result'  => false,
+                    'message' => 'Terminez votre livraison en cours avant de modifier votre statut.',
+                ], 422);
+            }
+        }
+
         $data = ['availability_status' => $status, 'last_seen_at' => now()];
 
         if ($status === 'available' && $request->filled('lat') && $request->filled('lng')) {
