@@ -167,9 +167,9 @@ class DeliveryBroadcastService
                 $existing->save();
             }
 
-            // Mark delivery boy as busy
+            // Mettre le livreur hors ligne pendant la livraison
             DeliveryBoy::where('user_id', $deliveryBoyUserId)
-                ->update(['availability_status' => 'busy']);
+                ->update(['availability_status' => 'offline']);
 
             // SMS to delivery boy
             $deliveryBoyUser = User::find($deliveryBoyUserId);
