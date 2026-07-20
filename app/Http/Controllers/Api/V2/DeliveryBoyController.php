@@ -38,8 +38,8 @@ class DeliveryBoyController extends Controller
         return response()->json([
             'completed_delivery' => Order::where('assign_delivery_boy', $id)->where('delivery_status', 'delivered')->count(),
             'pending_delivery' => Order::where('assign_delivery_boy', $id)->where('delivery_status', '!=', 'delivered')->where('delivery_status', '!=', 'cancelled')->where('cancel_request', '0')->count(),
-            'total_collection' => format_price($delivery_boy->total_collection),
-            'total_earning' => format_price($delivery_boy->total_earning),
+            'total_collection' => format_price($delivery_boy?->total_collection ?? 0),
+            'total_earning' => format_price($delivery_boy?->total_earning ?? 0),
             'cancelled' => Order::where('assign_delivery_boy', $id)->where('delivery_status', 'cancelled')->count(),
             'on_the_way' => Order::where('assign_delivery_boy', $id)->where('delivery_status', 'on_the_way')->where('cancel_request', '0')->count(),
             'picked' => Order::where('assign_delivery_boy', $id)->where('delivery_status', 'picked_up')->where('cancel_request', '0')->count(),

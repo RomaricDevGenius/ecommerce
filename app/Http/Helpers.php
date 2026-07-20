@@ -1979,7 +1979,9 @@ function get_french_translations_fallback()
         'you_cannot_see_this_message' => 'Vous ne pouvez pas voir ce message.',
         'this_query_is_not_yours' => 'Cette demande ne vous appartient pas',
         'sender' => 'Expéditeur',
-        'hi_you_recieved_a_message_from_' => 'Bonjour ! Vous avez reçu un message de ',
+        'hi_you_recieved_a_message_from' => 'Bonjour ! Vous avez reçu un message de ',
+        'message_has_been_sent_to_seller' => 'Message envoyé au vendeur',
+        'see_details' => 'Voir les détails',
 
         // Messages API - Fichiers & Uploads
         'file_has_been_inserted_successfully' => 'Fichier ajouté avec succès',
