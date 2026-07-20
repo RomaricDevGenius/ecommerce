@@ -33,7 +33,7 @@ class DeliveryBoyController extends Controller
         $order_query->where('assign_delivery_boy', $id);
 
 
-        $delivery_boy = DeliveryBoy::where('user_id', $id)->first();
+        $delivery_boy = DeliveryBoy::firstOrCreate(['user_id' => $id]);
 
         return response()->json([
             'completed_delivery' => Order::where('assign_delivery_boy', $id)->where('delivery_status', 'delivered')->count(),
