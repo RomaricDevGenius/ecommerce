@@ -256,6 +256,8 @@ class OrderController extends Controller
         }
         $combined_order->save();
 
+        Cart::where('user_id', $user->id)->active()->delete();
+
         if (
             $request->payment_type == 'cash_on_delivery'
             || $request->payment_type == 'wallet'
