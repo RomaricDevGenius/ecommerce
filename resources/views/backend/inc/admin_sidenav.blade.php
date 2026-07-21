@@ -7,8 +7,8 @@
                     alt="{{ get_setting('site_name') }}">
                 @else
                 <span style="font-size:22px; font-weight:800; letter-spacing:1px;">
-                    <span style="color:#E85C0C;">DAKWARI</span>
-                    <span style="color:#7AB96B;">STORE</span>
+                    <span style="color:#EA6535;">DAKWARI</span>
+                    <span style="color:#35A89C;"> STORE</span>
                 </span>
                 @endif
             </a>
