@@ -6,9 +6,12 @@
                 <img class="mw-100" src="{{ uploaded_asset(get_setting('system_logo_black')) }}" class="brand-icon"
                     alt="{{ get_setting('site_name') }}">
                 @else
-                <span style="font-size:22px; font-weight:800; letter-spacing:1px;">
-                    <span style="color:#EA6535;">DAKWARI</span>
-                    <span style="color:#35A89C;"> STORE</span>
+                <span style="display:flex; align-items:center; gap:8px;">
+                    <img src="{{ static_asset('assets/img/logo_dakwari.png') }}" style="height:36px; width:auto;">
+                    <span style="font-size:22px; font-weight:800; letter-spacing:1px;">
+                        <span style="color:#EA6535;">DAKWARI</span>
+                        <span style="color:#35A89C;"> STORE</span>
+                    </span>
                 </span>
                 @endif
             </a>
