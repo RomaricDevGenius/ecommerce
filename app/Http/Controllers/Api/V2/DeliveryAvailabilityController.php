@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class DeliveryAvailabilityController extends Controller
 {
-    private const ALLOWED_STATUSES = ['available', 'offline', 'pause'];
+    private const ALLOWED_STATUSES = ['available', 'offline'];
 
     /**
      * POST /v2/delivery-boy/availability
@@ -23,7 +23,7 @@ class DeliveryAvailabilityController extends Controller
             return response()->json(['result' => false, 'message' => 'Statut invalide.'], 422);
         }
 
-        if (in_array($status, ['available', 'pause'])) {
+        if ($status === 'available') {
             $hasActive = \App\Models\Order::where('assign_delivery_boy', $user->id)
                 ->whereNotIn('delivery_status', ['delivered', 'cancelled'])
                 ->exists();

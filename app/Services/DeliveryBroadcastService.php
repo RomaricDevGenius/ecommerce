@@ -120,8 +120,17 @@ class DeliveryBroadcastService
             }
 
             $deliveryBoy = DeliveryBoy::where('user_id', $deliveryBoyUserId)->lockForUpdate()->first();
-            if (!$deliveryBoy || $deliveryBoy->availability_status !== 'available') {
-                return ['success' => false, 'message' => 'Vous avez déjà une livraison en cours.'];
+            if (!$deliveryBoy) {
+                return ['success' => false, 'message' => 'Profil livreur introuvable.'];
+            }
+            if ($deliveryBoy->availability_status !== 'available') {
+                $hasActive = \App\Models\Order::where('assign_delivery_boy', $deliveryBoyUserId)
+                    ->whereNotIn('delivery_status', ['delivered', 'cancelled'])
+                    ->exists();
+                if ($hasActive) {
+                    return ['success' => false, 'message' => 'Terminez votre livraison en cours avant d\'en accepter une nouvelle.'];
+                }
+                return ['success' => false, 'message' => 'Vous êtes hors ligne, vous ne pouvez pas accepter une commande.'];
             }
 
             $order = $broadcast->order;
