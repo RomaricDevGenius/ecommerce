@@ -95,6 +95,10 @@
             border-top-right-radius: 4px !important;
             border-bottom-right-radius: 4px !important;
         }
+        .aiz-sidebar.left,
+        .aiz-side-nav-logo-wrap {
+            background-color: #E85C0C !important;
+        }
     </style>
     <script>
         var AIZ = AIZ || {};
