@@ -44,6 +44,13 @@ class DeliveryAvailabilityController extends Controller
 
         DeliveryBoy::where('user_id', $user->id)->update($data);
 
+        // Expirer les offres en attente quand le livreur passe offline
+        if ($status === 'offline') {
+            BroadcastOffer::where('delivery_boy_id', $user->id)
+                ->where('response', 'pending')
+                ->update(['response' => 'timeout', 'responded_at' => now()]);
+        }
+
         return response()->json([
             'result'  => true,
             'message' => 'Statut mis à jour.',
@@ -94,6 +101,11 @@ class DeliveryAvailabilityController extends Controller
     public function pendingOffers()
     {
         $user = auth()->user();
+
+        $db = DeliveryBoy::where('user_id', $user->id)->first();
+        if (!$db || $db->availability_status !== 'available') {
+            return response()->json(['result' => true, 'offers' => []]);
+        }
 
         $offers = BroadcastOffer::with([
                 'broadcast.order.orderDetails',
