@@ -6,8 +6,9 @@
                 <img class="mw-100" src="{{ uploaded_asset(get_setting('system_logo_black')) }}" class="brand-icon"
                     alt="{{ get_setting('site_name') }}">
                 @else
-                <span class="text-white font-weight-bold" style="font-size:22px; letter-spacing:1px;">
-                    {{ get_setting('site_name') ?? 'Dakwari' }}
+                <span style="font-size:22px; font-weight:800; letter-spacing:1px;">
+                    <span style="color:#E85C0C;">DAKWARI</span>
+                    <span style="color:#7AB96B;">STORE</span>
                 </span>
                 @endif
             </a>
