@@ -3067,6 +3067,8 @@ function get_french_translations_fallback()
         'use_country_code_before_number' => 'Utilisez le préfixe pays avant le numéro',
         'remember_me' => 'Se souvenir de moi',
         'forgot_password' => 'Mot de passe oublié ?',
+        'enter_your_email_address_or_phone_number_to_recover_your_password' => 'Saisissez votre adresse e-mail ou votre numéro de téléphone pour récupérer votre mot de passe.',
+        'enter_your_email_address_to_recover_your_password' => 'Saisissez votre adresse e-mail pour récupérer votre mot de passe.',
         'dont_have_an_account' => 'Vous n\'avez pas de compte ?',
         'register_now' => 'S\'inscrire maintenant',
         'or_login_with' => 'Ou se connecter avec',
