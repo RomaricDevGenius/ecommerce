@@ -56,10 +56,13 @@
                                                         autocomplete="off">
                                                         @if(get_setting('customer_registration_verify') == '1')
                                                         <button class="btn btn-primary" type="button" id="sendOtpPhoneBtn" onclick="sendVerificationCode(this)">
-                                                                    {{ translate('Verify') }} 
+                                                                    {{ translate('Verify') }}
                                                         </button>
                                                         @endif
                                                     </div>
+                                                    @if(get_setting('customer_registration_verify') == '1')
+                                                    <small class="text-muted" style="font-style:italic;">Cliquez sur "Vérifier" pour recevoir votre code de confirmation par SMS.</small>
+                                                    @endif
                                                 </div>
                                         
                                                 <input type="hidden" id="country_code" name="country_code" value="{{ old('country_code', 'US') }}"> {{-- Default to 'US' --}}
