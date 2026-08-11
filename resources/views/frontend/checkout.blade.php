@@ -1,5 +1,51 @@
 @extends('frontend.layouts.app')
 
+@section('style')
+<style>
+/* Delivery location card — snake border animation en rouge sur erreur GPS */
+#deliveryLocationCard {
+    position: relative;
+}
+#deliveryLocationCard::before,
+#deliveryLocationCard::after {
+    box-sizing: inherit;
+    content: '';
+    position: absolute;
+    z-index: 2;
+    width: 0;
+    height: 0;
+    border: 2px solid transparent;
+}
+#deliveryLocationCard::before { top: 0; left: 0; }
+#deliveryLocationCard::after  { top: 0; bottom: 0; left: 0; right: 0; }
+#deliveryLocationCard.delivery-location-error::before,
+#deliveryLocationCard.delivery-location-error::after { width: 100%; height: 100%; }
+#deliveryLocationCard.delivery-location-error::before {
+    border-top-color: #dc3545;
+    border-right-color: #dc3545;
+    transition: width 0.3s ease-out, height 0.3s ease-out 0.3s;
+}
+#deliveryLocationCard.delivery-location-error::after {
+    border-bottom-color: #dc3545;
+    border-left-color: #dc3545;
+    transition: height 0.3s ease-out, width 0.3s ease-out 0.3s;
+}
+/* Boutons de localisation — même couleur que btn-primary, scoped au card */
+#deliveryLocationCard .btn-delivery-location {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+#deliveryLocationCard .btn-delivery-location:hover,
+#deliveryLocationCard .btn-delivery-location:focus {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    opacity: 0.85;
+}
+</style>
+@endsection
+
 @section('content')
 
     <section class="my-4 gry-bg">
@@ -31,7 +77,7 @@
 
                             <!-- Delivery Location (GPS) -->
                             @if (get_setting('shipping_type') == 'gps_distance_shipping')
-                            <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem;">
+                            <div class="card rounded-0 border shadow-none" id="deliveryLocationCard" style="margin-bottom: 2rem;">
                                 <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryLocation">
                                     <div class="d-flex align-items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
@@ -43,12 +89,12 @@
                                 <div class="card-body pt-0">
                                     <div class="row gutters-5">
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="useCurrentLocation()">
+                                            <button type="button" class="btn btn-delivery-location btn-block fw-600" onclick="useCurrentLocation()">
                                                 <i class="las la-location-arrow"></i> {{ translate('My current location') }}
                                             </button>
                                         </div>
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="openDeliveryMap()">
+                                            <button type="button" class="btn btn-delivery-location btn-block fw-600" onclick="openDeliveryMap()">
                                                 <i class="las la-map"></i> {{ translate('Choose on map') }}
                                             </button>
                                         </div>
@@ -214,6 +260,11 @@
                         allIsOk = true;
                     }else{
                         AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
+                        if (!isOkDelivery) {
+                            var $dlCard = $('#deliveryLocationCard');
+                            $dlCard.removeClass('delivery-location-error');
+                            setTimeout(function(){ $dlCard.addClass('delivery-location-error'); $dlCard[0] && $dlCard[0].scrollIntoView({behavior:'smooth',block:'center'}); }, 10);
+                        }
                         $('#checkout-form [required]').each(function (i, el) {
                             if ($(el).val() == '' || $(el).val() == undefined) {
                                 var is_trx_id = $('.d-none #trx_id').length;
@@ -256,6 +307,11 @@
                             allIsOk = true;
                         }else{
                             AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
+                            if (!isOkDelivery) {
+                                var $dlCard = $('#deliveryLocationCard');
+                                $dlCard.removeClass('delivery-location-error');
+                                setTimeout(function(){ $dlCard.addClass('delivery-location-error'); $dlCard[0] && $dlCard[0].scrollIntoView({behavior:'smooth',block:'center'}); }, 10);
+                            }
                             $('#checkout-form [required]').each(function (i, el) {
                                 if ($(el).val() == '' || $(el).val() == undefined) {
                                     var is_trx_id = $('.d-none #trx_id').length;
@@ -894,6 +950,7 @@
                 _pickedLng = lng;
                 gps_last_distance = data.distance_km;
                 $('#headingDeliveryLocation svg *').css('fill', '#15a405');
+                $('#deliveryLocationCard').removeClass('delivery-location-error');
                 $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
                     '{{ translate('Location set') }} (' + Number(lat).toFixed(5) + ', ' + Number(lng).toFixed(5) + ')');
 
