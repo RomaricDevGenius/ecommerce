@@ -57,12 +57,12 @@
                                 <div class="card-body pt-0">
                                     <div class="row gutters-5">
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-primary btn-block fw-600" onclick="useCurrentLocation()">
+                                            <button type="button" class="btn btn-block fw-600" style="background:#EA6535; color:#fff; border:none; border-radius:4px;" onclick="useCurrentLocation()">
                                                 <i class="las la-location-arrow"></i> {{ translate('My current location') }}
                                             </button>
                                         </div>
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-primary btn-block fw-600" onclick="openDeliveryMap()">
+                                            <button type="button" class="btn btn-block fw-600" style="background:#EA6535; color:#fff; border:none; border-radius:4px;" onclick="openDeliveryMap()">
                                                 <i class="las la-map"></i> {{ translate('Choose on map') }}
                                             </button>
                                         </div>
