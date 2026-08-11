@@ -191,6 +191,7 @@
 #deliveryLocationCard::after {
     box-sizing: inherit; content: ''; position: absolute; z-index: 2;
     width: 0; height: 0; border: 2px solid transparent;
+    pointer-events: none;
 }
 #deliveryLocationCard::before { top: 0; left: 0; }
 #deliveryLocationCard::after  { top: 0; bottom: 0; left: 0; right: 0; }
