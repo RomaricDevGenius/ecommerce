@@ -240,7 +240,8 @@
                     if(isOkShipping && isOkDelivery && isOkPayment) {
                         allIsOk = true;
                     }else{
-                        AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
+                        var notifyMsg = !isOkDelivery ? 'Veuillez sélectionner votre lieu de livraison.' : '{{ translate("Please fill in all mandatory fields!") }}';
+                        AIZ.plugins.notify('danger', notifyMsg);
                         if (!isOkDelivery) {
                             var $dlCard = $('#deliveryLocationCard');
                             $dlCard.removeClass('delivery-location-error');
@@ -287,7 +288,8 @@
                         if(isOkShipping && isOkDelivery && isOkPayment) {
                             allIsOk = true;
                         }else{
-                            AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
+                            var notifyMsg = !isOkDelivery ? 'Veuillez sélectionner votre lieu de livraison.' : '{{ translate("Please fill in all mandatory fields!") }}';
+                            AIZ.plugins.notify('danger', notifyMsg);
                             if (!isOkDelivery) {
                                 var $dlCard = $('#deliveryLocationCard');
                                 $dlCard.removeClass('delivery-location-error');
