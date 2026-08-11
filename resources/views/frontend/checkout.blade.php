@@ -1,51 +1,5 @@
 @extends('frontend.layouts.app')
 
-@section('style')
-<style>
-/* Delivery location card — snake border animation en rouge sur erreur GPS */
-#deliveryLocationCard {
-    position: relative;
-}
-#deliveryLocationCard::before,
-#deliveryLocationCard::after {
-    box-sizing: inherit;
-    content: '';
-    position: absolute;
-    z-index: 2;
-    width: 0;
-    height: 0;
-    border: 2px solid transparent;
-}
-#deliveryLocationCard::before { top: 0; left: 0; }
-#deliveryLocationCard::after  { top: 0; bottom: 0; left: 0; right: 0; }
-#deliveryLocationCard.delivery-location-error::before,
-#deliveryLocationCard.delivery-location-error::after { width: 100%; height: 100%; }
-#deliveryLocationCard.delivery-location-error::before {
-    border-top-color: #dc3545;
-    border-right-color: #dc3545;
-    transition: width 0.3s ease-out, height 0.3s ease-out 0.3s;
-}
-#deliveryLocationCard.delivery-location-error::after {
-    border-bottom-color: #dc3545;
-    border-left-color: #dc3545;
-    transition: height 0.3s ease-out, width 0.3s ease-out 0.3s;
-}
-/* Boutons de localisation — même couleur que btn-primary, scoped au card */
-#deliveryLocationCard .btn-delivery-location {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-}
-#deliveryLocationCard .btn-delivery-location:hover,
-#deliveryLocationCard .btn-delivery-location:focus {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-    opacity: 0.85;
-}
-</style>
-@endsection
-
 @section('content')
 
     <section class="my-4 gry-bg">
@@ -231,6 +185,33 @@
 @endsection
 
 @section('script')
+<style>
+#deliveryLocationCard { position: relative; }
+#deliveryLocationCard::before,
+#deliveryLocationCard::after {
+    box-sizing: inherit; content: ''; position: absolute; z-index: 2;
+    width: 0; height: 0; border: 2px solid transparent;
+}
+#deliveryLocationCard::before { top: 0; left: 0; }
+#deliveryLocationCard::after  { top: 0; bottom: 0; left: 0; right: 0; }
+#deliveryLocationCard.delivery-location-error::before,
+#deliveryLocationCard.delivery-location-error::after { width: 100%; height: 100%; }
+#deliveryLocationCard.delivery-location-error::before {
+    border-top-color: #dc3545; border-right-color: #dc3545;
+    transition: width 0.3s ease-out, height 0.3s ease-out 0.3s;
+}
+#deliveryLocationCard.delivery-location-error::after {
+    border-bottom-color: #dc3545; border-left-color: #dc3545;
+    transition: height 0.3s ease-out, width 0.3s ease-out 0.3s;
+}
+#deliveryLocationCard .btn-delivery-location {
+    background-color: var(--primary); border-color: var(--primary); color: #fff;
+}
+#deliveryLocationCard .btn-delivery-location:hover,
+#deliveryLocationCard .btn-delivery-location:focus {
+    background-color: var(--primary); border-color: var(--primary); color: #fff; opacity: 0.85;
+}
+</style>
     <script type="text/javascript">
        var carrierCount=0;
         $(document).ready(function() {
