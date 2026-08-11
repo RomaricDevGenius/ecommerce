@@ -1,5 +1,19 @@
 @extends('frontend.layouts.app')
 
+@section('style')
+<style>
+@keyframes delivery-error-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(220,53,69,0.6); border-color: #dc3545; }
+    50%  { box-shadow: 0 0 0 10px rgba(220,53,69,0); border-color: #dc3545; }
+    100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); border-color: #dc3545; }
+}
+#deliveryLocationCard.delivery-error {
+    border-color: #dc3545 !important;
+    animation: delivery-error-pulse 0.7s ease 4;
+}
+</style>
+@endsection
+
 @section('content')
 
     <section class="my-4 gry-bg">
@@ -31,7 +45,7 @@
 
                             <!-- Delivery Location (GPS) -->
                             @if (get_setting('shipping_type') == 'gps_distance_shipping')
-                            <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem;">
+                            <div class="card rounded-0 border shadow-none" id="deliveryLocationCard" style="margin-bottom: 2rem;">
                                 <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryLocation">
                                     <div class="d-flex align-items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
@@ -43,12 +57,12 @@
                                 <div class="card-body pt-0">
                                     <div class="row gutters-5">
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="useCurrentLocation()">
+                                            <button type="button" class="btn btn-primary btn-block fw-600" onclick="useCurrentLocation()">
                                                 <i class="las la-location-arrow"></i> {{ translate('My current location') }}
                                             </button>
                                         </div>
                                         <div class="col-sm-6 mb-2">
-                                            <button type="button" class="btn btn-soft-primary btn-block fw-600" onclick="openDeliveryMap()">
+                                            <button type="button" class="btn btn-primary btn-block fw-600" onclick="openDeliveryMap()">
                                                 <i class="las la-map"></i> {{ translate('Choose on map') }}
                                             </button>
                                         </div>
@@ -214,16 +228,23 @@
                         allIsOk = true;
                     }else{
                         AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
-                        $('#checkout-form [required]').each(function (i, el) {
-                            if ($(el).val() == '' || $(el).val() == undefined) {
-                                var is_trx_id = $('.d-none #trx_id').length;
-                                if(($(el).attr('name') != 'trx_id') || is_trx_id == 0){
-                                    $(el).focus();
-                                    $(el).scrollIntoView({behavior: "smooth", block: "center"});
-                                    return false;
+                        if (!isOkDelivery) {
+                            var $card = $('#deliveryLocationCard');
+                            $card.removeClass('delivery-error');
+                            setTimeout(function() { $card.addClass('delivery-error'); }, 10);
+                            $card[0].scrollIntoView({behavior: 'smooth', block: 'center'});
+                        } else {
+                            $('#checkout-form [required]').each(function (i, el) {
+                                if ($(el).val() == '' || $(el).val() == undefined) {
+                                    var is_trx_id = $('.d-none #trx_id').length;
+                                    if(($(el).attr('name') != 'trx_id') || is_trx_id == 0){
+                                        $(el).focus();
+                                        $(el).scrollIntoView({behavior: "smooth", block: "center"});
+                                        return false;
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
 
                     if (allIsOk) {
@@ -256,16 +277,23 @@
                             allIsOk = true;
                         }else{
                             AIZ.plugins.notify('danger', '{{ translate("Please fill in all mandatory fields!") }}');
-                            $('#checkout-form [required]').each(function (i, el) {
-                                if ($(el).val() == '' || $(el).val() == undefined) {
-                                    var is_trx_id = $('.d-none #trx_id').length;
-                                    if(($(el).attr('name') != 'trx_id') || is_trx_id == 0){
-                                        $(el).focus();
-                                        $(el).scrollIntoView({behavior: "smooth", block: "center"});
-                                        return false;
+                            if (!isOkDelivery) {
+                                var $card = $('#deliveryLocationCard');
+                                $card.removeClass('delivery-error');
+                                setTimeout(function() { $card.addClass('delivery-error'); }, 10);
+                                $card[0].scrollIntoView({behavior: 'smooth', block: 'center'});
+                            } else {
+                                $('#checkout-form [required]').each(function (i, el) {
+                                    if ($(el).val() == '' || $(el).val() == undefined) {
+                                        var is_trx_id = $('.d-none #trx_id').length;
+                                        if(($(el).attr('name') != 'trx_id') || is_trx_id == 0){
+                                            $(el).focus();
+                                            $(el).scrollIntoView({behavior: "smooth", block: "center"});
+                                            return false;
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
 
                         if (allIsOk) {
@@ -894,6 +922,7 @@
                 _pickedLng = lng;
                 gps_last_distance = data.distance_km;
                 $('#headingDeliveryLocation svg *').css('fill', '#15a405');
+                $('#deliveryLocationCard').removeClass('delivery-error');
                 $('#gps_location_status').html('<i class="las la-check-circle text-success"></i> ' +
                     '{{ translate('Location set') }} (' + Number(lat).toFixed(5) + ', ' + Number(lng).toFixed(5) + ')');
 
