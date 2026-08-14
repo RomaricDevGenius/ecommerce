@@ -176,6 +176,12 @@ class OrderController extends Controller
             if ($address->latitude || $address->longitude) {
                 $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
             }
+            // Coordonnées GPS choisies sur la carte checkout (priorité sur l'adresse enregistrée)
+            $sessionLat = session('checkout_delivery_lat');
+            $sessionLng = session('checkout_delivery_lng');
+            if ($sessionLat && $sessionLng) {
+                $shippingAddress['lat_lang'] = $sessionLat . ',' . $sessionLng;
+            }
         }
 
         $billingAddress=[];
