@@ -62,4 +62,19 @@ class SliderController extends Controller
         }
         return new SliderCollection($banners);
     }
+
+    public function deliveryBanner()
+    {
+        $imageId = get_setting('delivery_app_banner_image');
+        $link    = get_setting('delivery_app_banner_link') ?? '';
+
+        return response()->json([
+            'data' => [
+                'photo' => $imageId ? uploaded_asset($imageId) : null,
+                'url'   => $link,
+            ],
+            'success' => true,
+            'status'  => 200,
+        ]);
+    }
 }
