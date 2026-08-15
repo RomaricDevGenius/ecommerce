@@ -358,6 +358,7 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
     Route::get('banners-one', 'App\Http\Controllers\Api\V2\SliderController@bannerOne');
     Route::get('banners-two', 'App\Http\Controllers\Api\V2\SliderController@bannerTwo');
     Route::get('banners-three', 'App\Http\Controllers\Api\V2\SliderController@bannerThree');
+    Route::get('delivery-banner', 'App\Http\Controllers\Api\V2\SliderController@deliveryBanner');
 
     Route::get('policies/seller', 'App\Http\Controllers\Api\V2\PolicyController@sellerPolicy')->name('policies.seller');
     Route::get('policies/support', 'App\Http\Controllers\Api\V2\PolicyController@supportPolicy')->name('policies.support');

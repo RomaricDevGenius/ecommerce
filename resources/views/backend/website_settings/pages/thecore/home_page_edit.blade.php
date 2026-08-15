@@ -124,6 +124,13 @@
 							{{ translate('Classifieds') }}
 						</a>
 					</li>
+					<!-- Delivery App Banner -->
+					<li class="nav-item">
+						<a class="nav-link" id="delivery-banner-tab" href="#delivery_app_banner"
+							data-toggle="tab" data-target="#delivery_app_banner" type="button" role="tab" aria-controls="delivery_app_banner" aria-selected="false">
+							{{ translate('Bannière App Livreur') }}
+						</a>
+					</li>
 					@if(addon_is_activated('preorder'))
 					<!-- Newest Preorder Products -->
 					<li class="nav-item">
@@ -875,6 +882,46 @@
 						</form>
 					</div>
 
+
+					<!-- Delivery App Banner -->
+					<div class="tab-pane fade" id="delivery_app_banner" role="tabpanel" aria-labelledby="delivery-banner-tab">
+						<form action="{{ route('business_settings.update') }}" method="POST" enctype="multipart/form-data">
+							@csrf
+							<input type="hidden" name="tab" value="delivery_app_banner">
+							<div class="bg-white p-3 p-sm-2rem">
+								<h5 class="fs-14 fw-600 mb-1">{{ translate('Bannière App Livreur') }}</h5>
+								<p class="text-muted fs-12 mb-3">{{ translate("Image affichée en haut de la page d'accueil de l'application livreur. Dimensions recommandées : 800×400px.") }}</p>
+
+								<!-- Image -->
+								<div class="form-group">
+									<label class="col-from-label fs-13 fw-500">{{ translate('Image de bannière') }}</label>
+									<div class="input-group" data-toggle="aizuploader" data-type="image">
+										<div class="input-group-prepend">
+											<div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse') }}</div>
+										</div>
+										<div class="form-control file-amount">{{ translate('Choose File') }}</div>
+										<input type="hidden" name="types[]" value="delivery_app_banner_image">
+										<input type="hidden" name="delivery_app_banner_image" class="selected-files" value="{{ get_setting('delivery_app_banner_image') }}">
+									</div>
+									<div class="file-preview box sm"></div>
+								</div>
+
+								<!-- Lien optionnel -->
+								<div class="form-group">
+									<label class="col-from-label fs-13 fw-500">{{ translate('Lien (optionnel)') }}</label>
+									<input type="hidden" name="types[]" value="delivery_app_banner_link">
+									<input type="text" class="form-control" name="delivery_app_banner_link"
+										value="{{ get_setting('delivery_app_banner_link') }}"
+										placeholder="http://">
+								</div>
+
+								<!-- Save -->
+								<div class="mt-4 text-right">
+									<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Save') }}</button>
+								</div>
+							</div>
+						</form>
+					</div>
 
 					<!-- Classifieds -->
 					<div class="tab-pane fade" id="classifieds" role="tabpanel" aria-labelledby="classifieds-tab">
