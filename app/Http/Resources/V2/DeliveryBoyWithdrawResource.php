@@ -18,8 +18,14 @@ class DeliveryBoyWithdrawResource extends JsonResource
             'notes'                => $this->notes,
             'status'               => $this->status,
             'status_label'         => $this->status_label,
-            'rejection_reason'     => $this->rejection_reason,
-            'admin_note'           => $this->admin_note,
+            'rejection_reason'          => $this->rejection_reason,
+            'admin_note'                => $this->admin_note,
+            'payment_method_image_url'  => static_asset('assets/img/cards/' . match ($this->payment_method) {
+                'orange_money' => 'orange.png',
+                'moov_money'   => 'moov.png',
+                'coris_money'  => 'coris.png',
+                default        => 'cod.png',
+            }),
             'created_at'           => $this->created_at->format('d/m/Y H:i'),
             'created_at_timestamp' => $this->created_at->timestamp,
         ];
