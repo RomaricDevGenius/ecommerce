@@ -20,7 +20,7 @@ class MessageCollection extends ResourceCollection
                     'month' => Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->format('m'),
                     'day_of_month' => Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->format('d-M'),
                     'date' => Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->format('F d, Y'),
-                    'time' => Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->format('h:i a'),
+                    'time' => Carbon::createFromFormat('Y-m-d H:i:s',$data->created_at)->format('h:i A'),
                 ];
             })
         ];
