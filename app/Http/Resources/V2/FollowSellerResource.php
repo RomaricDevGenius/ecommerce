@@ -14,14 +14,16 @@ class FollowSellerResource extends JsonResource
      */
     public function toArray($request)
     {
+        $shop = $this->shop;
+
         return [
-            'shop_id' => $this->shop->id,
-            'shop_slug' => $this->shop->slug,
-            'shop_name' => $this->shop->name,
-            'shop_url' => $this->shop->slug,
-            'shop_rating' => $this->shop->rating,
-            'shop_num_of_reviews' => $this->shop->num_of_reviews,
-            'shop_logo' => uploaded_asset($this->shop->logo),
+            'shop_id' => $shop?->id,
+            'shop_slug' => $shop?->slug,
+            'shop_name' => $shop?->name,
+            'shop_url' => $shop?->slug,
+            'shop_rating' => $shop?->rating,
+            'shop_num_of_reviews' => $shop?->num_of_reviews,
+            'shop_logo' => $shop ? uploaded_asset($shop->logo) : null,
         ];
     }
 }

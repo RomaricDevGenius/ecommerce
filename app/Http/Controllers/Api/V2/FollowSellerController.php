@@ -17,6 +17,7 @@ class FollowSellerController extends Controller
     {
         $followed_sellers = FollowSeller::query()
             ->with('shop')
+            ->whereHas('shop')
             ->where('user_id', auth()->user()->id)
             ->orderBy('shop_id', 'asc')
             ->paginate(10);
