@@ -199,6 +199,21 @@ class ShippingController extends Controller
                 $shop['owner_id'] = (int) $owner_id;
                 $shop['cart_items'] = $shop_items_data;
                 $shop['carriers'] = seller_base_carrier_list($owner_id, $userId, $tempUserId, $shipping_info);
+
+                // Choix de livraison déjà enregistré sur le panier : permet à
+                // l'écran de restaurer l'option retenue au lieu de repartir sur
+                // la livraison à domicile par défaut.
+                $selected_cart = $cartItems->where('owner_id', $owner_id)->first();
+                $shop['selected_shipping_type'] = $selected_cart
+                    ? $selected_cart->shipping_type
+                    : null;
+                $shop['selected_pickup_point'] = $selected_cart
+                    ? (int) $selected_cart->pickup_point
+                    : 0;
+                $shop['selected_carrier_id'] = $selected_cart
+                    ? (int) $selected_cart->carrier_id
+                    : 0;
+
                 $shop['pickup_points'] = [];
                 if (get_setting('pickup_point') == 1) {
                     $pickup_point_list = PickupPoint::where('pick_up_status', 1)->get();
