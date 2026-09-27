@@ -2,14 +2,21 @@
 
 namespace App\Http\Resources\V2;
 
+use App\Models\Cart;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class AddressCollection extends ResourceCollection
 {
     public function toArray($request)
     {
+        // Adresse déjà rattachée au panier en cours : elle permet au client de
+        // retrouver son choix précédent au lieu de repartir sur celle par défaut.
+        $cart_address_id = Cart::where('user_id', auth()->id())
+            ->active()
+            ->value('address_id');
+
         return [
-            'data' => $this->collection->map(function($data) {
+            'data' => $this->collection->map(function($data) use ($cart_address_id) {
 
                 $location_available = false;
                 $lat = 90.99;
@@ -41,6 +48,8 @@ class AddressCollection extends ResourceCollection
                     'lat' => $lat,
                     'lang' => $lang,
                     'valid' => $this->isValidAddress($data),
+                    'in_cart' => $cart_address_id !== null
+                        && (int) $cart_address_id === (int) $data->id,
                 ];
             })
         ];
