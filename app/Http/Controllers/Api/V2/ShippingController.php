@@ -10,6 +10,7 @@ use App\Models\PickupPoint;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 class ShippingController extends Controller
 {
     public function pickup_list()
@@ -30,11 +31,21 @@ class ShippingController extends Controller
         $deliveryLat = $request->has('delivery_lat') ? (float) $request->delivery_lat : null;
         $deliveryLng = $request->has('delivery_lng') ? (float) $request->delivery_lng : null;
 
-        // Si un devis GPS a déjà été accepté par ce client, les carts ont
-        // déjà le bon montant — ne pas recalculer ni écraser.
-        if ($userId && get_setting('shipping_type') === 'gps_distance_shipping') {
+        // Si un devis GPS accepté correspond au lieu de livraison demandé, les
+        // carts portent déjà le montant négocié — ne pas recalculer ni écraser.
+        //
+        // Le devis n'est retenu que s'il a été négocié POUR CE LIEU. Sans cette
+        // condition, un devis accepté pour une autre livraison s'appliquait au
+        // panier courant : le client voyait un prix issu d'un ancien devis,
+        // sans aucune position associée, et l'écran lui redemandait un lieu.
+        if ($userId && get_setting('shipping_type') === 'gps_distance_shipping'
+            && $deliveryLat !== null && $deliveryLng !== null) {
+
+            // Tolérance de ~55 m : la position n'est jamais pointée au mètre près.
             $acceptedQuote = GpsQuoteRequest::where('user_id', $userId)
                 ->where('status', 'accepted')
+                ->whereRaw('ABS(delivery_lat - ?) < 0.0005', [$deliveryLat])
+                ->whereRaw('ABS(delivery_lng - ?) < 0.0005', [$deliveryLng])
                 ->latest()
                 ->first();
 
@@ -106,6 +117,15 @@ class ShippingController extends Controller
                     $cartItem['pickup_point'] = 0;
                     $cartItem['carrier_id'] = $seller['shipping_id'];
                     $cartItem['shipping_cost'] = getShippingCost($carts, $key, $shipping_info, $seller['shipping_id']);
+                }
+
+                // On conserve la position qui a servi au calcul, pas seulement
+                // le montant obtenu : sans elle, le client qui revient voit un
+                // prix dont il ne peut plus retrouver l'origine.
+                if ($deliveryLat !== null && $deliveryLng !== null
+                    && Schema::hasColumn('carts', 'delivery_lat')) {
+                    $cartItem['delivery_lat'] = $deliveryLat;
+                    $cartItem['delivery_lng'] = $deliveryLng;
                 }
 
                 $cartItem->save();
@@ -213,6 +233,19 @@ class ShippingController extends Controller
                 $shop['selected_carrier_id'] = $selected_cart
                     ? (int) $selected_cart->carrier_id
                     : 0;
+
+                // Position GPS ayant servi au calcul du coût, pour que l'écran
+                // puisse la restaurer au lieu de redemander un lieu déjà choisi.
+                $shop['delivery_lat'] = null;
+                $shop['delivery_lng'] = null;
+                if ($selected_cart && Schema::hasColumn('carts', 'delivery_lat')) {
+                    $shop['delivery_lat'] = $selected_cart->delivery_lat !== null
+                        ? (float) $selected_cart->delivery_lat
+                        : null;
+                    $shop['delivery_lng'] = $selected_cart->delivery_lng !== null
+                        ? (float) $selected_cart->delivery_lng
+                        : null;
+                }
 
                 $shop['pickup_points'] = [];
                 if (get_setting('pickup_point') == 1) {
