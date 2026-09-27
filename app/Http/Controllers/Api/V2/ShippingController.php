@@ -10,7 +10,6 @@ use App\Models\PickupPoint;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 class ShippingController extends Controller
 {
     public function pickup_list()
@@ -119,15 +118,6 @@ class ShippingController extends Controller
                     $cartItem['shipping_cost'] = getShippingCost($carts, $key, $shipping_info, $seller['shipping_id']);
                 }
 
-                // On conserve la position qui a servi au calcul, pas seulement
-                // le montant obtenu : sans elle, le client qui revient voit un
-                // prix dont il ne peut plus retrouver l'origine.
-                if ($deliveryLat !== null && $deliveryLng !== null
-                    && Schema::hasColumn('carts', 'delivery_lat')) {
-                    $cartItem['delivery_lat'] = $deliveryLat;
-                    $cartItem['delivery_lng'] = $deliveryLng;
-                }
-
                 $cartItem->save();
             }
         }
@@ -219,34 +209,6 @@ class ShippingController extends Controller
                 $shop['owner_id'] = (int) $owner_id;
                 $shop['cart_items'] = $shop_items_data;
                 $shop['carriers'] = seller_base_carrier_list($owner_id, $userId, $tempUserId, $shipping_info);
-
-                // Choix de livraison déjà enregistré sur le panier : permet à
-                // l'écran de restaurer l'option retenue au lieu de repartir sur
-                // la livraison à domicile par défaut.
-                $selected_cart = $cartItems->where('owner_id', $owner_id)->first();
-                $shop['selected_shipping_type'] = $selected_cart
-                    ? $selected_cart->shipping_type
-                    : null;
-                $shop['selected_pickup_point'] = $selected_cart
-                    ? (int) $selected_cart->pickup_point
-                    : 0;
-                $shop['selected_carrier_id'] = $selected_cart
-                    ? (int) $selected_cart->carrier_id
-                    : 0;
-
-                // Position GPS ayant servi au calcul du coût, pour que l'écran
-                // puisse la restaurer au lieu de redemander un lieu déjà choisi.
-                $shop['delivery_lat'] = null;
-                $shop['delivery_lng'] = null;
-                if ($selected_cart && Schema::hasColumn('carts', 'delivery_lat')) {
-                    $shop['delivery_lat'] = $selected_cart->delivery_lat !== null
-                        ? (float) $selected_cart->delivery_lat
-                        : null;
-                    $shop['delivery_lng'] = $selected_cart->delivery_lng !== null
-                        ? (float) $selected_cart->delivery_lng
-                        : null;
-                }
-
                 $shop['pickup_points'] = [];
                 if (get_setting('pickup_point') == 1) {
                     $pickup_point_list = PickupPoint::where('pick_up_status', 1)->get();
